@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wadamomo/HBFP.git"
+    "url": "git+https://github.com/chmccc/FlacheQL.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/wadamomo/HBFP/issues"
+    "url": "https://github.com/chmccc/FlacheQL/issues"
   },
-  "homepage": "https://github.com/wadamomo/HBFP#readme",
+  "homepage": "https://github.com/chmccc/FlacheQL#readme",
   "dependencies": {
     "babel-preset-env": "^1.7.0",
     "babelify": "^8.0.0",
