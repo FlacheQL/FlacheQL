@@ -1,0 +1,15 @@
+* {
+  border: 1px dotted grey;
+}
+
+.main-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+.gitbox {
+  width: 90%;
+  
+}
