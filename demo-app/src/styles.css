@@ -9,9 +9,10 @@ body {
 .container {
   align-content: center;
   margin-top: 110px;
+  display: inline;
 }
 
-.tool-creator-container {
+.tweet-creator-container {
   align-items: center;
   top: 0px;
   margin: 0 auto;
@@ -30,13 +31,13 @@ body {
   margin-bottom: 15px;
 }
 
-.tool-creator-container button {
+.tweet-creator-container button {
   padding: 30px;
 }
 
 .outerBox {
   position: relative;
-  max-width: 90%;
+  max-width: 40%;
   margin: 0 auto;
   padding: 10px;
   box-shadow: 10px 15px 39px rgba(0, 0, 0, .2);
@@ -65,7 +66,7 @@ body {
   margin-left: 30px;
 }
 
-.extraOuter h1 {
+.header h1 {
   margin-left: 100px;
   color: rgb(93, 142, 197);
   margin-top: 50px;
@@ -73,28 +74,34 @@ body {
   font-size: 2.4em;
 }
 
-.tool-creator-container label {
+.extraOuter {
+  width: 100%;
+  display: flex;
+  align-content: space-around;
+}
+
+.tweet-creator-container label {
   display: inline-block;
   margin: 10px;
   color: rgb(199, 199, 199);
   font-weight: bold;
 }
 
-.tool-creator-container h4 {
+.tweet-creator-container h4 {
   font-size: 1.4em;
   display: inline-block;
   margin: 10px;
   color: rgb(199, 199, 199);
   font-weight: 600;
 }
-.tool-creator-container input {
+.tweet-creator-container input {
   display: inline-block;
   padding: 8px;
   margin-left: 10px;
   margin-right: 30px;
 }
 
-.tool-creator-container button{
+.tweet-creator-container button{
   display: inline-block;
   padding: 12px 28px;
   margin-left: 20px;
@@ -108,7 +115,7 @@ body {
   padding-top: 10px;
 }
 
-.singleTool {
+.singleTweet {
   display: inline-flex;
   padding: 5px;
   max-height: 0%;
@@ -120,11 +127,11 @@ body {
   box-shadow: 5px 5px 15px rgba(0, 0, 0, .2);
 }
 
-.singleTool div {
+.singleTweet div {
   width: 50%;
 }
 
-.singleTool .set3 h3 {
+.singleTweet .set3 h3 {
   margin-right: 75px;
   background: rgb(66, 66, 66);
   padding-left: 15px;
@@ -136,7 +143,7 @@ body {
   font-size: 2.2em;
 }
 
-.toolD {
+.tweetD {
   padding-top: 40px;
   line-height: 20px;
   width: 400px;
@@ -148,19 +155,19 @@ body {
   height: 30px;
 }
 
-.singleTool .set3 {
+.singleTweet .set3 {
   margin-left: 25px;
   margin-bottom: 25px;
   align-items: right;
   float: right;
 }
 
-.singleTool .voteButtons {
+.singleTweet .voteButtons {
   align-content: center;
   float: right;
 }
 
-.singleTool button {
+.singleTweet button {
   margin-left: 9px;
   padding: 10px 25px;
   font-size: 2.0em;

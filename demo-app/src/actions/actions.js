@@ -1,13 +1,13 @@
 // import actionType constants
 import * as types from '../constants/actionTypes'
 
-export const addTool = (toolName, toolApp, toolType, toolDesc) => ({
+export const addTweet = (tweetName, tweetApp, tweetType, tweetDesc) => ({
   type: 'ADD_TOOL',
-  toolName, 
-  toolApp, 
-  toolType, 
-  toolDesc,
-  toolLikes: 0
+  tweetName, 
+  tweetApp, 
+  tweetType, 
+  tweetDesc,
+  tweetLikes: 0
 });
 
 export const addLike = (index) => ({

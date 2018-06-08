@@ -1,7 +1,7 @@
 /**
  * ************************************
  *
- * @module  toolsDisplay
+ * @module  TweetsDisplay
  * @author
  * @date
  * @description presentation component that renders n MarketDisplay components
@@ -10,22 +10,22 @@
  */
 
 import React from 'react';
-import ToolDisplay from './ToolDisplay.jsx';
+import TweetDisplay from './TweetDisplay.jsx';
 
 
-const ToolsDisplay = (props) => {
+const TweetsDisplay = (props) => {
   return(
     <div className="displayBox">
         {
-          props.allTools
+          props.allTweets
           .map((el, i) => {
-            return <div id={i} key={i}><ToolDisplay {...props} onAddLike={props.onAddLike} onDeleteLike={props.onDeleteLike} key={i} i={i} /></div>})
+            return <div id={i} key={i}><TweetDisplay {...props} onAddLike={props.onAddLike} onDeleteLike={props.onDeleteLike} key={i} i={i} /></div>})
         }
     </div>
   );
 };
 
-export default ToolsDisplay;
+export default TweetsDisplay;
 
 // const PhotoGrid = React.createClass({
 //   render() {
