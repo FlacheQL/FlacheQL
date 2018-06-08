@@ -3,24 +3,18 @@ import * as types from '../constants/actionTypes';
 const initialState = {
   allTweets: [
     {
-      tweetName: "npm install with -D flag", 
-      tweetApp: "Terminal", 
-      tweetType: "NPM Shortcut", 
-      tweetDesc: "saves whatever you install to the dev dependencies (same thing as doing '--save-dev')",
+      tweetText: "This is a long tweet about things that are very interesting", 
+      tweetComments: ['i love long interesting things', 'me too', 'yay'],
       tweetLikes: 0
     },
     {
-      tweetName: "Duplicate Lines Up and Down", 
-      tweetApp: "VS Code", 
-      tweetType: "Keyboard Shortcut", 
-      tweetDesc: "Shift + Option + Down Arrow / Shift + Option + Down Arrow. Without highlighting anything you can duplicate a line. You can also drag your mouse haphazardly over a bunch of lines and with the same shortcut it will copy down the entire lines",
+      tweetText: "This is a short little tweet", 
+      tweetComments: "comments",
       tweetLikes: 0
     },
     {
-      tweetName: "Color Zilla", 
-      tweetApp: "Chrome", 
-      tweetType: "Extension", 
-      tweetDesc: "Gives you a pointer so you can click anywhere on a webpage and it will give you the both the rgb and hex codes for that color",
+      tweetText: "Sweet baby juuls ruul", 
+      tweetComments: "comments",
       tweetLikes: 0
     },
   ],
@@ -29,15 +23,11 @@ const initialState = {
 
 const tweetsReducer = (state = initialState, action) => {
   switch(action.type) {
-    case 'ADD_TOOL':
+    case 'ADD_TWEET':
       console.log('adding tweet')
       let newState = JSON.parse(JSON.stringify(state));
       let newTweet = {
-        tweetName: action.tweetName,
-        tweetApp: action.tweetApp,
-        tweetType: action.tweetType,
-        tweetDesc: action.tweetDesc,
-        tweetLikes: action.tweetLikes
+        tweetText: action.tweetText,
       }
       newState.allTweets = newState.allTweets.slice();
       newState.allTweets.push(newTweet)

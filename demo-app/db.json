@@ -1,0 +1,29 @@
+{
+    "users": [
+        {"id": "u1", "name": "Helen Kang", "gitHub": "learnjvs"},
+        {"id": "u2", "name": "Will Howard", "gitHub": "fairlycasual"},
+        {"id": "u3", "name": "Colin McCarthy", "gitHub": "chmccc"},
+        {"id": "u4", "name": "William Adamowicz", "gitHub": "wadamomo"}
+    ],
+    "tweets": [
+        {
+            "id": "t1",
+            "tweetText": "This is a long tweet about things that are very interesting", 
+            "tweetComments": ["i love long interesting things", "me too", "yay"],
+            "tweetLikes": 9
+        },
+        {
+            "id": "t2",
+            "tweetText": "This is a short little tweet", 
+            "tweetComments": ["i love short interesting things", "me too", "yay"],
+            "tweetLikes": 8
+        },
+        {
+            "id": "t3",
+            "tweetText": "Sweet baby juuls ruul", 
+            "tweetComments": ["i love juuls", "me too", "yay"],
+            "tweetLikes": 5
+        }
+    ],
+
+}
