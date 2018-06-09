@@ -10,15 +10,19 @@ class App extends Component {
       gitBoxes: []
     };
     this.getBooksByAuthor = () => {
-      fetch('http://localhost:4001/graphql', {
+      fetch('https://api.github.com/graphql', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: `{
-          author(id: 4339){
+        headers: { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" },
+        body: JSON.stringify({ query: `{ 
+          user(login: "fairlycasual") { 
             name
-            books {
-              title
-              isbn
+            repositories(last: 5) {
+              edges {
+                node {
+                  id
+                  name
+                }
+              }
             }
           }
         }`})
