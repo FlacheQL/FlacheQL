@@ -1,13 +1,31 @@
-* {
+/* * {
   border: 1px solid grey;
-}
+} */
 
 input {
-  background: #bada55
+  background: #bada55;
+  padding: 5;
+  width: 30%;
+  margin-top: 2;
+  margin-bottom: 2;
+}
+
+input[type=button] {
+  margin-top: 10;
+  margin-bottom: 20;
+}
+
+input[type=text] {
+  float: right;
+  width: 70%;
+}
+
+.searchBoxes {
+  width: 50%
 }
 
 .main-container {
-  width: 100%;
+  width: 50%;
   display: flex;
   flex-direction: column;
   align-content: center;

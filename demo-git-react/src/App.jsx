@@ -9,37 +9,45 @@ class App extends Component {
     this.state = {
       gitBoxes: []
     };
-    this.getBooksByAuthor = () => {
-      fetch('https://api.github.com/graphql', {
-        method: 'POST',
-        headers: { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" },
-        body: JSON.stringify({ query: `{ 
-          user(login: "fairlycasual") { 
-            name
-            repositories(last: 5) {
-              edges {
-                node {
-                  id
-                  name
+    this.getBooksByAuthor = this.getBooksByAuthor.bind(this)
+  }
+  
+  getBooksByAuthor() {
+    fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      headers: { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" },
+      body: JSON.stringify({ query: `{
+        search(query: "apollo language:JavaScript stars:>100", type: REPOSITORY, first: 10) {
+          repositoryCount
+          edges {
+            node {
+              ... on Repository {
+                name
+                descriptionHTML
+                stargazers {
+                  totalCount
                 }
+                forks {
+                  totalCount
+                }
+                updatedAt
               }
             }
           }
-        }`})
-      })
-      .then(res => res.json())
-      .then(res => {
-        console.log(res.data)
-        const newBoxes = res.data.author.books.map((book, index) => {
-          console.log(book.title);
-          return <GitBox key={index} author={res.data.author.name} title={book.title} isbn={book.isbn}/>
-        });
-        console.log(newBoxes);
-        this.setState({gitBoxes: newBoxes});
-      })
-    }
+        }
+      }`})
+    })
+    .then(res => res.json())
+    .then(res => {
+      console.log(res.data.search.edges)
+      const newBoxes = res.data.search.edges.map((repo, index) => {
+        return <GitBox key={index} name={repo.node.name} stars={repo.node.stargazers.totalCount} forks={repo.node.forks.totalCount}/>
+      });
+      console.log(newBoxes);
+      this.setState({gitBoxes: newBoxes});
+    })
   }
-
+  
   componentDidMount() {
     this.getBooksByAuthor();
   }
@@ -47,7 +55,16 @@ class App extends Component {
   render() {
     return (
       <div className="main-container">
-        <input type="text" className="text"/>
+        <h3>Search Repositories</h3>
+        <div className="searchBoxes">
+          <label>Language: <input type="text" className="text"/></label>
+        </div>
+        <div className="searchBoxes">
+          <label># of ✡: <input type="text" className="text"/></label>
+        </div>
+        <div className="searchBoxes">
+          <label>Search Terms: <input type="text" className="text"/></label>
+        </div>
         <input type="button" value="Search" onClick={this.getBooksByAuthor}/>
         {this.state.gitBoxes}
         <GitBox/>

@@ -9,9 +9,9 @@ class GitBox extends Component {
     return (
       <div className="gitbox">
         <div className="gitbox-static-data">
-          <span>{this.props.author}</span>
-          <span>{this.props.title}</span>
-          <span>{this.props.isbn}</span>
+          <span>{this.props.name}</span>
+          <span>{this.props.stars}</span>
+          <span>{this.props.forks}</span>
         </div>
         <div className="gitbox2">
         </div>
