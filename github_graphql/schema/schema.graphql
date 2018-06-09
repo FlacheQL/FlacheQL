@@ -1,0 +1,45 @@
+type Query {
+  info: String!
+  repository(owner: String!, name: String!): Repository
+  search(query: String!, type: SearchType!): SearchResultItemConnection
+
+}
+
+type Repository {
+  collaborators(first: Int!): RepositoryCollaboratorConnection
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  databaseId: Int
+  description: String
+  name: String!
+  stargazers: StargazerConnection!
+}
+
+type StargazerConnection {
+  totalCount: Int!
+}
+
+type RepositoryCollaboratorConnection {
+  nodes: [User]
+}
+
+type User {
+  id: ID!
+  name: String!
+  repositories(first: Int): RepositoryConnection
+}
+
+type RepositoryConnection {
+  totalCount: Int!
+  nodes: [Repository]
+}
+
+type SearchType {
+  REPOSITORY
+  USER
+}
+
+type SearchResultItemConnection {
+  repositoryCount: Int!
+  userCount: Int!
+}
