@@ -1,5 +1,9 @@
 * {
-  border: 1px dotted grey;
+  border: 1px solid grey;
+}
+
+input {
+  background: #bada55
 }
 
 .main-container {
@@ -7,9 +11,10 @@
   display: flex;
   flex-direction: column;
   align-content: center;
+  padding: 30px;
 }
 
 .gitbox {
   width: 90%;
-  
+  padding: 30px;
 }
