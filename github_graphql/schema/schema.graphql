@@ -1,14 +1,16 @@
+const typeDefs = `
+
 type Query {
   info: String!
   repository(owner: String!, name: String!): Repository
-  search(query: String!, type: SearchType!): SearchResultItemConnection
+  search(query: String!, type: String!): SearchResultItemConnection
 
 }
 
 type Repository {
   collaborators(first: Int!): RepositoryCollaboratorConnection
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  #createdAt: DateTime!
+  #updatedAt: DateTime!
   databaseId: Int
   description: String
   name: String!
@@ -34,12 +36,16 @@ type RepositoryConnection {
   nodes: [Repository]
 }
 
-type SearchType {
-  REPOSITORY
-  USER
-}
+#type SearchType {
+   #repository: REPOSITORY
+   #user: USER
+   #}
 
 type SearchResultItemConnection {
   repositoryCount: Int!
   userCount: Int!
 }
+`;
+
+module.exports = typeDefs;
+
