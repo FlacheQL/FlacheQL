@@ -20,39 +20,42 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getBooksByAuthor();
+    this.getBooksByAuthor('graphql', 'javascript', 5, 10);
   }
 
-  getBooksByAuthor(terms = 'graphql', language = 'Javascript', stars, num = 10) {
-    if (!stars || stars === 0) stars = 10;
-    console.log('fetching results... terms: ', terms, ', language: ', language, ', stars: ', stars);
-    if (isNaN(stars)) return window.alert('# of stars must be a number!');
+  getBooksByAuthor(terms, language, stars, num) {
+    if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
+    if (!terms || terms === 'graphql');
     if (num > 100) return window.alert('max 100 results!');
     this.startTimer(num);
+    const searchQuery = `"${terms || ''}${language ? ' language:' + language : ''}${stars ? ' stars:>' + stars : ''}"`;
+    if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
+    const query = `{
+      search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
+        repositoryCount
+        edges {
+          node {
+            ... on Repository {
+              name
+              descriptionHTML
+              stargazers {
+                totalCount
+              }
+              forks {
+                totalCount
+              }
+              updatedAt
+            }
+          }
+        }
+      }
+    }`;
+    console.log('query to fetch: ', query);
     fetch('https://api.github.com/graphql', {
       method: 'POST',
       headers: { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" },
       body: JSON.stringify({
-        query: `{
-          search(query: "${terms} language:${language} stars:>${stars}", type: REPOSITORY, first: ${num}) {
-            repositoryCount
-            edges {
-              node {
-                ... on Repository {
-                  name
-                  descriptionHTML
-                  stargazers {
-                    totalCount
-                  }
-                  forks {
-                    totalCount
-                  }
-                  updatedAt
-                }
-              }
-            }
-          }
-        }`,
+        query,
       }),
     })
       .then((res) => {
