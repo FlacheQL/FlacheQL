@@ -8,7 +8,7 @@ class GitBox extends Component {
   render() {
     return (
       <div className="gitbox">
-        <div class="gitbox-repo-name"><h3>{this.props.name}</h3></div>
+        <div className="gitbox-repo-name"><h3>{this.props.name}</h3></div>
         <div>Stars: {this.props.stars}</div>
         <div>Forks: {this.props.forks}</div>
       </div>
