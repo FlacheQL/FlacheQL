@@ -8,13 +8,9 @@ class GitBox extends Component {
   render() {
     return (
       <div className="gitbox">
-        <div className="gitbox-static-data">
-          <span>{this.props.name}</span>
-          <span>{this.props.stars}</span>
-          <span>{this.props.forks}</span>
-        </div>
-        <div className="gitbox2">
-        </div>
+        <div class="gitbox-repo-name"><h3>{this.props.name}</h3></div>
+        <div>Stars: {this.props.stars}</div>
+        <div>Forks: {this.props.forks}</div>
       </div>
     )
   }
