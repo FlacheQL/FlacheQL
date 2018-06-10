@@ -2,7 +2,7 @@
   "name": "demo-git-react",
   "version": "1.0.0",
   "description": "",
-  "main": "index.jsx",
+  "main": "index.js",
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack-dev-server --mode development --open"

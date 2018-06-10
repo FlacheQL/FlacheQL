@@ -1,73 +1,120 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import GitBox from "./GitBox.jsx";
+import QueryTimer from './QueryTimer.jsx';
 
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      gitBoxes: []
+      gitBoxes: [],
+      reqStartTime: null,
+      lastQueryTime: 'Please wait...',
+      timerText: 'Last query fetched 0 items in 0ms',
     };
-    this.getBooksByAuthor = this.getBooksByAuthor.bind(this)
+    this.getBooksByAuthor = this.getBooksByAuthor.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.startTimer = this.startTimer.bind(this);
+    this.endTimer = this.endTimer.bind(this);
   }
-  
-  getBooksByAuthor() {
+
+  componentDidMount() {
+    this.getBooksByAuthor();
+  }
+
+  getBooksByAuthor(terms = 'graphql', language = 'Javascript', stars, num = 10) {
+    if (!stars || stars === 0) stars = 10;
+    console.log('fetching results... terms: ', terms, ', language: ', language, ', stars: ', stars);
+    if (isNaN(stars)) return window.alert('# of stars must be a number!');
+    if (num > 100) return window.alert('max 100 results!');
+    this.startTimer(num);
     fetch('https://api.github.com/graphql', {
       method: 'POST',
       headers: { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" },
-      body: JSON.stringify({ query: `{
-        search(query: "apollo language:JavaScript stars:>100", type: REPOSITORY, first: 10) {
-          repositoryCount
-          edges {
-            node {
-              ... on Repository {
-                name
-                descriptionHTML
-                stargazers {
-                  totalCount
+      body: JSON.stringify({
+        query: `{
+          search(query: "${terms} language:${language} stars:>${stars}", type: REPOSITORY, first: ${num}) {
+            repositoryCount
+            edges {
+              node {
+                ... on Repository {
+                  name
+                  descriptionHTML
+                  stargazers {
+                    totalCount
+                  }
+                  forks {
+                    totalCount
+                  }
+                  updatedAt
                 }
-                forks {
-                  totalCount
-                }
-                updatedAt
               }
             }
           }
-        }
-      }`})
+        }`,
+      }),
     })
-    .then(res => res.json())
-    .then(res => {
-      console.log(res.data.search.edges)
-      const newBoxes = res.data.search.edges.map((repo, index) => {
-        return <GitBox key={index} name={repo.node.name} stars={repo.node.stargazers.totalCount} forks={repo.node.forks.totalCount}/>
+      .then((res) => {
+        return res.json();
+      })
+      .then((res) => {
+        console.log(res.data.search.edges)
+        this.endTimer(res.data.search.edges.length);
+        const newBoxes = res.data.search.edges.map((repo, index) => {
+          return <GitBox key={`b${index}`} name={repo.node.name} stars={repo.node.stargazers.totalCount} forks={repo.node.forks.totalCount}/>
+        });
+        this.setState({ gitBoxes: newBoxes });
       });
-      console.log(newBoxes);
-      this.setState({gitBoxes: newBoxes});
-    })
   }
-  
-  componentDidMount() {
-    this.getBooksByAuthor();
+
+  startTimer(num) {
+    const reqStartTime = Date.now();
+    this.setState({ timerText: `Fetching ${num} items...`, reqStartTime, lastQueryTime: 'Please wait...' });
+  }
+
+  endTimer(num) {
+    const lastQueryTime = `${Date.now() - this.state.reqStartTime} ms`;
+    this.setState({ timerText: `Last query fetched ${num} results in`, lastQueryTime });
+  }
+
+  handleSubmit() {
+    this.getBooksByAuthor(
+      document.getElementById('searchText').value,
+      document.getElementById('searchLang').value,
+      Number(document.getElementById('searchStars').value),
+      document.getElementById('searchNum').value,
+    );
   }
 
   render() {
     return (
       <div className="main-container">
-        <h3>Search Repositories</h3>
-        <div className="searchBoxes">
-          <label>Language: <input type="text" className="text"/></label>
+        <div id="top-wrapper">
+          <div id="form-wrapper">
+            <h2>Search Repositories</h2>
+            <div className="searchBoxes">
+              <label>Search Terms: <input id="searchText" type="text" className="text"/></label>
+            </div>
+            <div className="searchBoxes">
+              <label>Language: <input id="searchLang" type="text" className="text"/></label>
+            </div>
+            <div className="searchBoxes">
+              <label># of ✡: <input id="searchStars" type="text" className="text"/></label>
+            </div>
+            <div className="searchBoxes">
+              <label># to fetch: <input id="searchNum" type="text" className="text"/></label>
+            </div>
+            <input type="button" value="Search" onClick={this.handleSubmit} />
+          </div>
+          <QueryTimer
+            lastQueryTime={this.state.lastQueryTime}
+            timerText={this.state.timerText}
+          />
         </div>
-        <div className="searchBoxes">
-          <label># of ✡: <input type="text" className="text"/></label>
+        <div className="result-list">
+          {this.state.gitBoxes}
         </div>
-        <div className="searchBoxes">
-          <label>Search Terms: <input type="text" className="text"/></label>
-        </div>
-        <input type="button" value="Search" onClick={this.getBooksByAuthor}/>
-        {this.state.gitBoxes}
-        <GitBox/>
       </div>
     )
   }
