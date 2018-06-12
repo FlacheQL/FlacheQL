@@ -15,16 +15,12 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.3",
-    "express-graphql": "^0.6.12",
-    "graphql": "^0.13.2",
     "lokka": "^1.7.0",
     "lokka-transport-http": "^1.6.1",
     "node-fetch": "^2.1.2",
     "path": "^0.12.7",
     "react": "^16.4.0",
-    "react-dom": "^16.4.0",
-    "util": "^0.11.0",
-    "xml2js": "^0.4.19"
+    "react-dom": "^16.4.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
