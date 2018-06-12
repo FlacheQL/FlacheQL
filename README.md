@@ -35,3 +35,6 @@ cache.it(query, endpoint, headers)
 // If no headers are provided, the default value is:
 // { "Content-Type": "application/graphql" }  
 ```
+
+## Contributing
+If you see or experience something that can be improved, please file an [issue](https://github.com/flacheQL/FlacheQL/issues)!
