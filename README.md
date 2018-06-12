@@ -13,12 +13,12 @@ Import FlacheQL with your other node modules:
 import { Flache } from 'flacheql'
 const cache = new Flache();
 
-const query = /* Define your GraphQL query. */
-const endpoint = /* Define your GraphQL endpoint. */ 
+const query = // Define your GraphQL query. 
+const endpoint = // Define your GraphQL endpoint. 
 
 cache.it(query, endpoint)
      .then(res => {
-       /* Do stuff with the query response */
+       // Do stuff with the query response 
     });
 ```
 
@@ -29,7 +29,7 @@ const headers = { "Content-Type": "application/graphql", "Authorization": "token
 
 cache.it(query, endpoint, headers)
      .then(res => {
-       /* Do stuff with the query response */
+       // Do stuff with the query response 
     });
     
 // If no headers are provided, the default value is:
