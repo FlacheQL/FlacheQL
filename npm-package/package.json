@@ -1,0 +1,33 @@
+{
+  "name": "flacheql",
+  "version": "1.0.0",
+  "description": "simple and fast client-side cache for graphql",
+  "main": "flache.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlacheQL/FlacheQL.git"
+  },
+  "keywords": [
+    "flache",
+    "flacheql",
+    "cache",
+    "graphql",
+    "caching",
+    "client-side",
+    "client",
+    "graph",
+    "fast",
+    "library",
+    "apollo",
+    "lokka"
+  ],
+  "author": "FlacheQL",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FlacheQL/FlacheQL/issues"
+  },
+  "homepage": "https://github.com/FlacheQL/FlacheQL#readme"
+}
