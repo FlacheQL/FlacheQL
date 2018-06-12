@@ -33,5 +33,5 @@ cache.it(query, endpoint, headers)
     });
     
 // If no headers are provided, the default value is:
-{ "Content-Type": "application/graphql" }  
+// { "Content-Type": "application/graphql" }  
 ```
