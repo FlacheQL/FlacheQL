@@ -2,16 +2,19 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
-
+import Flache from '../flache'
+// import Flache from 'flacheql';
 
 class App extends Component {
   constructor(props) {
     super(props);
+    this.cache = new Flache();
     this.state = {
       gitBoxes: [],
       reqStartTime: null,
       lastQueryTime: 'Please wait...',
       timerText: 'Last query fetched 0 items in 0ms',
+      cache: this.cache
     };
     this.getBooksByAuthor = this.getBooksByAuthor.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -20,7 +23,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getBooksByAuthor('graphql', 'javascript', 5, 10);
+    this.getBooksByAuthor('react', '', 5, 10);
   }
 
   getBooksByAuthor(terms, language, stars, num) {
@@ -50,25 +53,18 @@ class App extends Component {
         }
       }
     }`;
-    console.log('query to fetch: ', query);
-    fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      headers: { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" },
-      body: JSON.stringify({
-        query,
-      }),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((res) => {
-        console.log(res.data.search.edges)
-        this.endTimer(res.data.search.edges.length);
-        const newBoxes = res.data.search.edges.map((repo, index) => {
-          return <GitBox key={`b${index}`} name={repo.node.name} stars={repo.node.stargazers.totalCount} forks={repo.node.forks.totalCount}/>
-        });
-        this.setState({ gitBoxes: newBoxes });
+    console.log(query)
+    const endpoint = 'https://api.github.com/graphql'
+    const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
+    this.cache.it(query, endpoint, headers)
+    .then(res => {
+      console.log(res)
+      this.endTimer(res.data.search.edges.length);
+      const newBoxes = res.data.search.edges.map((repo, index) => {
+        return <GitBox key={`b${index}`} name={repo.node.name} stars={repo.node.stargazers.totalCount} forks={repo.node.forks.totalCount}/>
       });
+      this.setState({ gitBoxes: newBoxes });
+    })
   }
 
   startTimer(num) {
@@ -95,15 +91,15 @@ class App extends Component {
       <div className="main-container">
         <div id="top-wrapper">
           <div id="form-wrapper">
-            <h2>Search Repositories</h2>
+            <h2>Find Github Repositories</h2>
             <div className="searchBoxes">
-              <label>Search Terms: <input id="searchText" type="text" className="text"/></label>
+              <label>Search: <input id="searchText" type="text" className="text"/></label>
             </div>
             <div className="searchBoxes">
               <label>Language: <input id="searchLang" type="text" className="text"/></label>
             </div>
             <div className="searchBoxes">
-              <label># of ✡: <input id="searchStars" type="text" className="text"/></label>
+              <label># of ☆: <input id="searchStars" type="text" className="text"/></label>
             </div>
             <div className="searchBoxes">
               <label># to fetch: <input id="searchNum" type="text" className="text"/></label>

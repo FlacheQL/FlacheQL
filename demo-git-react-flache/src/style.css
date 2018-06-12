@@ -42,6 +42,10 @@ input[type=text] {
   font-size: 14px;
 }
 
+.searchBoxes {
+  line-height: 2;
+}
+4
 .result-list {
   width: 90%;
 }

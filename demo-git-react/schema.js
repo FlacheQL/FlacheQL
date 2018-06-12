@@ -65,18 +65,3 @@ module.exports = new GraphQLSchema({
     })
   })
 });
-
-
-// query { 
-//     user(login: "wadamomo") { 
-//           name
-//       repositories(last: 5) {
-//         edges {
-//           node {
-//             id
-//             name
-//           }
-//         }
-//       }
-//     }
-//   }
