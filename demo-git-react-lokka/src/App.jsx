@@ -1,8 +1,16 @@
 import React, { Component } from 'react'
-import { render } from 'react-dom'
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
+const Lokka = require('lokka').Lokka;
+const Transport = require('lokka-transport-http').Transport;
 
+const client = new Lokka({
+  transport: new Transport(('http://localhost:4001/graphql')
+  , {
+    "Content-Type": "application/graphql",
+    "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d",
+  })
+});
 
 class App extends Component {
   constructor(props) {
@@ -13,19 +21,19 @@ class App extends Component {
       lastQueryTime: 'Please wait...',
       timerText: 'Last query fetched 0 items in 0ms',
     };
-    this.getBooksByAuthor = this.getBooksByAuthor.bind(this);
+    this.getRepos = this.getRepos.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.startTimer = this.startTimer.bind(this);
     this.endTimer = this.endTimer.bind(this);
   }
 
   componentDidMount() {
-    this.getBooksByAuthor('graphql', 'javascript', 5, 10);
+    this.getRepos('graphql', 'javascript', 5, 10);
   }
 
-  getBooksByAuthor(terms, language, stars, num) {
+  getRepos(terms, language, stars, num) {
     if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
-    if (!terms || terms === 'graphql');
+    if (!terms) terms === 'graphql';
     if (num > 100) return window.alert('max 100 results!');
     this.startTimer(num);
     const searchQuery = `"${terms || ''}${language ? ' language:' + language : ''}${stars ? ' stars:>' + stars : ''}"`;
@@ -51,20 +59,11 @@ class App extends Component {
       }
     }`;
     console.log('query to fetch: ', query);
-    fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      headers: { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" },
-      body: JSON.stringify({
-        query,
-      }),
-    })
+    client.query(query)
       .then((res) => {
-        return res.json();
-      })
-      .then((res) => {
-        console.log(res.data.search.edges)
-        this.endTimer(res.data.search.edges.length);
-        const newBoxes = res.data.search.edges.map((repo, index) => {
+        console.log(res.search.edges)
+        this.endTimer(res.search.edges.length);
+        const newBoxes = res.search.edges.map((repo, index) => {
           return <GitBox key={`b${index}`} name={repo.node.name} stars={repo.node.stargazers.totalCount} forks={repo.node.forks.totalCount}/>
         });
         this.setState({ gitBoxes: newBoxes });
@@ -82,7 +81,7 @@ class App extends Component {
   }
 
   handleSubmit() {
-    this.getBooksByAuthor(
+    this.getRepos(
       document.getElementById('searchText').value,
       document.getElementById('searchLang').value,
       Number(document.getElementById('searchStars').value),
