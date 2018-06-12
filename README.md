@@ -25,7 +25,7 @@ cache.it(query, endpoint)
 If additional headers are needed, for example if your endpoint requires authorization, cache.it can take an optional headers parameter. 
 
 ```js
-const headers = { "Content-Type": "application/graphql", "Authorization": "token ***your token here***" };
+const headers = { "Content-Type": "application/graphql", "Authorization": "token *your token here*" };
 
 cache.it(query, endpoint, headers)
      .then(res => {
