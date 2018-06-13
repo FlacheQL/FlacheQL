@@ -43,9 +43,15 @@ class App extends Component {
     const endpoint = 'https://api.github.com/graphql'
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
     const query = this.buildQuery(terms, language, stars, num);
+    const variables = { 
+      terms,
+      language,
+      stars,
+      num,
+    }
     // either fetch by flache or by apollo
     if (flache) {
-      this.cache.it(query, endpoint, headers)
+      this.cache.it(query, variables, endpoint, headers)
         .then(res => this.handleResponse(res.data, flache));
     } else {
       // use apollo cache/fetch method
