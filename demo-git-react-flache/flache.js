@@ -3,7 +3,7 @@ export default class Flache {
         this.cache = {};
         this.queryCache = {};
         this.cacheExpiration = 1000 * 120;
-        this.bogus = {}
+        this.bogusshmogus = {}
     }
 
     it(query, variables, endpoint, headers = { "Content-Type": "application/graphql" }) {
