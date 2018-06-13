@@ -7,12 +7,10 @@ class QueryTimer extends Component {
 
   render() {
     return (
-      <div id="timer-wrapper">
-        <div id="timer">
-          <center><h3>Query Timer</h3></center>
-          <div id="timer-text">{this.props.timerText}</div>
-          <div id="clock"><center>{this.props.lastQueryTime}</center></div>
-        </div>
+      <div id={`${this.props.title}-timer`} className={this.props.class}>
+        <center><h3>{this.props.title} Timer</h3></center>
+        <div className="timer-text">{this.props.timerText}</div>
+        <div className="clock"><center>{this.props.lastQueryTime}</center></div>
       </div>
     )
   }
