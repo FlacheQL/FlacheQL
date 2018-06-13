@@ -16,23 +16,24 @@ class App extends Component {
       timerText: 'Last query fetched 0 items in 0ms',
       cache: this.cache
     };
-    this.getBooksByAuthor = this.getBooksByAuthor.bind(this);
+    this.getRepositories = this.getRepositories.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.startTimer = this.startTimer.bind(this);
     this.endTimer = this.endTimer.bind(this);
   }
 
   componentDidMount() {
-    this.getBooksByAuthor('react', '', 5, 10);
+    this.getRepositories('react', '', 5, 10);
   }
 
-  getBooksByAuthor(terms, language, stars, num) {
+  getRepositories(terms, language, stars, num) {
     if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
     if (!terms || terms === 'graphql');
     if (num > 100) return window.alert('max 100 results!');
+    
     this.startTimer(num);
+    
     const searchQuery = `"${terms || ''}${language ? ' language:' + language : ''}${stars ? ' stars:>' + stars : ''}"`;
-    if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
     const query = `{
       search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
         repositoryCount
@@ -53,10 +54,18 @@ class App extends Component {
         }
       }
     }`;
-    console.log(query)
     const endpoint = 'https://api.github.com/graphql'
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
-    this.cache.it(query, endpoint, headers)
+    const variables = {
+      terms,
+      language,
+      stars,
+      num,
+    }
+    console.log(variables)
+    if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
+    
+    this.cache.it(query, variables, endpoint, headers)
     .then(res => {
       console.log(res)
       this.endTimer(res.data.search.edges.length);
@@ -78,7 +87,7 @@ class App extends Component {
   }
 
   handleSubmit() {
-    this.getBooksByAuthor(
+    this.getRepositories(
       document.getElementById('searchText').value,
       document.getElementById('searchLang').value,
       Number(document.getElementById('searchStars').value),
