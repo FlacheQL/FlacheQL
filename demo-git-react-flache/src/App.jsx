@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
-import { render } from 'react-dom'
+import React, { Component } from 'react';
+import { render } from 'react-dom';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
-import Flache from '../flache'
+import Flache from '../flache';
 // import Flache from 'flacheql';
 
 class App extends Component {
@@ -14,28 +14,31 @@ class App extends Component {
       flacheTimer : {
         reqStartTime: null,
         lastQueryTime: 'Please wait...',
-        timerText: 'Last query fetched 0 items in 0ms',
+        timerText: 'Last query fetched 0 results in',
       },
+      flacheTimerClass: "timer",
       apolloTimer: {
         reqStartTime: null,
-        lastQueryTime: 'Please wait...',
-        timerText: 'Last query fetched 0 items in 0ms',
+        lastQueryTime: 'Please submit query...',
+        timerText: 'Last query fetched 0 results in',
       },
+      apolloTimerClass: "timer",
       cache: this.cache
     };
-    this.getBooksByAuthor = this.getBooksByAuthor.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.startTimer = this.startTimer.bind(this);
-    this.endTimer = this.endTimer.bind(this);
+    this.getRepos = this.getRepos.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
     this.buildBoxes = this.buildBoxes.bind(this);
+    this.startTimer = this.startTimer.bind(this);
+    this.endTimer = this.endTimer.bind(this);
+    this.flashTimer = this.flashTimer.bind(this);
   }
 
   componentDidMount() {
-    this.getBooksByAuthor('react', '', 5, 10, true);
+    this.getRepos('react', '', 5, 10, true);
   }
 
-  getBooksByAuthor(terms, language, stars, num, flache) {
+  getRepos(terms, language, stars, num, flache) {
     this.startTimer(flache, num);
     const endpoint = 'https://api.github.com/graphql'
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
@@ -91,7 +94,7 @@ class App extends Component {
   }
 
   startTimer(flache, num) {
-    const reqStartTime = Date.now();
+    const reqStartTime = window.performance.now();
     const updatedTimer = { timerText: `Fetching ${num} items...`, reqStartTime, lastQueryTime: 'Please wait...' };
     // update either the flache or apollo timer
     if (flache) return this.setState({ flacheTimer: updatedTimer });
@@ -99,17 +102,29 @@ class App extends Component {
   }
 
   endTimer(flache, num) {
-    const lastQueryTime = flache ? `${Date.now() - this.state.flacheTimer.reqStartTime} ms` : `${Date.now() - this.state.apolloTimer.reqStartTime} ms`;
+    const lastQueryTime = flache ? `${window.performance.now() - this.state.flacheTimer.reqStartTime} ms` : `${window.performance.now() - this.state.apolloTimer.reqStartTime} ms`;
     // console.log('endTimer: lastQueryTime: ', lastQueryTime, '\n, flache?: ', flache);
     const updatedTimer = { timerText: `Last query fetched ${num} results in`, lastQueryTime, reqStartTime: null };
     // update either the flache or apollo timer
-    if (flache) return this.setState({ flacheTimer: updatedTimer });
-    return this.setState({ apolloTimer: updatedTimer });
+    if (flache) this.setState({ flacheTimer: updatedTimer });
+    else this.setState({ apolloTimer: updatedTimer });
+    this.flashTimer(flache);
+  }
+
+  // simple flash effect for timer
+  flashTimer(flache) {
+    if (flache) {
+      this.setState({ flacheTimerClass: "timer flash" })
+      setTimeout(() => this.setState({ flacheTimerClass: "timer" }), 200);
+    } else {
+      this.setState({ apolloTimerClass: "timer flash" })
+      setTimeout(() => this.setState({ apolloTimerClass: "timer" }), 200);
+    }
   }
 
   handleSubmit(button) {
     const flache = button === 'flache';
-    this.getBooksByAuthor(
+    this.getRepos(
       document.getElementById('searchText').value,
       document.getElementById('searchLang').value,
       Number(document.getElementById('searchStars').value),
@@ -136,12 +151,23 @@ class App extends Component {
             <div className="searchBoxes">
               <label># to fetch: <input id="searchNum" type="text" className="text"/></label>
             </div>
-            <input type="button" value="Search" onClick={() => this.handleSubmit('flache')} />
+            <input type="button" value="Search with FlacheQL" onClick={() => this.handleSubmit('flache')} />
+            <input type="button" value="Search with Apollo" onClick={() => this.handleSubmit('apollo')} />
           </div>
-          <QueryTimer
-            lastQueryTime={this.state.flacheTimer.lastQueryTime}
-            timerText={this.state.flacheTimer.timerText}
-          />
+          <div id="timer-wrapper">
+            <QueryTimer
+              class={this.state.flacheTimerClass}
+              title="FlacheQL"
+              lastQueryTime={this.state.flacheTimer.lastQueryTime}
+              timerText={this.state.flacheTimer.timerText}
+            />
+            <QueryTimer
+              class={this.state.apolloTimerClass}
+              title="Apollo"
+              lastQueryTime={this.state.apolloTimer.lastQueryTime}
+              timerText={this.state.apolloTimer.timerText}
+            />
+          </div>
         </div>
         <div className="result-list">
           {this.state.gitBoxes}
