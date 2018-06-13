@@ -5,11 +5,7 @@ const Lokka = require('lokka').Lokka;
 const Transport = require('lokka-transport-http').Transport;
 
 const client = new Lokka({
-  transport: new Transport(('http://localhost:4001/graphql')
-  , {
-    "Content-Type": "application/graphql",
-    "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d",
-  })
+  transport: new Transport('http://localhost:4001/graphql')
 });
 
 class App extends Component {
@@ -25,17 +21,17 @@ class App extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.startTimer = this.startTimer.bind(this);
     this.endTimer = this.endTimer.bind(this);
+    this.buildBoxes = this.buildBoxes.bind(this);
   }
 
   componentDidMount() {
     this.getRepos('graphql', 'javascript', 5, 10);
   }
 
-  getRepos(terms, language, stars, num) {
+  async getRepos(terms, language, stars, num) {
     if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
-    if (!terms) terms === 'graphql';
+    if (!terms) terms = 'graphql';
     if (num > 100) return window.alert('max 100 results!');
-    this.startTimer(num);
     const searchQuery = `"${terms || ''}${language ? ' language:' + language : ''}${stars ? ' stars:>' + stars : ''}"`;
     if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
     const query = `{
@@ -58,24 +54,48 @@ class App extends Component {
         }
       }
     }`;
-    console.log('query to fetch: ', query);
-    client.query(query)
-      .then((res) => {
-        console.log(res.search.edges)
-        this.endTimer(res.search.edges.length);
-        const newBoxes = res.search.edges.map((repo, index) => {
-          return <GitBox key={`b${index}`} name={repo.node.name} stars={repo.node.stargazers.totalCount} forks={repo.node.forks.totalCount}/>
-        });
-        this.setState({ gitBoxes: newBoxes });
-      });
+    this.cacheFetch(query, num, true);
+  }
+
+  async cacheFetch(query, num, lokka) {
+    this.startTimer(num);
+    const payload = await client.cache.getItemPayload(query, {});
+    if (lokka) {
+      if (payload) {
+        console.log('Lokka: Cache retieval!');
+        this.handleResponse(payload, query, lokka);
+      } else {
+        console.log('Lokka: Not found in cache!');
+        client.query(query)
+          .then(res => this.handleResponse(res, query, lokka));
+      }
+    } else {
+      // do some FlacheQL stuff
+    }
+  }
+
+  handleResponse(res, query, lokka) {
+    this.endTimer(res.search.edges.length);
+    this.buildBoxes(res);
+    if (lokka) client.cache.setItemPayload(query, {}, res);
+  }
+
+  // should take a response object from the server
+  buildBoxes(res) {
+    const newBoxes = res.search.edges.map((repo, index) => {
+      return <GitBox key={`b${index}`} name={repo.node.name} stars={repo.node.stargazers.totalCount} forks={repo.node.forks.totalCount}/>
+    });
+    this.setState({ gitBoxes: newBoxes });
   }
 
   startTimer(num) {
+    console.log('starting timer');
     const reqStartTime = Date.now();
     this.setState({ timerText: `Fetching ${num} items...`, reqStartTime, lastQueryTime: 'Please wait...' });
   }
 
   endTimer(num) {
+    console.log('ending timer');
     const lastQueryTime = `${Date.now() - this.state.reqStartTime} ms`;
     this.setState({ timerText: `Last query fetched ${num} results in`, lastQueryTime });
   }
