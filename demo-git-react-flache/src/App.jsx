@@ -3,6 +3,9 @@ import { render } from 'react-dom';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import Flache from '../flache';
+import gql from 'graphql-tag';
+import http from 'http';
+
 // import Flache from 'flacheql';
 
 class App extends Component {
@@ -25,47 +28,69 @@ class App extends Component {
       apolloTimerClass: "timer",
       cache: this.cache
     };
+
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getRepos = this.getRepos.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
     this.buildBoxes = this.buildBoxes.bind(this);
-    this.startTimer = this.startTimer.bind(this);
-    this.endTimer = this.endTimer.bind(this);
+    this.startTimers = this.startTimers.bind(this);
+    this.endTimers = this.endTimers.bind(this);
     this.flashTimer = this.flashTimer.bind(this);
+    this.apolloClient = this.props.client;
   }
 
   componentDidMount() {
-    this.getRepos('react', '', 5, 10, true);
+    this.getRepos('react', '', 5, 100, true);
+    this.getRepos('react', '', 5, 100, false);
   }
 
   getRepos(terms, language, stars, num, flache) {
-    this.startTimer(flache, num);
-    const endpoint = 'https://api.github.com/graphql'
-    const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
-    const query = this.buildQuery(terms, language, stars, num);
-    const variables = { 
-      terms,
-      language,
-      stars,
-      num,
-    }
-    // either fetch by flache or by apollo
+    this.startTimers(flache, num);
+      const endpoint = 'https://api.github.com/graphql'
+      const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
+      const variables = { 
+        terms,
+        language,
+        stars,
+        num,
+      }
+    const query = this.buildQuery(terms, language, stars, num, flache);
+    // either cache by flache or by apollo
     if (flache) {
       this.cache.it(query, variables, endpoint, headers)
-        .then(res => this.handleResponse(res.data, flache));
-    } else {
-      // use apollo cache/fetch method
-      console.log('ALERT: Apollo functions not integrated!');
-    }
+        .then(res => {
+          this.handleResponse(res.data, flache)
+        });
+    } else this.apolloClient.query({ query: query }).then(res => this.handleResponse(res.data));
   }
 
-  buildQuery(terms, language, stars, num) {
+  buildQuery(terms, language, stars, num, flache) {
     if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
     if (!terms || terms === 'graphql');
     if (num > 100) return window.alert('max 100 results!');
     const searchQuery = `"${terms || ''}${language ? ' language:' + language : ''}${stars ? ' stars:>' + stars : ''}"`;
     if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
-    return `{
+    return flache ? `{
+      search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
+        repositoryCount
+        edges {
+          node {
+            ... on Repository {
+              name
+              descriptionHTML
+              stargazers {
+                totalCount
+              }
+              forks {
+                totalCount
+              }
+              updatedAt
+            }
+          }
+        }
+      }
+    }` :
+    gql`{
       search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
         repositoryCount
         edges {
@@ -88,7 +113,7 @@ class App extends Component {
   }
 
   handleResponse(res, flache) {
-    this.endTimer(flache, res.search.edges.length);
+    this.endTimers(flache, res.search.edges.length);
     this.buildBoxes(res);
   }
 
@@ -99,7 +124,7 @@ class App extends Component {
     this.setState({ gitBoxes: newBoxes });
   }
 
-  startTimer(flache, num) {
+  startTimers(flache, num) {
     const reqStartTime = window.performance.now();
     const updatedTimer = { timerText: `Fetching ${num} items...`, reqStartTime, lastQueryTime: 'Please wait...' };
     // update either the flache or apollo timer
@@ -107,9 +132,8 @@ class App extends Component {
     return this.setState({ apolloTimer: updatedTimer });
   }
 
-  endTimer(flache, num) {
+  endTimers(flache, num) {
     const lastQueryTime = flache ? `${window.performance.now() - this.state.flacheTimer.reqStartTime} ms` : `${window.performance.now() - this.state.apolloTimer.reqStartTime} ms`;
-    // console.log('endTimer: lastQueryTime: ', lastQueryTime, '\n, flache?: ', flache);
     const updatedTimer = { timerText: `Last query fetched ${num} results in`, lastQueryTime, reqStartTime: null };
     // update either the flache or apollo timer
     if (flache) this.setState({ flacheTimer: updatedTimer });
@@ -130,13 +154,12 @@ class App extends Component {
 
   handleSubmit(button) {
     const flache = button === 'flache';
-    this.getRepos(
-      document.getElementById('searchText').value,
-      document.getElementById('searchLang').value,
-      Number(document.getElementById('searchStars').value),
-      document.getElementById('searchNum').value,
-      flache,
-    );
+    const terms = document.getElementById('searchText').value;
+    const language = document.getElementById('searchLang').value;
+    const stars = Number(document.getElementById('searchStars').value);
+    const num = document.getElementById('searchNum').value;
+    console.log('')
+    this.getRepos(terms, language, stars, num, false);
   }
 
   render() {
@@ -159,6 +182,7 @@ class App extends Component {
             </div>
             <input type="button" value="Search with FlacheQL" onClick={() => this.handleSubmit('flache')} />
             <input type="button" value="Search with Apollo" onClick={() => this.handleSubmit('apollo')} />
+            <input type="button" value="Search with Apollo" onClick={() => this.handleSubmit('both')} />
           </div>
           <div id="timer-wrapper">
             <QueryTimer
