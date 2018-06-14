@@ -35,7 +35,13 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getRepos('react', '', 5, 10, true);
+    this.getRepos('graphql', 'python', 5, 10, true);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 30000, 10, true);
+    // }, 3000)
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 10, true);
+    // }, 5000)
   }
 
   getRepos(terms, language, stars, num, flache) {
@@ -47,11 +53,18 @@ class App extends Component {
       terms,
       language,
       stars,
-      num,
+    }
+    const options = {
+      partialRetrieval: true,
+      defineSubsets: {
+        "terms": "=",
+        "language": "> string",
+        "stars": "> number",
+      },
     }
     // either fetch by flache or by apollo
     if (flache) {
-      this.cache.it(query, variables, endpoint, headers)
+      this.cache.it(query, variables, endpoint, headers, options)
         .then(res => this.handleResponse(res.data, flache));
     } else {
       // use apollo cache/fetch method
