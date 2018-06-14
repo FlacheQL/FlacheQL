@@ -58,10 +58,23 @@ class App extends Component {
     // either cache by flache or by apollo
     if (flache) {
       this.cache.it(query, variables, endpoint, headers)
+<<<<<<< HEAD
         .then(res => {
           this.handleResponse(res.data, flache)
         });
     } else this.apolloClient.query({ query: query }).then(res => this.handleResponse(res.data));
+=======
+        .then(res => this.handleResponse(res.data, flache));
+    } else {
+      // use apollo cache/fetch method
+      console.log('ALERT: Apollo functions not integrated!');
+      // bad!!!!!
+      let res = { data: {}, search: { edges: []} };
+      //this.cache.it(query, variables, endpoint, headers) --> apollo goes here!
+      //.then(res => this.
+      this.handleResponse(res.data, flache); //invoke handle response with some dummy data?
+    }
+>>>>>>> 564c392f35713dca0fc07cf2f2d0788b29213db4
   }
 
   buildQuery(terms, language, stars, num, flache) {
@@ -113,7 +126,13 @@ class App extends Component {
   }
 
   handleResponse(res, flache) {
+<<<<<<< HEAD
     this.endTimers(flache, res.search.edges.length);
+=======
+    // bad!!!!
+    if (res.search === undefined) res.search = {edges: [0]}
+    this.endTimer(flache, res.search.edges.length);
+>>>>>>> 564c392f35713dca0fc07cf2f2d0788b29213db4
     this.buildBoxes(res);
   }
 
@@ -128,8 +147,8 @@ class App extends Component {
     const reqStartTime = window.performance.now();
     const updatedTimer = { timerText: `Fetching ${num} items...`, reqStartTime, lastQueryTime: 'Please wait...' };
     // update either the flache or apollo timer
-    if (flache) return this.setState({ flacheTimer: updatedTimer });
-    return this.setState({ apolloTimer: updatedTimer });
+    if (flache) this.setState({ flacheTimer: updatedTimer });
+    else this.setState({ apolloTimer: updatedTimer });
   }
 
   endTimers(flache, num) {
@@ -144,14 +163,15 @@ class App extends Component {
   // simple flash effect for timer
   flashTimer(flache) {
     if (flache) {
-      this.setState({ flacheTimerClass: "timer flash" })
+      this.setState({ flacheTimerClass: "timer flash" });
       setTimeout(() => this.setState({ flacheTimerClass: "timer" }), 200);
     } else {
-      this.setState({ apolloTimerClass: "timer flash" })
+      this.setState({ apolloTimerClass: "timer flash" });
       setTimeout(() => this.setState({ apolloTimerClass: "timer" }), 200);
     }
   }
 
+<<<<<<< HEAD
   handleSubmit(button) {
     const flache = button === 'flache';
     const terms = document.getElementById('searchText').value;
@@ -160,6 +180,23 @@ class App extends Component {
     const num = document.getElementById('searchNum').value;
     console.log('')
     this.getRepos(terms, language, stars, num, false);
+=======
+  handleSubmit() {
+    this.getRepos(
+      document.getElementById('searchText').value,
+      document.getElementById('searchLang').value,
+      Number(document.getElementById('searchStars').value),
+      document.getElementById('searchNum').value,
+      true,
+    );
+    this.getRepos(
+      document.getElementById('searchText').value,
+      document.getElementById('searchLang').value,
+      Number(document.getElementById('searchStars').value),
+      document.getElementById('searchNum').value,
+      false,
+    );
+>>>>>>> 564c392f35713dca0fc07cf2f2d0788b29213db4
   }
 
   render() {
@@ -180,9 +217,13 @@ class App extends Component {
             <div className="searchBoxes">
               <label># to fetch: <input id="searchNum" type="text" className="text"/></label>
             </div>
+<<<<<<< HEAD
             <input type="button" value="Search with FlacheQL" onClick={() => this.handleSubmit('flache')} />
             <input type="button" value="Search with Apollo" onClick={() => this.handleSubmit('apollo')} />
             <input type="button" value="Search with Apollo" onClick={() => this.handleSubmit('both')} />
+=======
+            <input type="button" value="Search" onClick={() => this.handleSubmit()} />
+>>>>>>> 564c392f35713dca0fc07cf2f2d0788b29213db4
           </div>
           <div id="timer-wrapper">
             <QueryTimer
