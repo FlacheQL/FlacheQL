@@ -21,7 +21,8 @@ export default class Flache {
         if (options.partialRetrieval) this.options.partialRetrieval = true;
         // if (options.defineSubsets) this.options.defineSubsets = options.defineSubsets;
         // console.log(this.options.defineSubsets)
-        console.log('IM A BIG OLD querycache:', this.queryCache)
+        const test = Object.assign({}, this.queryCache);
+        console.log('IM ANOTHER querycache:', test)
         console.log(1)
 
         this.queryCacheLength++;
