@@ -37,8 +37,13 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getRepos('react', '', 5, 100, true);
-    this.getRepos('react', '', 5, 100, false);
+    this.getRepos('graphql', 'python', 5, 10);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 30000, 10);
+    // }, 3000)
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 10);
+    // }, 5000)
   }
 
   getRepos(terms, language, stars, num) {
@@ -48,7 +53,14 @@ class App extends Component {
       terms,
       language,
       stars,
-      num,
+    }
+    const options = {
+      partialRetrieval: true,
+      defineSubsets: {
+        "terms": "=",
+        "language": "> string",
+        "stars": "> number",
+      },
     }
     const flacheQuery = this.buildQuery(terms, language, stars, num, true);
     const apolloQuery = this.buildQuery(terms, language, stars, num, false);
