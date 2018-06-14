@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import Flache from '../flache';
 import gql from 'graphql-tag';
-import http from 'http';
 
 // import Flache from 'flacheql';
 
@@ -26,7 +24,6 @@ class App extends Component {
         timerText: 'Last query fetched 0 results in',
       },
       apolloTimerClass: "timerF",
-      cache: this.cache
     };
     // this.equalityTimerStart = this.equalityTimerStart.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
