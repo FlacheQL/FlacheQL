@@ -3,6 +3,9 @@ import { render } from 'react-dom';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import Flache from '../flache';
+import gql from 'graphql-tag';
+import http from 'http';
+
 // import Flache from 'flacheql';
 
 class App extends Component {
@@ -16,15 +19,16 @@ class App extends Component {
         lastQueryTime: 'Please wait...',
         timerText: 'Last query fetched 0 results in',
       },
-      flacheTimerClass: "timer",
+      flacheTimerClass: "timerF",
       apolloTimer: {
         reqStartTime: null,
         lastQueryTime: 'Please submit query...',
         timerText: 'Last query fetched 0 results in',
       },
-      apolloTimerClass: "timer",
+      apolloTimerClass: "timerF",
       cache: this.cache
     };
+    // this.equalityTimerStart = this.equalityTimerStart.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getRepos = this.getRepos.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
@@ -32,45 +36,65 @@ class App extends Component {
     this.startTimer = this.startTimer.bind(this);
     this.endTimer = this.endTimer.bind(this);
     this.flashTimer = this.flashTimer.bind(this);
+    this.apolloClient = this.props.client;
   }
 
   componentDidMount() {
-    this.getRepos('react', '', 5, 10, true);
+    this.getRepos('react', '', 5, 100, true);
+    this.getRepos('react', '', 5, 100, false);
   }
 
-  getRepos(terms, language, stars, num, flache) {
-    this.startTimer(flache, num);
+  getRepos(terms, language, stars, num) {
     const endpoint = 'https://api.github.com/graphql'
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
-    const query = this.buildQuery(terms, language, stars, num);
     const variables = { 
       terms,
       language,
       stars,
       num,
     }
-    // either fetch by flache or by apollo
-    if (flache) {
-      this.cache.it(query, variables, endpoint, headers)
-        .then(res => this.handleResponse(res.data, flache));
-    } else {
-      // use apollo cache/fetch method
-      console.log('ALERT: Apollo functions not integrated!');
-      // bad!!!!!
-      let res = { data: {}, search: { edges: []} };
-      //this.cache.it(query, variables, endpoint, headers) --> apollo goes here!
-      //.then(res => this.
-      this.handleResponse(res.data, flache); //invoke handle response with some dummy data?
-    }
+    const flacheQuery = this.buildQuery(terms, language, stars, num, true);
+    const apolloQuery = this.buildQuery(terms, language, stars, num, false);
+    // start flache timer
+    this.startTimer(true, num);
+    // launch flache query
+    this.cache.it(flacheQuery, variables, endpoint, headers)
+      .then(res => {
+        this.handleResponse(res.data, true)
+      });
+    // start apollo timer
+    this.startTimer(false, num);
+    // launch apollo query
+    this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
   }
 
-  buildQuery(terms, language, stars, num) {
+  buildQuery(terms, language, stars, num, flache) {
     if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
     if (!terms || terms === 'graphql');
     if (num > 100) return window.alert('max 100 results!');
     const searchQuery = `"${terms || ''}${language ? ' language:' + language : ''}${stars ? ' stars:>' + stars : ''}"`;
     if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
-    return `{
+    return flache ? `{
+      search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
+        repositoryCount
+        edges {
+          node {
+            ... on Repository {
+              name
+              descriptionHTML
+              stargazers {
+                totalCount
+              }
+              forks {
+                totalCount
+              }
+              updatedAt
+            }
+          }
+        }
+      }
+    }` :
+    gql`{
       search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
         repositoryCount
         edges {
@@ -93,8 +117,6 @@ class App extends Component {
   }
 
   handleResponse(res, flache) {
-    // bad!!!!
-    if (res.search === undefined) res.search = {edges: [0]}
     this.endTimer(flache, res.search.edges.length);
     this.buildBoxes(res);
   }
@@ -116,7 +138,6 @@ class App extends Component {
 
   endTimer(flache, num) {
     const lastQueryTime = flache ? `${window.performance.now() - this.state.flacheTimer.reqStartTime} ms` : `${window.performance.now() - this.state.apolloTimer.reqStartTime} ms`;
-    // console.log('endTimer: lastQueryTime: ', lastQueryTime, '\n, flache?: ', flache);
     const updatedTimer = { timerText: `Last query fetched ${num} results in`, lastQueryTime, reqStartTime: null };
     // update either the flache or apollo timer
     if (flache) this.setState({ flacheTimer: updatedTimer });
@@ -127,11 +148,11 @@ class App extends Component {
   // simple flash effect for timer
   flashTimer(flache) {
     if (flache) {
-      this.setState({ flacheTimerClass: "timer flash" });
-      setTimeout(() => this.setState({ flacheTimerClass: "timer" }), 200);
+      this.setState({ flacheTimerClass: "timerF flashF" });
+      setTimeout(() => this.setState({ flacheTimerClass: "timerF" }), 200);
     } else {
-      this.setState({ apolloTimerClass: "timer flash" });
-      setTimeout(() => this.setState({ apolloTimerClass: "timer" }), 200);
+      this.setState({ apolloTimerClass: "timerA flashA" });
+      setTimeout(() => this.setState({ apolloTimerClass: "timerA" }), 200);
     }
   }
 
@@ -141,14 +162,6 @@ class App extends Component {
       document.getElementById('searchLang').value,
       Number(document.getElementById('searchStars').value),
       document.getElementById('searchNum').value,
-      true,
-    );
-    this.getRepos(
-      document.getElementById('searchText').value,
-      document.getElementById('searchLang').value,
-      Number(document.getElementById('searchStars').value),
-      document.getElementById('searchNum').value,
-      false,
     );
   }
 
