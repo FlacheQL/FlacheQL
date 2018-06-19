@@ -37,7 +37,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-<<<<<<< HEAD:demo-git-react-flache/src/App.jsx
     this.getRepos('graphql', 'python', 5, 10, true);
     setTimeout(() => {
       this.getRepos('react', 'javascript', 30000, 10, true);
@@ -51,15 +50,13 @@ class App extends Component {
     setTimeout(() => {
       this.getRepos('react', 'javascript', 20000, 10, true);
     }, 10000)
-=======
-    this.getRepos('graphql', 'python', 5, 10, ['']);
+    // this.getRepos('graphql', 'python', 5, 10, ['']);
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 30000, 10);
     // }, 3000)
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 50000, 10);
     // }, 5000)
->>>>>>> c08043034bd742b39456c6cc01ca6597445c9937:demo/src/App.jsx
   }
 
   getRepos(terms, language, stars, num, extraFields) {
