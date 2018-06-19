@@ -37,20 +37,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getRepos('graphql', 'python', 5, 10, true);
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 30000, 10, true);
-    }, 3000)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 30000, 10, true);
-    }, 5000)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 50000, 10, true);
-    }, 7000)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 20000, 10, true);
-    }, 10000)
-    // this.getRepos('graphql', 'python', 5, 10, ['']);
+    this.getRepos('graphql', 'python', 5, 10, ['']);
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 30000, 10);
     // }, 3000)
@@ -82,7 +69,7 @@ class App extends Component {
     // start flache timer
     this.startTimer(true, num);
     // launch flache query
-    this.cache.it(flacheQuery, variables, endpoint, headers)
+    this.cache.it(flacheQuery, variables, endpoint, headers, options)
       .then(res => {
         this.handleResponse(res.data, true)
       });
@@ -218,7 +205,7 @@ class App extends Component {
             <input type="button" value="Search w/createdAt" onClick={() => this.handleSubmit(['createdAt'])} />
             <input type="button" value="Search w/createdAt and databaseId" onClick={() => this.handleSubmit(['createdAt', 'databaseId'])} />
             <input type="button" value="Search w/databaseId" onClick={() => this.handleSubmit(['databaseId'])} />
-            <input type="button" value="Show query cache" onClick={() => console.log(this.cache.queryCacheTest)} />
+            <input type="button" value="Show query cache" onClick={() => console.log(this.cache.comparisonCache)} />
           </div>
           <div id="timer-wrapper">
             <QueryTimer
