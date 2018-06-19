@@ -7,25 +7,39 @@ function findEndOfNestedObject(string) {
   }
 }
 
+function findEndOfSpreadField(string) {
+  for (let i = 0; i < string.length; i++) {
+    if (string[i] === '{') return i;
+  }
+}
+
 
 function buildQueryCacheObj(string) {
   const returnObj = {};
   let i = 1;
   let item = '';
-  let dotDotDot = false;
   while (i < string.length) {
-    if (item === '...') dotDotDot = true;
-    if (/\w/.test(string[i])) { // must refactor for "..."
+    if (string[i] === '.') {
+      returnObj[item] = item;
+      const spreadEnd = findEndOfSpreadField(string.slice(i));
+      item = string.slice(i, i + spreadEnd - 1);
+      i += spreadEnd;
+      const newI = findEndOfNestedObject(string.slice(i));
+      returnObj[item] = buildQueryCacheObj(string.slice(i, i + newI + 1), 0);
+      item = '';
+      i += newI + 1;
+      continue;
+    }
+    if (/\w/.test(string[i])) {
       item += string[i];
     } else if (string[i] === '{') {
       const newI = findEndOfNestedObject(string.slice(i));
       returnObj[item] = buildQueryCacheObj(string.slice(i, i + newI + 1), 0);
       item = '';
-      dotDotDot = false;
       i += newI + 1;
       continue;
-    } else if (!dotDotDot && string[i] === ' ' && /\w/.test(string[i + 1])) {
-      if (item) returnObj[item] = item; // refactor?
+    } else if (string[i] === ' ' && /\w/.test(string[i + 1])) {
+      if (item) returnObj[item] = item; // refactor to assign stuff
       item = '';
     } else if (string[i] === '}') {
       if (item) returnObj[item] = item;
@@ -37,7 +51,7 @@ function buildQueryCacheObj(string) {
 
 class QueryCache {
   constructor() {
-    this.queryCache = {};
+    this.cache = {};
   }
 }
 
@@ -47,7 +61,7 @@ QueryCache.prototype.cacheQuery = function cacheQuery(queryStr) {
   this.queryCache[queryStr.slice(start, end)] = buildQueryCacheObj(queryStr.slice(end + 3));
 }
 
-const str = `{ search(query: "flache", type: REPOSITORY, first: 10) { repositoryCount ... on Repository { forks stargazers { totalCount } owner { name id friends { name } } forkCount } } }`;
+const str = `{ search(query: "flache", type: REPOSITORY, first: 10) { repositoryCount ... on Repository { forks stargazers { totalCount } owner { name id friends { name } } forkCount } }`;
 
 const qc = new QueryCache();
 qc.cacheQuery(str);
