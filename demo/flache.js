@@ -1,15 +1,43 @@
+import ComparisonCache from './queryCache';
 export default class Flache {
 
   constructor(props) {
       this.cache = {};
       this.queryCache = {};
       this.queryCacheLength = 0;
+      this.comparisonCache = new ComparisonCache();
       this.cacheExpiration = 1000 * 120;
       this.options = {
           partialRetrieval: false,
           subsets: {}
+      },
+      this.contains = (fields, query) => {
+        console.log('in contains, key: ', query);
+        console.log('in contains, fields: ', fields);
+          if ( query.match((fields[0] && fields[1])) ) {
+            return ([fields[0], fields[1]]);   
+          } else if ( query.match((fields[0])) ) {
+            return (fields[0]); 
+          } else if ( query.match((fields[1])) ) {
+            return (fields[1]);
+          } else return false;
+      },
+      this.cleanQuery = (query) => {
+        let queryStr = JSON.stringify(query);
+        let resultStr = queryStr.replace(/\s+/g, '  ').trim();
+        resultStr = resultStr.replace(/\s+/g, ' ').trim();
+        resultStr = resultStr.replace(/\\n/g, ' ');
+        resultStr = resultStr.replace('/', '');
+        resultStr = resultStr.replace(/\\/g, '');
+        return resultStr;
       }
   }
+
+// parse and clean the newline chars, extra spaces, and slashes from the query
+   
+//   // scrub the query that was just issued
+//   let key = cleanQuery(query);
+//   console.log('key ', key); 
 
   it(query, variables, endpoint, headers = { "Content-Type": "application/graphql" }, options) {
       // create a key to store the payloads in the cache
@@ -21,6 +49,9 @@ export default class Flache {
               resolve(this.cache[stringifiedQuery]);
           })
       }
+      // here we do the sub-field retrieval
+      this.comparisonCache.cacheQuery(this.cleanQuery(stringifiedQuery));
+      console.log('comparisionCache query is: ', this.comparisonCache.cache);
 
       // set boolean to check for partial queries, else fetch and return
       if (options.partialRetrieval) this.options.partialRetrieval = true;
@@ -47,9 +78,9 @@ export default class Flache {
               for (let key in variables) {
                   // console.log('im the current key:', key)
                   for (let query in this.queryCache[key]) {
-                      console.log('im the current subset function: ', cbs[this.options.subsets[key]])
-                      console.log(`the inputs of the subset function are ${variables[key]} and ${this.queryCache[key][query]}`)
-                      console.log('im the result of the current subset function: ', cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query]))
+                      //console.log('im the current subset function: ', cbs[this.options.subsets[key]])
+                      //console.log(`the inputs of the subset function are ${variables[key]} and ${this.queryCache[key][query]}`)
+                      //console.log('im the result of the current subset function: ', cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query]))
                       if (cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query])) {
                           // console.log('i'm the current callback function: ', cbs[this.options.subsets[key]])
                           currentMatchedQuery = query;
