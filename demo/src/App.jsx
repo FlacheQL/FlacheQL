@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import Flache from '../flache';
 import gql from 'graphql-tag';
-import http from 'http';
 
 // import Flache from 'flacheql';
 
@@ -26,7 +24,6 @@ class App extends Component {
         timerText: 'Last query fetched 0 results in',
       },
       apolloTimerClass: "timerF",
-      cache: this.cache
     };
     // this.equalityTimerStart = this.equalityTimerStart.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -40,8 +37,13 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getRepos('react', '', 5, 100, true);
-    this.getRepos('react', '', 5, 100, false);
+    this.getRepos('graphql', 'python', 5, 10);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 30000, 10);
+    // }, 3000)
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 10);
+    // }, 5000)
   }
 
   getRepos(terms, language, stars, num) {
@@ -51,7 +53,14 @@ class App extends Component {
       terms,
       language,
       stars,
-      num,
+    }
+    const options = {
+      partialRetrieval: true,
+      defineSubsets: {
+        "terms": "=",
+        "language": "> string",
+        "stars": "> number",
+      },
     }
     const flacheQuery = this.buildQuery(terms, language, stars, num, true);
     const apolloQuery = this.buildQuery(terms, language, stars, num, false);

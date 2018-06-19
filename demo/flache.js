@@ -3,11 +3,17 @@ const _ = require('lodash');
 const diff = require('deep-diff');
 
 export default class Flache {
+
     constructor(props) {
         this.cache = {};
         this.cacheMap;
         this.queryCache = {};
+        this.queryCacheLength = 0;
         this.cacheExpiration = 1000 * 120;
+        this.options = {
+            partialRetrieval: false,
+            defineSubsets: {}
+        }
     }
 
     it(query, variables, endpoint, headers = { "Content-Type": "application/graphql" }) {
