@@ -7,93 +7,112 @@ export default class Flache {
         this.cacheExpiration = 1000 * 120;
         this.options = {
             partialRetrieval: false,
-            defineSubsets: {}
+            subsets: {}
         }
     }
 
     it(query, variables, endpoint, headers = { "Content-Type": "application/graphql" }, options) {
-        console.log('IM A BIG OLD querycache:', this.queryCache)
-        console.log('STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY STARTING NEW QUERY ')
-        // console.log(variables)
-        //create a key to store the payloads in the cache
+        // create a key to store the payloads in the cache
         const stringifiedQuery = JSON.stringify(query);
-        
-        if (options.partialRetrieval) this.options.partialRetrieval = true;
-        // if (options.defineSubsets) this.options.defineSubsets = options.defineSubsets;
-        // console.log(this.options.defineSubsets)
-        const test = Object.assign({}, this.queryCache);
-        console.log('IM ANOTHER querycache:', test)
-        console.log(1)
+        console.log('variables :', variables)
+        // if an identical query comes in return the cached result
+        if (this.cache[stringifiedQuery]) {
+            return new Promise((resolve, reject) => {
+                resolve(this.cache[stringifiedQuery]);
+            })
+        }
 
+        // set boolean to check for partial queries, else fetch and return
+        if (options.partialRetrieval) this.options.partialRetrieval = true;
+        else return this.fetchData(query, endpoint, headers, stringifiedQuery);
+        
+        // save subsets to state
+        if (options.defineSubsets) this.options.subsets = options.defineSubsets;
+
+        // returns an array of callback functions that check query validity using subset options
+        const cbs = this.createCallbacksForPartialQueryValidation(this.options.subsets)
+
+        // create a boolean to check if all queries are subsets of others
+        let allQueriesPass = false;    
+
+        // increment cache length
         this.queryCacheLength++;
 
         if (this.options.partialRetrieval) {
-            let allQueriesPass = true;    
-            console.log('current querycache:', this.queryCache, allQueriesPass)
-            Object.keys(variables).forEach(variable => {
-                console.log('foreach variable:', variable)
-                for (let key in this.queryCache[variable]) {
-                    console.log('forkeying key:', key, allQueriesPass)
-                    if (this.queryCache[variable][key] === variables[variable]) {
-                        console.log('POTENTIAL MATCH: querycache and variables', this.queryCache[variable][key], variables[variable])
-                        for (let prop in this.queryCache) {
-                            if (this.options.defineSubsets[prop] === '=') {
-                                console.log('checking equality:', this.queryCache[prop][key], allQueriesPass)
-                                if (this.queryCache[prop][key] !== variables[variable]) {
-                                    console.log('IN INEQUALITY variables[variable]:', variables[variable])
-                                    allQueriesPass = false;
-                                }
-                            }
-                            if (this.options.defineSubsets[prop] === '> number') {
-                                console.log('checking num', allQueriesPass)
-                                console.log('checking num:', this.queryCache[prop][key], allQueriesPass)
-                                if (this.queryCache[prop][key] > variables[variable]) {
-                                    allQueriesPass = false;
-                                } 
-                            }
-                            if (this.options.defineSubsets[prop] === '> string') {
-                                console.log('prop', this.queryCache[prop], allQueriesPass)
-                                console.log('key', key, allQueriesPass)
-                                if (this.queryCache[prop][key].includes(variables[variable])) {
-                                    allQueriesPass = false;
-                                } 
-                                
-                            }
+            // console.log('query cache in partial retrieval ', JSON.parse(JSON.stringify(this.queryCache)))
+            let currentMatchedQuery;
+            
+            // no need to run partial query check on first query 
+            if (this.queryCacheLength > 1) {
+                for (let key in variables) {
+                    // console.log('im the current key:', key)
+                    for (let query in this.queryCache[key]) {
+                        console.log('im the current subset function: ', cbs[this.options.subsets[key]])
+                        console.log(`the inputs of the subset function are ${variables[key]} and ${this.queryCache[key][query]}`)
+                        console.log('im the result of the current subset function: ', cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query]))
+                        if (cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query])) {
+                            // console.log('i'm the current callback function: ', cbs[this.options.subsets[key]])
+                            currentMatchedQuery = query;
+                            console.log(`found a match between ${variables[key]} and ${this.queryCache[key][query]}`)
+                            break;
                         }
                     }
+                    if (currentMatchedQuery) {
+                        console.log('got a match on the first try')
+                        for (let currentKey in this.queryCache) {
+                            // skip the first one since this is the one that just matched
+                            if (key === currentKey) continue;
+                            
+                            /* else run the value on that query on each callback 
+                            such that if the callback of the current symbol passes
+                            given the current query variable as the first argument, 
+                            and the cached value on the current matched query key as the second,
+                            the queriesPass boolean is set to the return value of the callback */
+                            let rule = this.options.subsets[currentKey];
+                            let arg1 = variables[currentKey];
+                            let arg2 = this.queryCache[currentKey][currentMatchedQuery];
+                            let result = cbs[rule](arg1, arg2);
+                            console.log('this is the outcome of the current callback: ', cbs[rule](arg1, arg2))
+                            // if the result of the callback is truthy, set the boolean to that value
+                            if (result) allQueriesPass = result;
+                            else {
+                                // reset the boolean and break out
+                                allQueriesPass = false;
+                                break; 
+                            }
+                                
+                        }
+                        if (allQueriesPass) {
+                            return new Promise((resolve, reject) => {
+                                resolve(this.cache[currentMatchedQuery]);
+                            })
+                        }
+                    } else {
+                        console.log('dont bother trying')
+                        break;
+                    }
                 }
-            });
+            }
 
             // add variables to query cache or create new properties on query cache if variables do not exist
-            console.log(2)
-            Object.keys(variables).forEach(varKey => {
-                console.log('STORING FUCKING STUFF to query cache', varKey)
-                console.log('STORING FUCKING STUFF to query cache', stringifiedQuery)
-                console.log(3)
-                if (this.queryCache[varKey]) {
-                    this.queryCache[varKey][stringifiedQuery] = variables[varKey]
+            Object.keys(variables).forEach(queryVariable => {
+                // if a key already exists on the query cache for that variable add a new key value pair to it, else create a new obj 
+                if (this.queryCache[queryVariable]) {
+                    this.queryCache[queryVariable][stringifiedQuery] = variables[queryVariable]
                 }
-                else this.queryCache[varKey] = { [stringifiedQuery]: variables[varKey] }
-            }) 
+                else this.queryCache[queryVariable] = { [stringifiedQuery]: variables[queryVariable] }
+            })
 
-            
-            console.log('thinking about going to the cache,', allQueriesPass, allQueriesPass, allQueriesPass, allQueriesPass, allQueriesPass, allQueriesPass, allQueriesPass, allQueriesPass, allQueriesPass, allQueriesPass, allQueriesPass, allQueriesPass, allQueriesPass, allQueriesPass)
-            console.log('thinking about going to the cache,', this.queryCacheLength, this.queryCacheLength, this.queryCacheLength, this.queryCacheLength, this.queryCacheLength, this.queryCacheLength, this.queryCacheLength, this.queryCacheLength, this.queryCacheLength, this.queryCacheLength, this.queryCacheLength, this.queryCacheLength, this.queryCacheLength, this.queryCacheLength)
+            // if all queries pass and this is not the first query grab from the cache 
             if (allQueriesPass && this.queryCacheLength > 1) {
                 // filter items from cache and grab all the ones that match the subset filters
                 console.log('GRABBING FROM THE CACHE GRABBING FROM THE CACHEGRABBING FROM THE CACHEGRABBING FROM THE CACHEGRABBING FROM THE CACHE')
             }
 
-            
-
-
-            if (false) {
-                console.log('query cache: ', this.queryCache)
-                console.log('variables: ', variables)
-            } else {
-                return this.fetchData(query, endpoint, headers, stringifiedQuery);
-            }
+            // if query validation fails fetch data
+            return this.fetchData(query, endpoint, headers, stringifiedQuery);
         } else {
+            // if an identical query comes in return the exact match, else make a call to the server
             if (this.cache[stringifiedQuery]) {
                 return new Promise((resolve, reject) => {
                     resolve(this.cache[stringifiedQuery]);
@@ -118,13 +137,42 @@ export default class Flache {
                 this.cache[stringifiedQuery] = res;
                 setTimeout(() => delete this.cache[stringifiedQuery], this.cacheExpiration)
                 resolve(res);
-                console.log(res)
                 if (this.options.resultsVariable) {
-                    // ADD PROPERTY ON QUERY IN CACHE TO INDICATE WHETHER NUMBER OF RETURNED RESULTS 
+                    // ADD PROPERTY ON QUERY IN CACHE TO INDICATE WHETHER NUMBER OF RETURNED RESULTS IS GREATER THAN MAX
                 }
             })
             .catch(err => err)
         })
+    }
+
+    createCallbacksForPartialQueryValidation(subsets) {
+        return Object.values(subsets).reduce((obj, subsetRule) => {
+                    let func;
+                    switch (subsetRule) {
+                        case "=":
+                            func = (str1, str2) => {
+                                return str1 == str2;
+                            };
+                            break;
+                        case "> string":
+                            func = (str1, str2) => {
+                                return str1.includes(str2)
+                            };
+                            break;
+                        case ">= number":
+                            func = (num1, num2) => {
+                                return num1 >= num2;
+                            };
+                            break;
+                        case "<= number":
+                            func = (num1, num2) => {
+                                return num1 <= num2;
+                            };
+                            break;
+                    }
+                    obj[subsetRule] = func;
+                    return obj
+                }, {})
     }
 }
 

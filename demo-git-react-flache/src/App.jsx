@@ -36,12 +36,18 @@ class App extends Component {
 
   componentDidMount() {
     this.getRepos('graphql', 'python', 5, 10, true);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 30000, 10, true);
-    // }, 3000)
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 50000, 10, true);
-    // }, 5000)
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 30000, 10, true);
+    }, 3000)
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 30000, 10, true);
+    }, 5000)
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 50000, 10, true);
+    }, 7000)
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 20000, 10, true);
+    }, 10000)
   }
 
   getRepos(terms, language, stars, num, flache) {
@@ -53,13 +59,15 @@ class App extends Component {
       terms,
       language,
       stars,
+      num,
     }
     const options = {
       partialRetrieval: true,
       defineSubsets: {
         "terms": "=",
         "language": "> string",
-        "stars": "> number",
+        "stars": ">= number",
+        "num": "<= number"
       },
     }
     // either fetch by flache or by apollo
