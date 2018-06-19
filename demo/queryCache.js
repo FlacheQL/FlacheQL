@@ -13,7 +13,6 @@ function findEndOfSpreadField(string) {
   }
 }
 
-
 function buildQueryCacheObj(string) {
   const returnObj = {};
   let i = 1;
@@ -56,14 +55,15 @@ class QueryCache {
 }
 
 QueryCache.prototype.cacheQuery = function cacheQuery(queryStr) {
+  console.log('request to cache a query!');
   const start = queryStr.search(/\w/);
   const end = queryStr.indexOf(')');
-  this.queryCache[queryStr.slice(start, end)] = buildQueryCacheObj(queryStr.slice(end + 3));
+  const paramString = queryStr.slice(start, end);
+  if (this.cache[paramString]) this.cache[paramString].push(buildQueryCacheObj(queryStr.slice(end + 3)));
+  else this.cache[paramString] = [buildQueryCacheObj(queryStr.slice(end + 3))];
 }
 
-const str = `{ search(query: "flache", type: REPOSITORY, first: 10) { repositoryCount ... on Repository { forks stargazers { totalCount } owner { name id friends { name } } forkCount } }`;
+// const qc = new QueryCache();
+// qc.cacheQuery('')
 
-const qc = new QueryCache();
-qc.cacheQuery(str);
-
-console.log(qc.cache);
+export default QueryCache;
