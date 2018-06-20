@@ -23,7 +23,7 @@ export default class Flache {
     console.log("variables :", variables);
     // if an identical query comes in return the cached result
     if (this.cache[stringifiedQuery]) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         resolve(this.cache[stringifiedQuery]);
       });
     }
@@ -55,27 +55,20 @@ export default class Flache {
       // no need to run partial query check on first query
       if (this.queryCacheLength > 1) {
         for (let key in variables) {
-          // console.log('im the current key:', key)
+          console.log('im the current key:', key)
           for (let query in this.queryCache[key]) {
-            // console.log('im the current subset function: ', cbs[this.options.subsets[key]])
-            // console.log(`the inputs of the subset function are ${variables[key]} and ${this.queryCache[key][query]}`)
-            // console.log('im the result of the current subset function: ', cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query]))
+            console.log('im the current subset function: ', this.cbs[this.options.subsets[key]])
+            console.log(`the inputs of the subset function are ${variables[key]} and ${this.queryCache[key][query]}`)
+            console.log('im the result of the current subset function: ', this.cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query]))
             
-            if (
-              this.cbs[this.options.subsets[key]](
-                variables[key],
-                this.queryCache[key][query]
-              )
-            ) {
+            if (this.cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query])) {
               // if the callback returns true, set the currentMatchedQuery to be the current query
               currentMatchedQuery = query;
-              // console.log(`found a match between ${variables[key]} and ${this.queryCache[key][query]}`)
-              break;
+            } else {
+                continue;
             }
-          }
 
-          if (currentMatchedQuery) {
-            // console.log('got a match on the first try')
+            console.log('checking current matched query: ', currentMatchedQuery)
             for (let currentKey in this.queryCache) {
               // skip the first key since this is the one that just matched
               if (key === currentKey) continue;
@@ -89,39 +82,45 @@ export default class Flache {
               let arg1 = variables[currentKey];
               let arg2 = this.queryCache[currentKey][currentMatchedQuery];
               let result = this.cbs[rule](arg1, arg2);
-
+              console.log('rule: ', rule)
+              console.log('arg1: ', arg1)
+              console.log('arg2: ', arg2)
+              console.log('result: ', result)
+              
               // if the result of the callback is truthy, set the boolean to that value
-              if (result) allQueriesPass = result;
-              else {
+              if (result) {
+                  allQueriesPass = result;
+              } else {
                 // reset the boolean and break out
+                console.log('resetting bool')
                 allQueriesPass = false;
                 break;
               }
             }
-            if (allQueriesPass) {
-              let pathToNodes = options.pathToNodes;
-              let cached = Object.assign(this.cache[currentMatchedQuery], {});
-              let { path, lastTerm } = this.constructResponsePath(pathToNodes, cached)
 
-              for (let key in options.queryPaths) {
-                path[lastTerm] = path[lastTerm].filter(el => {
-                    let { path, lastTerm } = this.constructResponsePath(options.queryPaths[key], el)
-                    return this.cbs[this.options.subsets[key]](path[lastTerm], variables[key])
+            if (allQueriesPass) {
+                console.log('went into all queries pass!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                let pathToNodes = options.pathToNodes;
+                let cached = Object.assign(this.cache[currentMatchedQuery], {});
+                let { path, lastTerm } = this.constructResponsePath(pathToNodes, cached)
+  
+                for (let key in options.queryPaths) {
+                  path[lastTerm] = path[lastTerm].filter(el => {
+                      let { path, lastTerm } = this.constructResponsePath(options.queryPaths[key], el)
+                      // return path[lastTerm] > variables[key];
+                      return this.cbs[this.options.subsets[key]](path[lastTerm], variables[key])
+                  });
+                  console.log(cached);
+                }
+                return new Promise((resolve, reject) => {
+                  resolve(cached);
                 });
-                console.log(cached);
               }
-              return new Promise((resolve, reject) => {
-                resolve(cached);
-              });
-            }
-          } else {
-            console.log("dont bother trying");
-            break;
+
           }
         }
       }
 
-      // add variables to query cache or create new properties on query cache if variables do not exist
       Object.keys(variables).forEach(queryVariable => {
         // if a key already exists on the query cache for that variable add a new key value pair to it, else create a new obj
         if (this.queryCache[queryVariable]) {
@@ -133,24 +132,16 @@ export default class Flache {
           };
       });
 
-      // if all queries pass and this is not the first query grab from the cache
-      if (allQueriesPass && this.queryCacheLength > 1) {
-        // filter items from cache and grab all the ones that match the subset filters
-        console.log(
-          "GRABBING FROM THE CACHE GRABBING FROM THE CACHEGRABBING FROM THE CACHEGRABBING FROM THE CACHEGRABBING FROM THE CACHE"
-        );
-      }
-
-      // if query validation fails fetch data
-      return this.fetchData(query, endpoint, headers, stringifiedQuery);
+        return this.fetchData(query, endpoint, headers, stringifiedQuery);
     } else {
-      //   // if an identical query comes in return the exact match, else make a call to the server
-      //   if (this.cache[stringifiedQuery]) {
-      //     return new Promise((resolve, reject) => {
-      //       resolve(this.cache[stringifiedQuery]);
-      //     });
-      //   } else {
-      return this.fetchData(query, endpoint, headers, stringifiedQuery);
+        //if partial retrieval is off, return cached object or fetch
+        if (this.cache[stringifiedQuery]) {
+        return new Promise((resolve) => {
+            resolve(this.cache[stringifiedQuery]);
+        });
+        } else {
+            return this.fetchData(query, endpoint, headers, stringifiedQuery);
+        } 
     }
   }
 

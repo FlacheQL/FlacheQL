@@ -41,13 +41,16 @@ class App extends Component {
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 30000, 10, ['']);
     // }, 3000)
-    this.getRepos('react', 'javascript', 30000, 10, ['']);
+    this.getRepos('react', 'javascript', 30000, 100, ['']);
     setTimeout(() => {
-      this.getRepos('react', 'javascript', 50000, 10, ['']);
+      this.getRepos('react', 'javascript', 50000, 100, ['']);
     }, 3000)
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 20000, 10, ['']);
-    // }, 10000)
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 20000, 100, ['']);
+    }, 6000)
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 25000, 100, ['']);
+    }, 10000)
     // this.getRepos('graphql', 'python', 5, 10, ['']);
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 30000, 10);
