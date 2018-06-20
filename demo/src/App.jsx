@@ -37,19 +37,17 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getRepos('graphql', 'python', 5, 10, true);
+    // this.getRepos('graphql', 'python', 5, 10, ['']);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 30000, 10, ['']);
+    // }, 3000)
+    this.getRepos('react', 'javascript', 30000, 10, ['']);
     setTimeout(() => {
-      this.getRepos('react', 'javascript', 30000, 10, true);
+      this.getRepos('react', 'javascript', 50000, 10, ['']);
     }, 3000)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 30000, 10, true);
-    }, 5000)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 50000, 10, true);
-    }, 7000)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 20000, 10, true);
-    }, 10000)
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 20000, 10, ['']);
+    // }, 10000)
     // this.getRepos('graphql', 'python', 5, 10, ['']);
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 30000, 10);
@@ -59,12 +57,12 @@ class App extends Component {
     // }, 5000)
   }
 
-  getRepos(terms, language, stars, num, extraFields) {
+  getRepos(terms, languages, stars, num, extraFields) {
     const endpoint = 'https://api.github.com/graphql'
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
     const variables = { 
       terms,
-      language,
+      languages,
       stars,
       num,
     }
@@ -72,17 +70,21 @@ class App extends Component {
       partialRetrieval: true,
       defineSubsets: {
         "terms": "=",
-        "language": "> string",
+        "languages": "> string",
         "stars": ">= number",
         "num": "<= number"
       },
+      queryPaths: {
+        "stars": "node.stargazers.totalCount" 
+      },
+      pathToNodes: "data.search.edges"
     }
-    const flacheQuery = this.buildQuery(terms, language, stars, num, true, extraFields);
-    const apolloQuery = this.buildQuery(terms, language, stars, num, false, extraFields);
+    const flacheQuery = this.buildQuery(terms, languages, stars, num, true, extraFields);
+    const apolloQuery = this.buildQuery(terms, languages, stars, num, false, extraFields);
     // start flache timer
     this.startTimer(true, num);
     // launch flache query
-    this.cache.it(flacheQuery, variables, endpoint, headers)
+    this.cache.it(flacheQuery, variables, endpoint, headers, options)
       .then(res => {
         this.handleResponse(res.data, true)
       });
@@ -92,14 +94,14 @@ class App extends Component {
     this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
   }
 
-  buildQuery(terms, language, stars, num, flache, extraFields) {
-    console.log('extra fields given to build Query: ', extraFields);
+  buildQuery(terms, languages, stars, num, flache, extraFields) {
+    // console.log('extra fields given to build Query: ', extraFields);
     if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
     if (!terms || terms === 'graphql');
     if (num > 100) return window.alert('max 100 results!');
-    const searchQuery = `"${terms || ''}${language ? ' language:' + language : ''}${stars ? ' stars:>' + stars : ''}"`;
+    const searchQuery = `"${terms || ''}${languages ? ' language:' + languages : ''}${stars ? ' stars:>' + stars : ''}"`;
     if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
-    let str = '';
+    let str = ''; // 'createdAt databaseId'
     extraFields.forEach(e => str += ' ' + e);
     return flache ? `{
       search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
