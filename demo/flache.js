@@ -1,3 +1,4 @@
+import ComparisonCache from './queryCache';
 export default class Flache {
   constructor(props) {
     this.cache = {};
@@ -9,6 +10,26 @@ export default class Flache {
       partialRetrieval: false,
       subsets: {}
     };
+    this.contains = (fields, query) => {
+      console.log('in contains, key: ', query);
+      console.log('in contains, fields: ', fields);
+        if ( query.match((fields[0] && fields[1])) ) {
+          return ([fields[0], fields[1]]);   
+        } else if ( query.match((fields[0])) ) {
+          return (fields[0]); 
+        } else if ( query.match((fields[1])) ) {
+          return (fields[1]);
+        } else return false;
+    },
+    this.cleanQuery = (query) => {
+      let queryStr = JSON.stringify(query);
+      let resultStr = queryStr.replace(/\s+/g, '  ').trim();
+      resultStr = resultStr.replace(/\s+/g, ' ').trim();
+      resultStr = resultStr.replace(/\\n/g, ' ');
+      resultStr = resultStr.replace('/', '');
+      resultStr = resultStr.replace(/\\/g, '');
+      return resultStr;
+    }
   }
 
   it(

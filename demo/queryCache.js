@@ -53,17 +53,49 @@ class QueryCache {
     this.cache = {};
   }
 }
+function matchObjects(base, comparison) {
+  // loop through the keys in comparison
+  for (let cKey in comparison) {
+    // check that the corresponding key in base exists
+    if (!base.hasOwnProperty(cKey)) return false;
+    // recurse if nested
+    if (typeof comparison[cKey] === 'object') {
+      if (!matchObjects(base[cKey], comparison[cKey])) return false;
+    }
+  }
+  // passed!
+  return true;
+}
 
 QueryCache.prototype.cacheQuery = function cacheQuery(queryStr) {
   console.log('request to cache a query!');
   const start = queryStr.search(/\w/);
-  const end = queryStr.indexOf(')');
+  const end = queryStr.indexOf(')') + 1;
   const paramString = queryStr.slice(start, end);
-  if (this.cache[paramString]) this.cache[paramString].push(buildQueryCacheObj(queryStr.slice(end + 3)));
-  else this.cache[paramString] = [buildQueryCacheObj(queryStr.slice(end + 3))];
+  const matchedCache = this.cache[paramString];
+  const incomingQueryObject = buildQueryCacheObj(queryStr.slice(end + 3));
+  if (matchedCache) {
+    // look for a subset match
+    // loop through the existing cache for this parameter set
+    for (let i = 0; i < matchedCache.length; i += 1) {
+      if (matchObjects(matchedCache[i], incomingQueryObject)) {
+        // spit out the data for the matched object
+        return matchedCache[i].payload
+        break; // or return
+      }
+    }
+    matchedCache.push(incomingQueryObject);
+    // return something? or call another action?
+  }
+  else this.cache[paramString] = [incomingQueryObject];
 }
 
-// const qc = new QueryCache();
-// qc.cacheQuery('')
 
-export default QueryCache;
+// const qc = new QueryCache();
+// qc.cacheQuery('{  search(query: "graphql language:python stars:>5", type: REPOSITORY, first: 10) {  repositoryCount  edges {  node {  ... on Repository {  name    descriptionHTML  stargazers {  totalCount  }  forks {  totalCount  }  updatedAt  }  }  }  }  }');
+
+// qc.cacheQuery('{  search(query: "graphql language:python stars:>5", type: REPOSITORY, first: 10) {  repositoryCount  edges {  node {  ... on Repository {  name    stargazers {  totalCount  }  forks {  totalCount  }  updatedAt  }  }  }  }  }');
+
+// console.log(matchObjects(qc.cache['search(query: "graphql language:python stars:>5", type: REPOSITORY, first: 10)'][1], qc.cache['search(query: "graphql language:python stars:>5", type: REPOSITORY, first: 10)'][0]));
+
+// export default QueryCache;
