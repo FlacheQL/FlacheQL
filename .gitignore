@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-node_modules/
-=======
 # Logs
 logs
 *.log
@@ -63,4 +60,3 @@ typings/
 # next.js build output
 .next
 .vscode/launch.json
->>>>>>> 1715ccc9688e10c9990e9421599d24a51b98d614
