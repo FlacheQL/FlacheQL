@@ -2,13 +2,12 @@ language: node_js
 node_js:
   - "stable"
 
-cache:
-  directories:
-    - demo/node_modules
-
 install:
   - cd demo
   - npm install
+
+before_deploy:
+  - git add -f node_modules/
 
 deploy:
 - provider: s3
