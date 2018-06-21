@@ -10,6 +10,7 @@ before_deploy:
   - git add -f node_modules/
 
 deploy:
+  skip_cleanup: true
 - provider: s3
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
@@ -20,6 +21,7 @@ deploy:
   bucket: flacheql
   region: us-west-1
 - provider: codedeploy
+  skip_cleanup: true
   revision_type: github
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
