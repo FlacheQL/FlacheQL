@@ -5,11 +5,11 @@ files:
     destination: /home/ubuntu/FlacheQL
 hooks:
   BeforeInstall:
-    - location: scripts/clear.sh
+    - location: dpl_scripts/clear.sh
       timeout: 30
       runas: root
   ApplicationStart:
-    - location: scripts/start_server.sh
+    - location: dpl_scripts/start_server.sh
       timeout: 180
       runas: root
 #   ValidateService:

@@ -1,0 +1,3 @@
+#!/bin/sh
+echo Starting server...
+node /home/ubuntu/FlacheQL/demo/server.js
