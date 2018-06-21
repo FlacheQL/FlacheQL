@@ -10,7 +10,6 @@ before_deploy:
   - git add -f node_modules/
 
 deploy:
-  skip_cleanup: true
 - provider: s3
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
