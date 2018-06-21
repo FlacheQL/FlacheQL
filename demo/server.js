@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// hello!
+// hello world!
 const express = require('express');
 const path = require('path');
 const app = express();
