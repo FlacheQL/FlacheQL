@@ -3,14 +3,15 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/FlacheQL
-# hooks:
-#   BeforeInstall:
-#     - location: SGA_Apex_REST_API_WAR/src/main/resources/scripts/before-install.sh
-#       runas: root
-#   ApplicationStart:
-#     - location: SGA_Apex_REST_API_WAR/src/main/resources/scripts/install.sh
-#       timeout: 3600
-#       runas: root
+hooks:
+  BeforeInstall:
+    - location: scripts/clear.sh
+      timeout: 30
+      runas: root
+  ApplicationStart:
+    - location: scripts/start_server.sh
+      timeout: 180
+      runas: root
 #   ValidateService:
 #     - location: SGA_Apex_REST_API_WAR/src/main/resources/scripts/validate-service.sh
 #       timeout: 180
