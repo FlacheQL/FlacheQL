@@ -37,7 +37,21 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getRepos('graphql', 'python', 5, 10);
+    // this.getRepos('graphql', 'python', 5, 10, ['']);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 30000, 10, ['']);
+    // }, 3000)
+    this.getRepos('react', 'javascript', 30000, 100, ['']);
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 50000, 100, ['']);
+    }, 3000)
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 20000, 100, ['']);
+    }, 6000)
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 25000, 100, ['']);
+    }, 10000)
+    // this.getRepos('graphql', 'python', 5, 10, ['']);
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 30000, 10);
     // }, 3000)
@@ -46,28 +60,34 @@ class App extends Component {
     // }, 5000)
   }
 
-  getRepos(terms, language, stars, num) {
+  getRepos(terms, languages, stars, num, extraFields) {
     const endpoint = 'https://api.github.com/graphql'
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
     const variables = { 
       terms,
-      language,
+      languages,
       stars,
+      num,
     }
     const options = {
       partialRetrieval: true,
       defineSubsets: {
         "terms": "=",
-        "language": "> string",
-        "stars": "> number",
+        "languages": "> string",
+        "stars": ">= number",
+        "num": "<= number"
       },
+      queryPaths: {
+        "stars": "node.stargazers.totalCount" 
+      },
+      pathToNodes: "data.search.edges"
     }
-    const flacheQuery = this.buildQuery(terms, language, stars, num, true);
-    const apolloQuery = this.buildQuery(terms, language, stars, num, false);
+    const flacheQuery = this.buildQuery(terms, languages, stars, num, true, extraFields);
+    const apolloQuery = this.buildQuery(terms, languages, stars, num, false, extraFields);
     // start flache timer
     this.startTimer(true, num);
     // launch flache query
-    this.cache.it(flacheQuery, variables, endpoint, headers)
+    this.cache.it(flacheQuery, variables, endpoint, headers, options)
       .then(res => {
         this.handleResponse(res.data, true)
       });
@@ -77,12 +97,15 @@ class App extends Component {
     this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
   }
 
-  buildQuery(terms, language, stars, num, flache) {
+  buildQuery(terms, languages, stars, num, flache, extraFields) {
+    // console.log('extra fields given to build Query: ', extraFields);
     if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
     if (!terms || terms === 'graphql');
     if (num > 100) return window.alert('max 100 results!');
-    const searchQuery = `"${terms || ''}${language ? ' language:' + language : ''}${stars ? ' stars:>' + stars : ''}"`;
+    const searchQuery = `"${terms || ''}${languages ? ' language:' + languages : ''}${stars ? ' stars:>' + stars : ''}"`;
     if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
+    let str = ''; // 'createdAt databaseId'
+    extraFields.forEach(e => str += ' ' + e);
     return flache ? `{
       search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
         repositoryCount
@@ -90,6 +113,7 @@ class App extends Component {
           node {
             ... on Repository {
               name
+              ${str}
               descriptionHTML
               stargazers {
                 totalCount
@@ -110,6 +134,7 @@ class App extends Component {
           node {
             ... on Repository {
               name
+              ${str}
               descriptionHTML
               stargazers {
                 totalCount
@@ -165,12 +190,14 @@ class App extends Component {
     }
   }
 
-  handleSubmit() {
+  handleSubmit(extraFields) {
+    console.log('handle extraFields: ', extraFields)
     this.getRepos(
       document.getElementById('searchText').value,
       document.getElementById('searchLang').value,
       Number(document.getElementById('searchStars').value),
       document.getElementById('searchNum').value,
+      extraFields,
     );
   }
 
@@ -192,7 +219,11 @@ class App extends Component {
             <div className="searchBoxes">
               <label># to fetch: <input id="searchNum" type="text" className="text"/></label>
             </div>
-            <input type="button" value="Search" onClick={() => this.handleSubmit()} />
+            <input type="button" value="Search" onClick={() => this.handleSubmit([''])} />
+            <input type="button" value="Search w/createdAt" onClick={() => this.handleSubmit(['createdAt'])} />
+            <input type="button" value="Search w/createdAt and databaseId" onClick={() => this.handleSubmit(['createdAt', 'databaseId'])} />
+            <input type="button" value="Search w/databaseId" onClick={() => this.handleSubmit(['databaseId'])} />
+            <input type="button" value="Show query cache" onClick={() => console.log(this.cache.comparisonCache, this.cache.cache)} />
           </div>
           <div id="timer-wrapper">
             <QueryTimer
