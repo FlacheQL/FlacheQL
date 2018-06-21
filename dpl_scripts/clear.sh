@@ -1,5 +1,3 @@
 #!/bin/sh
-echo Deleting FlacheQL directory...
-rm -rf /home/ubuntu/FlacheQL
-echo Deleted!!
-exit 0
+rm -rf /home/ubuntu/FlacheQL > /dev/null 2>&1
+rm -rf /home/ubuntu/package-lock.json > /dev/null 2>&1
