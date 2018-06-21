@@ -30,7 +30,6 @@
   },
   "devDependencies": {
     "react-apollo": "^2.1.5",
-    "graphql": "^0.13.2",
     "cors": "^2.8.4",
     "express": "^4.16.3",
     "express-graphql": "^0.6.12",

@@ -1,3 +1,6 @@
 #!/bin/sh
+cd /home/ubuntu/FlacheQL/demo
+echo Installing packages...
+npm install
 echo Starting server...
-node /home/ubuntu/FlacheQL/demo/server.js
+nodejs server.js
