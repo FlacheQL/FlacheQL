@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import gql from 'graphql-tag';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
+import CacheNotifier from './CacheNotifier.jsx';
 import Flache from '../flache';
-import gql from 'graphql-tag';
 
 // import Flache from 'flacheql';
 
@@ -24,6 +25,7 @@ class App extends Component {
         timerText: 'Last query fetched 0 results in',
       },
       apolloTimerClass: "timerF",
+      showCacheHit: true,
     };
     // this.equalityTimerStart = this.equalityTimerStart.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -37,10 +39,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // this.getRepos('graphql', 'python', 5, 10, ['']);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 30000, 10, ['']);
-    // }, 3000)
     this.getRepos('react', 'javascript', 30000, 100, ['']);
     setTimeout(() => {
       this.getRepos('react', 'javascript', 50000, 100, ['']);
@@ -51,13 +49,6 @@ class App extends Component {
     setTimeout(() => {
       this.getRepos('react', 'javascript', 25000, 100, ['']);
     }, 10000)
-    // this.getRepos('graphql', 'python', 5, 10, ['']);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 30000, 10);
-    // }, 3000)
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 50000, 10);
-    // }, 5000)
   }
 
   getRepos(terms, languages, stars, num, extraFields) {
@@ -239,6 +230,7 @@ class App extends Component {
               timerText={this.state.apolloTimer.timerText}
             />
           </div>
+          <CacheNotifier showCacheHit={this.state.showCacheHit} />
         </div>
         <div className="result-list">
           {this.state.gitBoxes}
