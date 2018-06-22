@@ -26,9 +26,9 @@
 export default function denormalize(pathsObject) {
   const payload = {};
   for (let key in pathsObject) {
-    workingObj = newObj;
+    let workingObj = payload;
     let path = key.split('.');
-    for (let i = 0; i < path.length; i += 1) {
+    for (let i = 1; i < path.length; i += 1) {
       const e = path[i];
       // if we're at the end of the array, we can do the value assignment! yay!!
       if (i === path.length - 1) workingObj[e] = pathsObject[key];
@@ -44,5 +44,5 @@ export default function denormalize(pathsObject) {
       workingObj = workingObj[e];
     }
   }
-  return newObj;
+  return payload;
 }
