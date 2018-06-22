@@ -68,7 +68,7 @@ function matchObjects(base, comparison) {
 }
 
 QueryCache.prototype.cacheQuery = function cacheQuery(queryStr) {
-  console.log('request to cache a query!');
+  // console.log('request to cache a query!');
   const start = queryStr.search(/\w/);
   const end = queryStr.indexOf(')') + 1;
   const paramString = queryStr.slice(start, end);

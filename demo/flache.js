@@ -20,7 +20,7 @@ export default class Flache {
   ) {
     // create a key to store the payloads in the cache
     const stringifiedQuery = JSON.stringify(query);
-    console.log("variables :", variables);
+    // console.log("variables :", variables);
     // if an identical query comes in return the cached result
     if (this.cache[stringifiedQuery]) {
       return new Promise((resolve) => {
@@ -55,11 +55,11 @@ export default class Flache {
       // no need to run partial query check on first query
       if (this.queryCacheLength > 1) {
         for (let key in variables) {
-          console.log('im the current key:', key)
+          // console.log('im the current key:', key)
           for (let query in this.queryCache[key]) {
-            console.log('im the current subset function: ', this.cbs[this.options.subsets[key]])
-            console.log(`the inputs of the subset function are ${variables[key]} and ${this.queryCache[key][query]}`)
-            console.log('im the result of the current subset function: ', this.cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query]))
+            // console.log('im the current subset function: ', this.cbs[this.options.subsets[key]])
+            // console.log(`the inputs of the subset function are ${variables[key]} and ${this.queryCache[key][query]}`)
+            // console.log('im the result of the current subset function: ', this.cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query]))
             
             if (this.cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query])) {
               // if the callback returns true, set the currentMatchedQuery to be the current query
@@ -68,7 +68,7 @@ export default class Flache {
                 continue;
             }
 
-            console.log('checking current matched query: ', currentMatchedQuery)
+            // console.log('checking current matched query: ', currentMatchedQuery)
             for (let currentKey in this.queryCache) {
               // skip the first key since this is the one that just matched
               if (key === currentKey) continue;
@@ -82,24 +82,24 @@ export default class Flache {
               let arg1 = variables[currentKey];
               let arg2 = this.queryCache[currentKey][currentMatchedQuery];
               let result = this.cbs[rule](arg1, arg2);
-              console.log('rule: ', rule)
-              console.log('arg1: ', arg1)
-              console.log('arg2: ', arg2)
-              console.log('result: ', result)
+              // console.log('rule: ', rule)
+              // console.log('arg1: ', arg1)
+              // console.log('arg2: ', arg2)
+              // console.log('result: ', result)
               
               // if the result of the callback is truthy, set the boolean to that value
               if (result) {
                   allQueriesPass = result;
               } else {
                 // reset the boolean and break out
-                console.log('resetting bool')
+                // console.log('resetting bool')
                 allQueriesPass = false;
                 break;
               }
             }
 
             if (allQueriesPass) {
-                console.log('went into all queries pass!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                // console.log('went into all queries pass!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 let pathToNodes = options.pathToNodes;
                 let cached = Object.assign(this.cache[currentMatchedQuery], {});
                 let { path, lastTerm } = this.constructResponsePath(pathToNodes, cached)
@@ -110,7 +110,7 @@ export default class Flache {
                       // return path[lastTerm] > variables[key];
                       return this.cbs[this.options.subsets[key]](path[lastTerm], variables[key])
                   });
-                  console.log(cached);
+                  // console.log(cached);
                 }
                 return new Promise((resolve, reject) => {
                   resolve(cached);
@@ -156,7 +156,7 @@ export default class Flache {
       })
         .then(res => res.json())
         .then(res => {
-          console.log("res: ", res);
+          // console.log("res: ", res);
           this.cache[stringifiedQuery] = res;
           setTimeout(
             () => delete this.cache[stringifiedQuery],
