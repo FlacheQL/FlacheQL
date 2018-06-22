@@ -1,21 +1,21 @@
 
-// const test = {
-//   "data.search.edges.0.node.value": 1,
-//   "data.search.edges.0.node.otherValue": 1,
-//   "data.search.edges.0.node.subParent.0.value": 1,
-//   "data.search.edges.0.node.subParent.1.value": 2,
-//   "data.search.edges.0.node.subParent.2.value": 3,
-//   "data.search.edges.1.node.value": 2,
-//   "data.search.edges.1.node.otherValue": 2,
-//   "data.search.edges.1.node.subParent.0.value": 1,
-//   "data.search.edges.1.node.subParent.1.value": 2,
-//   "data.search.edges.1.node.subParent.2.value": 3,
-//   "data.search.edges.2.node.value": 3,
-//   "data.search.edges.2.node.otherValue": 3,
-//   "data.search.edges.2.node.subParent.0.value": 1,
-//   "data.search.edges.2.node.subParent.1.value": 2,
-//   "data.search.edges.2.node.subParent.2.value": 3,
-// }
+const test = {
+  ".data.search.edges.0.node.value": 1,
+  ".data.search.edges.0.node.otherValue": 1,
+  ".data.search.edges.0.node.subParent.0.value": 1,
+  ".data.search.edges.0.node.subParent.1.value": 2,
+  ".data.search.edges.0.node.subParent.2.value": 3,
+  ".data.search.edges.1.node.value": 2,
+  ".data.search.edges.1.node.otherValue": 2,
+  ".data.search.edges.1.node.subParent.0.value": 1,
+  ".data.search.edges.1.node.subParent.1.value": 2,
+  ".data.search.edges.1.node.subParent.2.value": 3,
+  ".data.search.edges.2.node.value": 3,
+  ".data.search.edges.2.node.otherValue": 3,
+  ".data.search.edges.2.node.subParent.0.value": 1,
+  ".data.search.edges.2.node.subParent.1.value": 2,
+  ".data.search.edges.2.node.subParent.2.value": 3,
+}
 
 /**
  * Turns a normalized cache object into an acceptable payload
@@ -23,12 +23,12 @@
  * @returns {object} A response-like object that should satisfy a GraphQL query
  */
 
-export default function denormalize(pathsObject) {
+function denormalize(pathsObject) {
   const payload = {};
   for (let key in pathsObject) {
-    workingObj = newObj;
+    workingObj = payload;
     let path = key.split('.');
-    for (let i = 0; i < path.length; i += 1) {
+    for (let i = 1; i < path.length; i += 1) {
       const e = path[i];
       // if we're at the end of the array, we can do the value assignment! yay!!
       if (i === path.length - 1) workingObj[e] = pathsObject[key];
@@ -44,5 +44,7 @@ export default function denormalize(pathsObject) {
       workingObj = workingObj[e];
     }
   }
-  return newObj;
+  return payload;
 }
+
+console.log(denormalize(test));
