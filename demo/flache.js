@@ -1,3 +1,5 @@
+import denormalize from './denormalize';
+
 export default class Flache {
   constructor(props) {
     this.cache = {};
@@ -184,6 +186,8 @@ export default class Flache {
         if (foundMatch) {
             return new Promise((resolve) => {
                 console.log('resolving in retrieve');
+                filtered = denormalize(filtered);
+                console.log(filtered);
                 resolve(filtered);
               });
         }
