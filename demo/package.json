@@ -16,10 +16,7 @@
     "apollo-link-context": "^1.0.8",
     "apollo-link-http": "^1.5.4",
     "deep-diff": "^1.0.1",
-<<<<<<< HEAD
-=======
     "express": "^4.16.3",
->>>>>>> 9c09a55ce173bf14d5b1e8598af4ec6605d7568b
     "fast-clone": "^1.5.3",
     "flacheql": "^1.0.0",
     "graphql": "^0.13.2",
