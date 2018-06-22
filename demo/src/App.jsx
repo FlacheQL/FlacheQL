@@ -223,7 +223,7 @@ class App extends Component {
             <input type="button" value="Search w/createdAt" onClick={() => this.handleSubmit(['createdAt'])} />
             <input type="button" value="Search w/createdAt and databaseId" onClick={() => this.handleSubmit(['createdAt', 'databaseId'])} />
             <input type="button" value="Search w/databaseId" onClick={() => this.handleSubmit(['databaseId'])} />
-            <input type="button" value="Show query cache" onClick={() => console.log(this.cache.comparisonCache)} />
+            <input type="button" value="Show query cache" onClick={() => console.log(this.cache.comparisonCache, this.cache.cache)} />
           </div>
           <div id="timer-wrapper">
             <QueryTimer
