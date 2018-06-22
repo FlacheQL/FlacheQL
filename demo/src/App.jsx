@@ -44,13 +44,13 @@ class App extends Component {
     this.getRepos('react', 'javascript', 30000, 100, ['']);
     setTimeout(() => {
       this.getRepos('react', 'javascript', 50000, 100, ['']);
-    }, 3000)
+    }, 1500)
     setTimeout(() => {
       this.getRepos('react', 'javascript', 20000, 100, ['']);
-    }, 6000)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 25000, 100, ['']);
-    }, 10000)
+    }, 3000)
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 25000, 100, ['']);
+    // }, 6000)
     // this.getRepos('graphql', 'python', 5, 10, ['']);
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 30000, 10);
@@ -70,7 +70,8 @@ class App extends Component {
       num,
     }
     const options = {
-      partialRetrieval: true,
+      paramRetrieval: true,
+      fieldRetrieval: true,
       defineSubsets: {
         "terms": "=",
         "languages": "> string",
@@ -105,7 +106,7 @@ class App extends Component {
     const searchQuery = `"${terms || ''}${languages ? ' language:' + languages : ''}${stars ? ' stars:>' + stars : ''}"`;
     if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
     let str = ''; // 'createdAt databaseId'
-    extraFields.forEach(e => str += ' ' + e);
+    extraFields.forEach(e => str += '\n' + e);
     return flache ? `{
       search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
         repositoryCount
@@ -191,7 +192,6 @@ class App extends Component {
   }
 
   handleSubmit(extraFields) {
-    console.log('handle extraFields: ', extraFields)
     this.getRepos(
       document.getElementById('searchText').value,
       document.getElementById('searchLang').value,
