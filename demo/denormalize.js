@@ -23,7 +23,7 @@ const test = {
  * @returns {object} A response-like object that should satisfy a GraphQL query
  */
 
-function denormalize(pathsObject) {
+export default function denormalize(pathsObject) {
   const payload = {};
   for (let key in pathsObject) {
     workingObj = payload;
@@ -46,5 +46,3 @@ function denormalize(pathsObject) {
   }
   return payload;
 }
-
-console.log(denormalize(test));
