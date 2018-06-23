@@ -165,3 +165,47 @@ fieldset {
   padding: 0 0 5 7;
 }
 
+/* LANDING PAGE */
+
+.navigation-bar {
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  min-width: 800px;
+  width: 80%;
+}
+
+.navigation-bar a {
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.navigation-bar div:hover {
+  background-color: #bad;
+}
+
+.navigation-bar div {
+  min-width: 100px;
+  padding: 20px;
+}
+
+.landing-link {
+  padding: 15px;
+  border: 2px solid rgb(202, 187, 233);
+  border-radius: 5px;
+  margin: 0 20px;
+  background: linear-gradient(rgb(98, 66, 161), rgb(49, 9, 128));
+}
+
+.landing-link a {
+  text-decoration: none;
+  color: #bad;
+  font-size: 18px;
+}
+
+.landing-link-wrapper {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
