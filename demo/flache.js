@@ -17,7 +17,7 @@ export default class Flache {
 
   saveToSessionStorage() {
     Object.keys(this).forEach(key => sessionStorage.setItem(key, JSON.stringify(this[key])));
-    setTimeout(() => sessionStorage.clear(), 20000);
+    setTimeout(() => sessionStorage.clear(), 200000);
   }
 
   readFromSessionStorage() {

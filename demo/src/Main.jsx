@@ -5,9 +5,6 @@ import QueryTimer from './QueryTimer.jsx';
 import CacheNotifier from './CacheNotifier.jsx';
 import Flache from '../flache';
 import Documentation from './documentation.jsx';
-// import NavMenu from './nav.jsx';
-
-import { Router, Route, hashHistory } from 'react-router';
 
 class Main extends Component {
   constructor(props) {
@@ -170,7 +167,8 @@ class Main extends Component {
   }
 
   endTimer(flache, num) {
-    const lastQueryTime = flache ? `${window.performance.now() - this.state.flacheTimer.reqStartTime} ms` : `${window.performance.now() - this.state.apolloTimer.reqStartTime} ms`;
+    let lastQueryTime = flache ? `${window.performance.now() - this.state.flacheTimer.reqStartTime}` : `${window.performance.now() - this.state.apolloTimer.reqStartTime}`;
+    lastQueryTime = lastQueryTime.slice(0, lastQueryTime.indexOf('.') + 4) + ' ms';
     const updatedTimer = { timerText: `Last query fetched ${num} results in`, lastQueryTime, reqStartTime: null };
     // update either the flache or apollo timer
     if (flache) this.setState({ flacheTimer: updatedTimer });
@@ -246,8 +244,7 @@ class Main extends Component {
               </div>
             </fieldset>
             <input type="button" value="Search" onClick={() => this.handleSubmit([''])} />
-            <input type="button" value="Save To Local Storage" onClick={() => this.cache.saveToLocalStorage()} />
-            <input type="button" value="Read from Local Storage" onClick={() => this.cache.readFromLocalStorage()} />
+            <input type="button" value="Delete Session Storage" onClick={() => sessionStorage.clear()} />
           </div>
           <div id="timer-wrapper">
             <QueryTimer

@@ -4,11 +4,12 @@ class GitBox extends Component {
 
   render() {
     const displayOptions = [];
-
+    console.log('moreOptions: ', this.props.moreOptions);
+    console.log('gitbox props: ', this.props);
     for(let key in this.props.moreOptions) {
       let index = 0;
       if(this.props.moreOptions[key][0] === true) {
-        displayOptions.push(<div key={`c${index}`} className="gitbox-searchResult"><strong>{key}</strong>: {this.props[this.props.moreOptions[key][1]]} </div>);
+        displayOptions.push(<div key={`c${key}${index}`} className="gitbox-searchResult"><strong>{key}</strong>: {this.props[this.props.moreOptions[key][1]]} </div>);
         index +=1;
       }
     }
