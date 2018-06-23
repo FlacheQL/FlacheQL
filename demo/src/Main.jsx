@@ -21,7 +21,7 @@ class Main extends Component {
         updatedAt: false
       },
       gitBoxes: [],
-      flacheTimer : {
+      flacheTimer: {
         reqStartTime: null,
         lastQueryTime: 'Please wait...',
         timerText: 'Last query fetched 0 results in',
