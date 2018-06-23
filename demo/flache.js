@@ -15,6 +15,15 @@ export default class Flache {
     };
   }
 
+  saveToSessionStorage() {
+    Object.keys(this).forEach(key => sessionStorage.setItem(key, JSON.stringify(this[key])));
+    setTimeout(() => sessionStorage.clear(), 20000);
+  }
+
+  readFromSessionStorage() {
+    Object.keys(this).forEach((key) => { if (sessionStorage.getItem(key)) this[key] = JSON.parse(sessionStorage.getItem(key)); });
+  }
+
   it(
     query,
     variables,
