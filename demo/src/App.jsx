@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import gql from 'graphql-tag';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
+import CacheNotifier from './CacheNotifier.jsx';
 import Flache from '../flache';
-import gql from 'graphql-tag';
 
 // import Flache from 'flacheql';
 
@@ -30,6 +31,7 @@ class App extends Component {
         timerText: 'Last query fetched 0 results in',
       },
       apolloTimerClass: "timerF",
+      showCacheHit: true,
     };
     // this.equalityTimerStart = this.equalityTimerStart.bind(this);
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
@@ -47,7 +49,13 @@ class App extends Component {
     this.getRepos('react', 'javascript', 30000, 100, ['']);
     setTimeout(() => {
       this.getRepos('react', 'javascript', 50000, 100, ['']);
-    }, 3000)
+    }, 1500)
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 20000, 100, ['']);
+    }, 6000)
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 25000, 100, ['']);
+    }, 10000)
   }
 
   getRepos(terms, languages, stars, num, extraFields) {
@@ -60,7 +68,8 @@ class App extends Component {
       num,
     }
     const options = {
-      partialRetrieval: true,
+      paramRetrieval: true,
+      fieldRetrieval: true,
       defineSubsets: {
         "terms": "=",
         "languages": "> string",
@@ -94,7 +103,7 @@ class App extends Component {
     const searchQuery = `"${terms || ''}${languages ? ' language:' + languages : ''}${stars ? ' stars:>' + stars : ''}"`;
     if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
     let str = ''; // 'createdAt databaseId'
-    extraFields.forEach(e => str += ' ' + e);
+    extraFields.forEach(e => str += '\n' + e);
     return flache ? `{
       search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
         repositoryCount
@@ -251,6 +260,7 @@ class App extends Component {
               timerText={this.state.apolloTimer.timerText}
             />
           </div>
+          <CacheNotifier showCacheHit={this.state.showCacheHit} />
         </div>
         <div className="result-list">
           {this.state.gitBoxes}

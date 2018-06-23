@@ -15,6 +15,10 @@ body {
   align-items: center;
 }
 
+.hidden {
+  display: none;
+}
+
 #content {
   width: 75%;
   min-width: 800px !important;
@@ -53,6 +57,10 @@ input[type=text] {
 
 .result-list {
   width: 90%;
+}
+
+.cache-notifier {
+  
 }
 
 #form-wrapper {
