@@ -3,8 +3,10 @@ import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import Flache from '../flache';
 import gql from 'graphql-tag';
+import Documentation from './documentation.jsx';
+import NavMenu from './nav.jsx';
 
-// import Flache from 'flacheql';
+import { Router, Route, hashHistory } from 'react-router';
 
 class App extends Component {
   constructor(props) {
@@ -25,7 +27,7 @@ class App extends Component {
       },
       apolloTimerClass: "timerF",
     };
-    // this.equalityTimerStart = this.equalityTimerStart.bind(this);
+
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getRepos = this.getRepos.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
@@ -37,27 +39,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // this.getRepos('graphql', 'python', 5, 10, ['']);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 30000, 10, ['']);
-    // }, 3000)
-    this.getRepos('react', 'javascript', 30000, 100, ['']);
     setTimeout(() => {
       this.getRepos('react', 'javascript', 50000, 100, ['']);
-    }, 1500)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 20000, 100, ['']);
-    }, 3000)
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 25000, 100, ['']);
-    // }, 6000)
-    // this.getRepos('graphql', 'python', 5, 10, ['']);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 30000, 10);
-    // }, 3000)
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 50000, 10);
-    // }, 5000)
+    }, 1000)
   }
 
   getRepos(terms, languages, stars, num, extraFields) {
@@ -99,7 +83,6 @@ class App extends Component {
   }
 
   buildQuery(terms, languages, stars, num, flache, extraFields) {
-    // console.log('extra fields given to build Query: ', extraFields);
     if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
     if (!terms || terms === 'graphql');
     if (num > 100) return window.alert('max 100 results!');
@@ -202,6 +185,7 @@ class App extends Component {
   }
 
   render() {
+  
     return (
       <div className="main-container">
         <div id="top-wrapper">

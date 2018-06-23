@@ -22,6 +22,17 @@ body {
   flex-direction: column;
 }
 
+#navMenu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  transform: translate3d(-100vw, 0, 0);
+  transition: transform .3s cubic-bezier(0, .52, 0, 1);
+  width: 100vw;
+  height: 100vh;
+
+}
+
 input {
   background: #bada55;
   padding: 5;
@@ -127,3 +138,4 @@ input[type=text] {
   margin-bottom: 5px;
   background-color: rgb(211, 255, 211)
 }
+
