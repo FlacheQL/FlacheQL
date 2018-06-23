@@ -9,6 +9,7 @@ import Documentation from './Documentation.jsx';
 
 import { Router, Route, hashHistory } from 'react-router';
 
+
 class Main extends Component {
   constructor(props) {
     super(props);
@@ -21,7 +22,7 @@ class Main extends Component {
         updatedAt: false
       },
       gitBoxes: [],
-      flacheTimer : {
+      flacheTimer: {
         reqStartTime: null,
         lastQueryTime: 'Please wait...',
         timerText: 'Last query fetched 0 results in',
@@ -48,9 +49,14 @@ class Main extends Component {
   }
 
   componentDidMount() {
+    this.cache.readFromSessionStorage();
     setTimeout(() => {
       this.getRepos('react', 'javascript', 50000, 100, ['']);
-    }, 1000)
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    this.cache.saveToSessionStorage();
   }
 
   getRepos(terms, languages, stars, num, extraFields) {
@@ -78,6 +84,10 @@ class Main extends Component {
     }
     const flacheQuery = this.buildQuery(terms, languages, stars, num, true, extraFields);
     const apolloQuery = this.buildQuery(terms, languages, stars, num, false, extraFields);
+    // start apollo timer - THAT'S RIGHT WE RUN THEM FIRST - NO SHENANIGANS
+    this.startTimer(false, num);
+    // launch apollo query
+    this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
     // start flache timer
     this.startTimer(true, num);
     // launch flache query
@@ -85,10 +95,6 @@ class Main extends Component {
       .then(res => {
         this.handleResponse(res.data, true)
       });
-    // start apollo timer
-    this.startTimer(false, num);
-    // launch apollo query
-    this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
   }
 
   buildQuery(terms, languages, stars, num, flache, extraFields) {
@@ -165,7 +171,8 @@ class Main extends Component {
   }
 
   endTimer(flache, num) {
-    const lastQueryTime = flache ? `${window.performance.now() - this.state.flacheTimer.reqStartTime} ms` : `${window.performance.now() - this.state.apolloTimer.reqStartTime} ms`;
+    let lastQueryTime = flache ? `${window.performance.now() - this.state.flacheTimer.reqStartTime}` : `${window.performance.now() - this.state.apolloTimer.reqStartTime}`;
+    lastQueryTime = lastQueryTime.slice(0, lastQueryTime.indexOf('.') + 4) + ' ms';
     const updatedTimer = { timerText: `Last query fetched ${num} results in`, lastQueryTime, reqStartTime: null };
     // update either the flache or apollo timer
     if (flache) this.setState({ flacheTimer: updatedTimer });
@@ -241,6 +248,7 @@ class Main extends Component {
               </div>
             </fieldset>
             <input type="button" value="Search" onClick={() => this.handleSubmit([''])} />
+            <input type="button" value="Delete Session Storage" onClick={() => sessionStorage.clear()} />
           </div>
           <div id="timer-wrapper">
             <QueryTimer

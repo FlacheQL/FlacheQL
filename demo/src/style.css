@@ -8,6 +8,7 @@ body {
   background-color: mintcream;
 }
 
+
 .description {
   overflow: scroll
 }
@@ -61,11 +62,10 @@ body {
   transition: transform .3s cubic-bezier(0, .52, 0, 1);
   width: 100vw;
   height: 100vh;
-
 }
 
 input {
-  background: #bada55;
+  background: lightgreen;
   padding: 5;
   width: 30%;
   margin-top: 2;
@@ -222,10 +222,16 @@ fieldset {
 
 /* LANDING PAGE */
 
+.landing-container {
+  margin: 0 auto;
+  min-width: 800px;
+  width: 80%;
+}
+
 .navigation-bar {
   margin: 0 auto;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   min-width: 800px;
   width: 80%;
 }
@@ -237,14 +243,22 @@ fieldset {
 
 .navigation-bar div:hover {
   background-color: #bad;
+  animation-name: colorNav;
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
 }
 
 .navigation-bar div {
-  min-width: 100px;
+  min-width: 150px;
   padding: 20px;
+  border-radius: 10px;
 }
 
 .landing-link {
+  font-size: 18px;
+  text-decoration: none;
+  color: rgb(202, 187, 233);
+  min-width: 100px;
   padding: 15px;
   border: 2px solid rgb(202, 187, 233);
   border-radius: 5px;
@@ -252,10 +266,24 @@ fieldset {
   background: linear-gradient(rgb(98, 66, 161), rgb(49, 9, 128));
 }
 
-.landing-link a {
-  text-decoration: none;
-  color: #bad;
-  font-size: 18px;
+.landing-link:hover {
+  background: rgb(49, 9, 128);
+  background-color:  rgb(49, 9, 128);
+  animation-name: colorLink;
+  animation-duration: 1.2s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes colorLink {
+  0% { background-color: rgb(49, 9, 128); }
+  50% { background-color: rgb(98, 66, 161); }
+	100% { background-color: rgb(49, 9, 128); }
+}
+
+@keyframes colorNav {
+  0% { background-color: rgb(198, 182, 229); }
+  50% { background-color: rgb(222, 209, 248); }
+	100% { background-color: rgb(198, 182, 229); }
 }
 
 .landing-link-wrapper {

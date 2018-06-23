@@ -19,6 +19,7 @@ const Home = () => {
           <div className="landing-link"><Link to="/github">GitHub</Link></div>
           <div className="landing-link"><Link to="/yelp">Yelp</Link></div>
           <div className="landing-link"><Link to="/documentation">Docs</Link></div>
+
         </div>
       </center>
     </div>
