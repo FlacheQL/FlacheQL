@@ -48,9 +48,14 @@ class Main extends Component {
   }
 
   componentDidMount() {
+    this.cache.readFromSessionStorage();
     setTimeout(() => {
       this.getRepos('react', 'javascript', 50000, 100, ['']);
-    }, 1000)
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    this.cache.saveToSessionStorage();
   }
 
   getRepos(terms, languages, stars, num, extraFields) {
@@ -78,6 +83,10 @@ class Main extends Component {
     }
     const flacheQuery = this.buildQuery(terms, languages, stars, num, true, extraFields);
     const apolloQuery = this.buildQuery(terms, languages, stars, num, false, extraFields);
+    // start apollo timer - THAT'S RIGHT WE RUN THEM FIRST - NO SHENANIGANS
+    this.startTimer(false, num);
+    // launch apollo query
+    this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
     // start flache timer
     this.startTimer(true, num);
     // launch flache query
@@ -85,10 +94,6 @@ class Main extends Component {
       .then(res => {
         this.handleResponse(res.data, true)
       });
-    // start apollo timer
-    this.startTimer(false, num);
-    // launch apollo query
-    this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
   }
 
   buildQuery(terms, languages, stars, num, flache, extraFields) {
@@ -241,6 +246,8 @@ class Main extends Component {
               </div>
             </fieldset>
             <input type="button" value="Search" onClick={() => this.handleSubmit([''])} />
+            <input type="button" value="Save To Local Storage" onClick={() => this.cache.saveToLocalStorage()} />
+            <input type="button" value="Read from Local Storage" onClick={() => this.cache.readFromLocalStorage()} />
           </div>
           <div id="timer-wrapper">
             <QueryTimer
