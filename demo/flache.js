@@ -25,9 +25,8 @@ export default class Flache {
     // create a key to store the payloads in the cache
     const stringifiedQuery = JSON.stringify(query);
     this.queryParams = this.cleanQuery(query);
-    // console.log(query);
 
-    // create a children array to check params --> TROUBLE CREATING CHILDREN!?!
+    // create a children array to check params
     this.children = this.createChildren(query);
     console.log('query children: ', this.children);
 
@@ -38,8 +37,8 @@ export default class Flache {
         resolve(this.cache[stringifiedQuery]);
       });
     }
-    console.log('dont show up')
-    // set boolean to check for partial queries, else fetch and return
+
+    // set boolean to check for partial queries, else skip straight to fetch and return
     if (options.paramRetrieval) this.options.paramRetrieval = true;
     if (options.fieldRetrieval) this.options.fieldRetrieval = true;
     else return this.fetchData(query, endpoint, headers, stringifiedQuery);
@@ -53,36 +52,27 @@ export default class Flache {
           this.options.subsets
         );
     }
+
     // create a boolean to check if all queries are subsets of others
     let allQueriesPass = false;
 
     // increment cache length
     this.cacheLength = Object.keys(this.cache).length;
     
+    // if the developer specifies in App.jsx
     if (this.options.paramRetrieval) {
-        //check if query children match
         let childrenMatch = false;
-        // console.log('children:', this.children)
-        // console.log('fields cache,', JSON.parse(JSON.stringify(this.fieldsCache)))
-
+        //check if query children match
         childrenMatch = this.fieldsCache.some(obj => {
-            // console.log('children for each thing in cache:', Object.values(obj)[0].children)
             let objChildren = Object.values(obj)[0].children
             return objChildren.every(child => this.children.includes(child)) && this.children.every(child => objChildren.includes(child))
         })
-
-        // console.log('childrenmatch:', childrenMatch)
         // no need to run partial query check on first query
         if (childrenMatch) {
             if (this.cacheLength > 0) {
                 let currentMatchedQuery;
                 for (let key in variables) {
-                    //   console.log('im the current key:', key)
                     for (let query in this.queryCache[key]) {
-                        // console.log('im the current subset function: ', this.cbs[this.options.subsets[key]])
-                        // console.log(`the inputs of the subset function are ${variables[key]} and ${this.queryCache[key][query]}`)
-                        // console.log('im the result of the current subset function: ', this.cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query]))
-                        
                         if (this.cbs[this.options.subsets[key]](variables[key], this.queryCache[key][query])) {
                         // if the callback returns true, set the currentMatchedQuery to be the current query
                         currentMatchedQuery = query;
@@ -90,7 +80,6 @@ export default class Flache {
                             continue;
                         }
 
-                        // console.log('checking current matched query: ', currentMatchedQuery)
                         for (let currentKey in this.queryCache) {
                             // skip the first key since this is the one that just matched
                             if (key === currentKey) continue;
@@ -104,24 +93,18 @@ export default class Flache {
                             let arg1 = variables[currentKey];
                             let arg2 = this.queryCache[currentKey][currentMatchedQuery];
                             let result = this.cbs[rule](arg1, arg2);
-                            //   console.log('rule: ', rule)
-                            //   console.log('arg1: ', arg1)
-                            //   console.log('arg2: ', arg2)
-                            //   console.log('result: ', result)
-                            
+      
                             // if the result of the callback is truthy, set the boolean to that value
                             if (result) {
                                 allQueriesPass = result;
                             } else {
                                 // reset the boolean and break out
-                                // console.log('resetting FOOL')
                                 allQueriesPass = false;
                                 break;
                             }
                         }
 
                         if (allQueriesPass) {
-                            // console.log('went into all queries pass!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                             let pathToNodes = options.pathToNodes;
                             let cached = Object.assign(this.cache[currentMatchedQuery], {});
                             let { path, lastTerm } = this.constructResponsePath(pathToNodes, cached)
@@ -129,10 +112,8 @@ export default class Flache {
                             for (let key in options.queryPaths) {
                             path[lastTerm] = path[lastTerm].filter(el => {
                                 let { path, lastTerm } = this.constructResponsePath(options.queryPaths[key], el)
-                                // return path[lastTerm] > variables[key];
                                 return this.cbs[this.options.subsets[key]](path[lastTerm], variables[key])
                             });
-                            //   console.log(cached);
                             }
                             return new Promise((resolve, reject) => {
                                 resolve(cached);
@@ -156,17 +137,9 @@ export default class Flache {
     });
  
     if (this.options.fieldRetrieval) {
-        console.log('in field retrieval');
         let filtered;
         let foundMatch = false;
-        // console.log('query children: ', children);
-        //console.log('fieldsCache: ', this.fieldsCache, 'before queriesArr built');
-        //let queriesArray = Object.values(this.fieldsCache);
-        // console.log('query array: ', this.fieldsCache);
         this.fieldsCache.forEach((node) => {
-            console.log('im a node:', node)
-            console.log('im the query params,:', this.queryParams)
-            console.log('node has prop', node.hasOwnProperty(this.queryParams))
             if (node.hasOwnProperty(this.queryParams)) {
                 foundMatch = this.children.every(child => {
                     return node[this.queryParams].children.includes(child);
@@ -178,14 +151,12 @@ export default class Flache {
                             delete filtered[key];
                         }
                     }
-            
                 }
            }
         })
 
         if (foundMatch) {
             return new Promise((resolve) => {
-                console.log('resolving in retrieve');
                 filtered = denormalize(filtered);
                 console.log(filtered);
                 resolve(filtered);
@@ -201,8 +172,6 @@ export default class Flache {
             return this.fetchData(query, endpoint, headers, stringifiedQuery);
         } 
     }
-
-    console.log('go fetch fool')
     return this.fetchData(query, endpoint, headers, stringifiedQuery);
   }
   
@@ -222,7 +191,6 @@ export default class Flache {
           let normalizedData = this.flatten(res);
           this.fieldsCache.push({[this.queryParams]: {data: normalizedData, children: this.createChildren(query)}});
             console.log(res)
-          //   console.log('fields cache in fetch: ', JSON.parse(JSON.stringify(this.fieldsCache)));
           setTimeout(
             () => delete this.cache[stringifiedQuery],
             this.cacheExpiration
@@ -311,9 +279,7 @@ export default class Flache {
         } else if ( !ele.includes('{') && !ele.includes('}') && ele.trim() != "") childArr.push(ele.trim());
       }
     });
-    // console.log(childArr)
     return childArr;
   }
-
-
 }
+

@@ -4,8 +4,11 @@ import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import CacheNotifier from './CacheNotifier.jsx';
 import Flache from '../flache';
+import gql from 'graphql-tag';
+import Documentation from './documentation.jsx';
+import NavMenu from './nav.jsx';
 
-// import Flache from 'flacheql';
+import { Router, Route, hashHistory } from 'react-router';
 
 class App extends Component {
   constructor(props) {
@@ -46,16 +49,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getRepos('react', 'javascript', 30000, 100, ['']);
     setTimeout(() => {
       this.getRepos('react', 'javascript', 50000, 100, ['']);
-    }, 1500)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 20000, 100, ['']);
-    }, 6000)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 25000, 100, ['']);
-    }, 10000)
+    }, 1000)
   }
 
   getRepos(terms, languages, stars, num, extraFields) {
@@ -218,6 +214,7 @@ class App extends Component {
   }
 
   render() {
+  
     return (
       <div className="main-container">
         <div id="top-wrapper">
