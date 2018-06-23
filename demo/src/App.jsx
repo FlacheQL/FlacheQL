@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import gql from 'graphql-tag';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
+import CacheNotifier from './CacheNotifier.jsx';
 import Flache from '../flache';
 import gql from 'graphql-tag';
 import Documentation from './documentation.jsx';
@@ -13,6 +15,12 @@ class App extends Component {
     super(props);
     this.cache = new Flache();
     this.state = {
+      moreOptions: {
+        createdAt: false,  
+        databaseId: false,
+        homepageUrl: false,
+        updatedAt: false
+      },
       gitBoxes: [],
       flacheTimer : {
         reqStartTime: null,
@@ -26,8 +34,10 @@ class App extends Component {
         timerText: 'Last query fetched 0 results in',
       },
       apolloTimerClass: "timerF",
+      showCacheHit: true,
     };
-
+    // this.equalityTimerStart = this.equalityTimerStart.bind(this);
+    this.handleMoreOptions = this.handleMoreOptions.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getRepos = this.getRepos.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
@@ -119,14 +129,13 @@ class App extends Component {
             ... on Repository {
               name
               ${str}
-              descriptionHTML
+              description
               stargazers {
                 totalCount
               }
               forks {
                 totalCount
               }
-              updatedAt
             }
           }
         }
@@ -139,9 +148,11 @@ class App extends Component {
     this.buildBoxes(res);
   }
 
-  buildBoxes(res) {
+  buildBoxes(res) { //map values
     const newBoxes = res.search.edges.map((repo, index) => {
-      return <GitBox key={`b${index}`} name={repo.node.name} stars={repo.node.stargazers.totalCount} forks={repo.node.forks.totalCount}/>
+      return <GitBox key={`b${index}`} name={repo.node.name} stars={repo.node.stargazers.totalCount} forks={repo.node.forks.totalCount} 
+      description={repo.node.description} createdAt={repo.node.createdAt} databaseId={repo.node.databaseId} 
+      updatedAt={repo.node.updatedAt} homepageUrl={repo.node.homepageUrl} moreOptions={this.state.moreOptions} />
     });
     this.setState({ gitBoxes: newBoxes });
   }
@@ -174,7 +185,25 @@ class App extends Component {
     }
   }
 
-  handleSubmit(extraFields) {
+  handleMoreOptions() {
+    const saveOptions = [];
+    const updateOptions = {};
+    const options = document.getElementsByClassName('searchOptions');
+    
+    for(let i = 0; i < options.length; i++) {
+      if(options[i].checked) {
+        saveOptions.push(options[i].value);
+        updateOptions[options[i].value] = [true, options[i].value];
+      } else {
+        updateOptions[options[i].value] = false;
+      }
+    } 
+    this.setState({ moreOptions: updateOptions });
+    return saveOptions;
+  }
+
+  handleSubmit() {
+    const extraFields = this.handleMoreOptions();
     this.getRepos(
       document.getElementById('searchText').value,
       document.getElementById('searchLang').value,
@@ -203,11 +232,16 @@ class App extends Component {
             <div className="searchBoxes">
               <label># to fetch: <input id="searchNum" type="text" className="text"/></label>
             </div>
+            <fieldset>
+              <legend>More Options</legend>
+              <div>
+              <label><input id="databaseId" type="checkbox" className="searchOptions" value="databaseId"/> database Id</label><br/>
+              <label><input id="createdAt" type="checkbox" className="searchOptions" value="createdAt"/> created At</label><br/>
+              <label><input id="updatedAt" type="checkbox" className="searchOptions" value="updatedAt"/> updated At</label><br/>
+              <label><input id="homepageUrl" type="checkbox" className="searchOptions" value="homepageUrl"/> homepage Url</label>
+              </div>
+            </fieldset>
             <input type="button" value="Search" onClick={() => this.handleSubmit([''])} />
-            <input type="button" value="Search w/createdAt" onClick={() => this.handleSubmit(['createdAt'])} />
-            <input type="button" value="Search w/createdAt and databaseId" onClick={() => this.handleSubmit(['createdAt', 'databaseId'])} />
-            <input type="button" value="Search w/databaseId" onClick={() => this.handleSubmit(['databaseId'])} />
-            <input type="button" value="Show query cache" onClick={() => console.log(this.cache.comparisonCache, this.cache.cache)} />
           </div>
           <div id="timer-wrapper">
             <QueryTimer
@@ -223,6 +257,7 @@ class App extends Component {
               timerText={this.state.apolloTimer.timerText}
             />
           </div>
+          <CacheNotifier showCacheHit={this.state.showCacheHit} />
         </div>
         <div className="result-list">
           {this.state.gitBoxes}
