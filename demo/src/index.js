@@ -21,7 +21,6 @@ const client = new ApolloClient({
   link,
   cache: new InMemoryCache()
 });
-console.log("HELLO!");
 
 ReactDOM.render(
   <App client={client} />,
