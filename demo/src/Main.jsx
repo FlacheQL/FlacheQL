@@ -4,7 +4,11 @@ import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import CacheNotifier from './CacheNotifier.jsx';
 import Flache from '../flache';
-import Documentation from './documentation.jsx';
+import Documentation from './Documentation.jsx';
+// import NavMenu from './nav.jsx';
+
+import { Router, Route, hashHistory } from 'react-router';
+
 
 class Main extends Component {
   constructor(props) {

@@ -8,8 +8,9 @@ body {
   background-color: mintcream;
 }
 
-.header * {
-  margin: 20 0 10 0;
+
+.description {
+  overflow: scroll
 }
 
 .body-wrapper {
@@ -21,6 +22,29 @@ body {
 
 .hidden {
   display: none;
+}
+
+.backdrop {
+  position: relative;
+  min-height: 25%;
+  max-height: 80%;
+  z-index: 3;
+  top: -300;
+  padding: 50;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(255, 255, 255);
+  border-radius: 0;
+  max-width: 100%;
+  max-height: 100%;
+  min-height: 300;
+  overflow: auto;
+  z-index: 1010;
 }
 
 #content {
@@ -68,6 +92,34 @@ input[type=text] {
 .searchBoxes {
   line-height: 2;
 }
+
+.flex-container {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  float: center;
+  text-align: center;
+  position: relative;
+}
+
+.doc-container {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  text-align: center;
+  margin: auto;
+  line-height: 2;
+  width: 30%;
+  height: 75px;
+  font-size: 18px;
+  border-radius: 5px;
+  margin: 10px;
+  background: linear-gradient(rgb(98, 66, 161), rgb(49, 9, 128));
+  color: white;
+  box-shadow: 2px 2px rgba(165, 165, 165, .4);
+}
+
 
 .result-list {
   width: 90%;
@@ -239,4 +291,25 @@ fieldset {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.popup {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  background-color: rgba(0,0,0, 0.5);
+}
+.popup_inner {
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  top: 25%;
+  bottom: 25%;
+  margin: auto;
+  background: white;
 }

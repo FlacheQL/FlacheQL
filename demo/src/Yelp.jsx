@@ -94,6 +94,7 @@ class App extends Component {
             rating
             reviews {
               text
+              time_created
           }
         }
       }
