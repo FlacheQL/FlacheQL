@@ -16,7 +16,7 @@ deploy:
   local_dir: dpl_cd_upload
   skip_cleanup: true
   on: &2
-    repo: chmccc/FlacheQL
+    repo: FlacheQL/FlacheQL
   bucket: flacheql
   region: us-west-1
 - provider: codedeploy
