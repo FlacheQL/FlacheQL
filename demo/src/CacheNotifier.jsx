@@ -9,7 +9,7 @@ class CacheNotifier extends Component {
     const currentClass = this.props.showCacheHit ? "cache-notifier" : "cache-notifier hidden";
     return (
       <div className={currentClass}>
-        <center><h2>CACHE WAS HIT!</h2></center>
+        <center><h2>Cache hit!</h2></center>
       </div>
     )
   }
