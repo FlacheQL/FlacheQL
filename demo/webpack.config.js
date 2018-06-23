@@ -1,20 +1,19 @@
+const path = require('path')
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 
-const htmlPlugin = new HtmlWebPackPlugin({
-  template: "./src/index.html",
-  filename: "./index.html"
-});
-
 module.exports = {
+  entry: path.join(__dirname, './src/index.js'),
+  output: {
+    path: path.join(__dirname, 'public'),
+    filename: 'bundle.js'
+  },
+  mode: 'development',
   module: {
     rules: [
       {
         test: /\.jsx?$/,
         loader: "babel-loader",
         exclude: /node_modules/,
-        query: {
-          presets: ['react', 'es2015']
-        }
       },
       {
         test: /\.css$/,
@@ -22,5 +21,7 @@ module.exports = {
       }
     ]
   },
-  plugins: [htmlPlugin],
+  plugins: [new HtmlWebPackPlugin({
+    template: path.join(__dirname, '/src/index.html'),
+  })],
 };
