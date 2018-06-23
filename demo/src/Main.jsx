@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import gql from 'graphql-tag';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
-import CacheNotifier from './CacheNotifier.jsx';
 import Flache from '../flache';
 import Documentation from './documentation.jsx';
 
