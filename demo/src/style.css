@@ -26,6 +26,17 @@ body {
   flex-direction: column;
 }
 
+#navMenu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  transform: translate3d(-100vw, 0, 0);
+  transition: transform .3s cubic-bezier(0, .52, 0, 1);
+  width: 100vw;
+  height: 100vh;
+
+}
+
 input {
   background: #bada55;
   padding: 5;
@@ -34,8 +45,12 @@ input {
   margin-bottom: 2;
 }
 
+input.searchOptions {
+  width: 5%;
+}
+
 input[type=button] {
-  margin-top: 20px;
+  margin: 5 0 0 80;
   width: 70%;
   font-size: 14px;
   font-family: inherit;
@@ -124,6 +139,15 @@ input[type=text] {
   margin: 0 0 5 0;
 }
 
+fieldset {
+  width: %;
+  margin-bottom: 5px;
+  line-height: 1.4;
+  background-color: rgb(211, 255, 211);
+  border-style: ridge;
+  box-shadow: 2px 2px rgba(165, 165, 165, .4);
+}
+
 .gitbox {
   width: 90%;
   margin: 20px;
@@ -133,5 +157,11 @@ input[type=text] {
 
 .gitbox-repo-name h3 {
   margin-bottom: 5px;
-  background-color: rgb(211, 255, 211)
+  padding-left: 7px;
+  background-color: rgb(211, 255, 211);
 }
+
+.gitbox-searchResult {
+  padding: 0 0 5 7;
+}
+
