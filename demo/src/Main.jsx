@@ -59,6 +59,7 @@ class Main extends Component {
     this.cache.saveToSessionStorage();
   }
 
+  // function to call 
   getRepos(terms, languages, stars, num, extraFields) {
     const endpoint = 'https://api.github.com/graphql'
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
@@ -148,6 +149,11 @@ class Main extends Component {
     }`;
   }
 
+  /**
+  * Function to call when response is received from either the cache or from a fetch.
+  * @param {object} res The response data from a cache hit or fetch
+  * @param {boolean} flache Determines which timer to update, true for Flache, false for Apollo
+  */
   handleResponse(res, flache) {
     this.endTimer(flache, res.search.edges.length);
     this.buildBoxes(res);
@@ -170,6 +176,10 @@ class Main extends Component {
     else this.setState({ apolloTimer: updatedTimer });
   }
 
+  /**
+  * Stops the timer for a caching engine and displays the number of 
+  * @param {boolean} flache Determines which timer to update, true for Flache, false for Apollo
+  */
   endTimer(flache, num) {
     let lastQueryTime = flache ? `${window.performance.now() - this.state.flacheTimer.reqStartTime}` : `${window.performance.now() - this.state.apolloTimer.reqStartTime}`;
     lastQueryTime = lastQueryTime.slice(0, lastQueryTime.indexOf('.') + 4) + ' ms';
@@ -180,7 +190,11 @@ class Main extends Component {
     this.flashTimer(flache);
   }
 
-  // simple flash effect for timer
+  /**
+  * Simple flash effect for timer
+  * @param {boolean} flache Determines which timer to update, true for Flache, false for Apollo
+  */
+
   flashTimer(flache) {
     if (flache) {
       this.setState({ flacheTimerClass: "timerF flashF" });
@@ -191,23 +205,22 @@ class Main extends Component {
     }
   }
 
+  /** Handles changes to the More Options checkboxes and updates state to reflect */
   handleMoreOptions() {
     const saveOptions = [];
     const updateOptions = {};
     const options = document.getElementsByClassName('searchOptions');
-    
-    for(let i = 0; i < options.length; i++) {
-      if(options[i].checked) {
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].checked) {
         saveOptions.push(options[i].value);
         updateOptions[options[i].value] = [true, options[i].value];
-      } else {
-        updateOptions[options[i].value] = false;
-      }
+      } else updateOptions[options[i].value] = false;
     } 
     this.setState({ moreOptions: updateOptions });
     return saveOptions;
   }
 
+  /** Fired on search, collects input fields and calls getRepos */
   handleSubmit() {
     const extraFields = this.handleMoreOptions();
     this.getRepos(
@@ -220,7 +233,6 @@ class Main extends Component {
   }
 
   render() {
-  
     return (
       <div className="main-container">
         <div id="top-wrapper">
@@ -247,23 +259,26 @@ class Main extends Component {
               <label><input id="homepageUrl" type="checkbox" className="searchOptions" value="homepageUrl"/> homepage Url</label>
               </div>
             </fieldset>
-            <input type="button" value="Search" onClick={() => this.handleSubmit([''])} />
-            <input type="button" value="Delete Session Storage" onClick={() => sessionStorage.clear()} />
           </div>
-          <div id="timer-wrapper">
-            <QueryTimer
-              class={this.state.flacheTimerClass}
-              title="FlacheQL"
-              lastQueryTime={this.state.flacheTimer.lastQueryTime}
-              timerText={this.state.flacheTimer.timerText}
-            />
-            <QueryTimer
-              class={this.state.apolloTimerClass}
-              title="Apollo"
-              lastQueryTime={this.state.apolloTimer.lastQueryTime}
-              timerText={this.state.apolloTimer.timerText}
-            />
-            <CacheNotifier showCacheHit={this.state.showCacheHit} />
+          <div id="top-right-wrapper">
+            <div id="timer-wrapper">
+              <QueryTimer
+                class={this.state.flacheTimerClass}
+                title="FlacheQL"
+                lastQueryTime={this.state.flacheTimer.lastQueryTime}
+                timerText={this.state.flacheTimer.timerText}
+              />
+              <QueryTimer
+                class={this.state.apolloTimerClass}
+                title="Apollo"
+                lastQueryTime={this.state.apolloTimer.lastQueryTime}
+                timerText={this.state.apolloTimer.timerText}
+              />
+            </div>
+            <div id="buttons">
+              <input type="button" value="Search" onClick={() => this.handleSubmit([''])} />
+              <input type="button" value="Delete Session Storage" onClick={() => sessionStorage.clear()} />
+            </div>
           </div>
         </div>
         <div className="result-list">

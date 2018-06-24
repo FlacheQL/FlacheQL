@@ -8,6 +8,10 @@ body {
   background-color: mintcream;
 }
 
+.title * {
+  font-size: 46px;
+  margin: 20 0 10 0;
+  text-shadow: 2px 2px lightgray;
 
 .description {
   overflow: scroll
@@ -23,6 +27,12 @@ body {
 .hidden {
   display: none;
 }
+
+.main-container {
+  min-width: 800px !important;
+  width: 80%;
+  margin: 0 auto;
+ }
 
 .backdrop {
   position: relative;
@@ -77,8 +87,7 @@ input.searchOptions {
 }
 
 input[type=button] {
-  margin: 5 0 0 80;
-  width: 70%;
+  width: 90%;
   font-size: 14px;
   font-family: inherit;
 }
@@ -122,11 +131,7 @@ input[type=text] {
 
 
 .result-list {
-  width: 90%;
-}
-
-.cache-notifier {
-  
+  width: 100%;
 }
 
 #form-wrapper {
@@ -139,15 +144,41 @@ input[type=text] {
 #top-wrapper {
   width: 100%;
   display: flex;
+  align-items: flex;
+  justify-content: center;
 }
 
+#top-right-wrapper {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+fieldset {
+  margin-bottom: 5px;
+  line-height: 1.4;
+  background-color: rgb(211, 255, 211);
+  border-style: ridge;
+  box-shadow: 2px 2px rgba(165, 165, 165, .4);
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* TIMER STYLING */
+
 #timer-wrapper {
-  width: 50%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
+
 
 .timerF {
   margin: 10px;
@@ -194,18 +225,11 @@ input[type=text] {
   margin: 0 0 5 0;
 }
 
-fieldset {
-  width: %;
-  margin-bottom: 5px;
-  line-height: 1.4;
-  background-color: rgb(211, 255, 211);
-  border-style: ridge;
-  box-shadow: 2px 2px rgba(165, 165, 165, .4);
-}
+/* RESULT LIST */
 
 .gitbox {
   width: 90%;
-  margin: 20px;
+  margin: 20px 0px;
   box-shadow: 2px 2px rgba(165, 165, 165, .4);
   background-color: honeydew; 
 }
@@ -223,9 +247,11 @@ fieldset {
 /* LANDING PAGE */
 
 .landing-container {
+  padding: 10px;
   margin: 0 auto;
   min-width: 800px;
   width: 80%;
+  font-size: 20px;
 }
 
 .navigation-bar {
@@ -237,7 +263,7 @@ fieldset {
 }
 
 .navigation-bar a {
-  font-size: 20px;
+  font-size: 24px;
   text-decoration: none;
 }
 
@@ -262,7 +288,7 @@ fieldset {
   padding: 15px;
   border: 2px solid rgb(202, 187, 233);
   border-radius: 5px;
-  margin: 0 20px;
+  margin: 10px 20px;
   background: linear-gradient(rgb(98, 66, 161), rgb(49, 9, 128));
 }
 
