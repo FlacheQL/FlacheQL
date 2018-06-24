@@ -15,11 +15,17 @@ export default class Flache {
     };
   }
 
+  /**
+  * Saves all Flache data to browser session storage for cache persistence. Purges after 200 seconds.
+  */
   saveToSessionStorage() {
     Object.keys(this).forEach(key => sessionStorage.setItem(key, JSON.stringify(this[key])));
     setTimeout(() => sessionStorage.clear(), 200000);
   }
 
+  /**
+  * Grabs any relevant Flache data from browser session storage.
+  */
   readFromSessionStorage() {
     Object.keys(this).forEach((key) => { if (sessionStorage.getItem(key)) this[key] = JSON.parse(sessionStorage.getItem(key)); });
   }
