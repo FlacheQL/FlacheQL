@@ -23,10 +23,11 @@ const Home = () => {
         <p>We have also created some interactive documentation - feel free to browse this for information on how to set up and configure FlacheQL!</p>
         <h2>Documentation</h2>
         <div className="landing-link-wrapper">
-          <Link to="/github"><div className="landing-link">Browse the Docs</div></Link>
+          <Link to="/documentation"><div className="landing-link">Browse the Docs</div></Link>
         </div>
       </center>
     </div>
   );
 }
+
 export default Home;
