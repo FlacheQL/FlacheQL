@@ -16,8 +16,6 @@ class Setup extends React.Component {
           </div>
           <button onClick={this.props.onClose}>Close</button>
         </div>
-        {/* <div className="modal-overlay" id="modal-overlay">
-        </div> */}
       </div>
     )
   }

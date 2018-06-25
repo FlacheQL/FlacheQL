@@ -4,7 +4,7 @@
  * @returns {object} A response-like object that should satisfy a GraphQL query
  */
 
-export default function denormalize(pathsObject) {
+const Denormalize = (pathsObject) => {
   const payload = {};
   for (let key in pathsObject) {
     let workingObj = payload;
@@ -27,3 +27,5 @@ export default function denormalize(pathsObject) {
   }
   return payload;
 }
+
+export default Denormalize;

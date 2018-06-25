@@ -4,16 +4,15 @@ import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import CacheNotifier from './CacheNotifier.jsx';
 import Flache from '../flache';
+import { CleanQuery } from '../helpers'
 import Documentation from './Documentation.jsx';
 import Instructions from './InstructionModal.jsx';
-// import NavMenu from './nav.jsx';
-
 import { Router, Route, hashHistory } from 'react-router';
-
 
 class Main extends Component {
   constructor(props) {
     super(props);
+    /* Flache Implementation */
     this.cache = new Flache();
     this.state = {
       moreOptions: {
@@ -38,7 +37,7 @@ class Main extends Component {
       showCacheHit: true,
       activeModal: null
     };
-    // this.equalityTimerStart = this.equalityTimerStart.bind(this);
+
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getRepos = this.getRepos.bind(this);
@@ -48,11 +47,11 @@ class Main extends Component {
     this.endTimer = this.endTimer.bind(this);
     this.flashTimer = this.flashTimer.bind(this);
     this.apolloClient = this.props.client;
-  
     this.hideModal = this.hideModal.bind(this);
     this.showModal = this.showModal.bind(this);
   }
 
+  /* Modal Display */
   hideModal() {
     this.setState({ activeModal: null })
   }
@@ -61,6 +60,7 @@ class Main extends Component {
     this.setState({ activeModal: Instructions })
   }  
 
+  /* initial modal render */
   componentDidMount() {
     console.log('mounted, active modal: ', this.state.activeModal);
     setTimeout(() => {this.showModal();}, 250)
@@ -249,16 +249,19 @@ class Main extends Component {
     );
   }
 
+  
   render() {
     return (
       <div className="main-container">
         <div id="top-wrapper">
+        {/* Modal Control */}
         {this.state.activeModal === Instructions ? 
           <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onEscape={this.escapeKey}>
               <p>Modal</p>
           </Instructions>
           : <div></div>
         }
+        {/* Document Body */}
           <div id="form-wrapper">
             <h2>Find Github Repositories</h2>
             <div className="searchBoxes">
@@ -283,6 +286,7 @@ class Main extends Component {
               </div>
             </fieldset>
           </div>
+          {/* Timer Displays */}
           <div id="top-right-wrapper">
             <div id="timer-wrapper">
               <QueryTimer

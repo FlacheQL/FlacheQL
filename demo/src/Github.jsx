@@ -53,6 +53,7 @@ class Github extends Component {
     document.getElementById('body-wrapper').style.filter = 'blur(10px)'
   }
 
+  // attempt for escape to close modal 
   handleKeyUp(e) {
     console.log('key press');
     if (keys[e.keyCode] === 27) { 

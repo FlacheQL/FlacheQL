@@ -4,8 +4,6 @@ class GitBox extends Component {
 
   render() {
     const displayOptions = [];
-    console.log('moreOptions: ', this.props.moreOptions);
-    console.log('gitbox props: ', this.props);
     for(let key in this.props.moreOptions) {
       let index = 0;
       if(this.props.moreOptions[key][0] === true) {
