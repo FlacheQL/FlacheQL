@@ -36,6 +36,7 @@ class Yelp extends Component {
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
     this.buildBoxes = this.buildBoxes.bind(this);
+    this.buildQuery = this.buildQuery.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.startTimer = this.startTimer.bind(this);
     this.endTimer = this.endTimer.bind(this);
@@ -72,10 +73,10 @@ class Yelp extends Component {
       },
       pathToNodes: "data.search.business"
     }
-    const flacheQuery = buildQuery(location, limit, true, extraFields);
+    const flacheQuery = this.buildQuery(location, limit, true, extraFields);
     console.log('flachequery: ', flacheQuery);
     if (!disableApollo) {
-      const apolloQuery = buildQuery(location, limit, false, extraFields);
+      const apolloQuery = this.buildQuery(location, limit, false, extraFields);
       // start apollo timer
       this.startTimer(false, limit);
       // launch apollo query
@@ -93,39 +94,52 @@ class Yelp extends Component {
     });
   }
 
-<<<<<<< HEAD
-  buildQuery(terms, languages, stars, num, flache, extraFields) {
-    if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
-    if (!terms || terms === 'graphql');
-    if (num > 50) return window.alert('max 50 results!');
-    const locationQuery = `"${terms || ''}${food ? ' food:' + food : ''}${rating ? ' rating:>' + rating : ''}"`;
-    if (locationQuery === '""') return window.alert('bad query! you must enter at least one area to look in!');
-    let str = ''; // 'createdAt databaseId'
+  /**
+  * Compiles a GraphQL query string tailored to the engine it's intended for
+  * @param {string} location The location to retrieve from
+  * @param {number} limit The number of results to fetch, entered by the user in an input box
+  * @param {boolean} flache Determines which cache engine to build for, true for Flache, false for Apollo
+  * @param {array} extraFields An array containing information on which checkbokes are ticked
+  * @returns {string}
+  */
+  buildQuery(location, limit, flache, extraFields) {
+    if (!limit || limit === 0) return window.alert('Bad query! You must enter a number to search for.');
+    if (!location || location === '') return window.alert('Bad query! You must enter a limit (less than 50).')
+    if (limit > 50) return window.alert('Bad query! Max 50 results!');
+    let str = '';
     extraFields.forEach(e => str += '\n' + e);
     return flache ? `{
-      search(term: ${searchQuery}, location: ${locationQuery}, limit: ${num}) {
+      search(location: "${location}" limit: ${limit}) {
         business {
-            name
-            rating
-            reviews {
-              text
-              time_created
+          name
+          rating
+          hours {
+            is_open_now
           }
+          categories {
+            title
+          }
+          ${extraFields}
         }
       }
     }` :
     gql`{
-      search(query: ${searchQuery}, location: ${locationQuery}, limit: ${num}) {
-        business{
+      search(location: ${location} limit: ${limit}) {
+        business {
           name
           rating
-          reviews {
-            text
+          hours {
+            is_open_now
           }
+          categories {
+            title
+          }
+          ${extraFields}
         }
       }
     }`;
-=======
+  }
+
   handleMoreOptions() {
     const saveOptions = [];
     const updateOptions = {};
@@ -139,7 +153,6 @@ class Yelp extends Component {
     console.log('SAVEOPTIONS: ', saveOptions);
     this.setState({ moreOptions: updateOptions });
     return saveOptions;
->>>>>>> yelp
   }
 
   handleResponse(data, flache) {
@@ -247,52 +260,6 @@ class Yelp extends Component {
       </div>
     )
   }
-}
-
-/**
-* Compiles a GraphQL query string tailored to the engine it's intended for
-* @param {string} location The location to retrieve from
-* @param {number} limit The number of results to fetch, entered by the user in an input box
-* @param {boolean} flache Determines which cache engine to build for, true for Flache, false for Apollo
-* @param {array} extraFields An array containing information on which checkbokes are ticked
-* @returns {string}
-*/
-function buildQuery(location, limit, flache, extraFields) {
-  if (!limit || limit === 0) return window.alert('Bad query! You must enter a number to search for.');
-  if (!location || location === '') return window.alert('Bad query! You must enter a limit (less than 50).')
-  if (limit > 50) return window.alert('Bad query! Max 50 results!');
-  let str = '';
-  extraFields.forEach(e => str += '\n' + e);
-  return flache ? `{
-    search(location: "${location}" limit: ${limit}) {
-      business {
-        name
-        rating
-        hours {
-          is_open_now
-        }
-        categories {
-          title
-        }
-        ${extraFields}
-      }
-    }
-  }` :
-  gql`{
-    search(location: ${location} limit: ${limit}) {
-      business {
-        name
-        rating
-        hours {
-          is_open_now
-        }
-        categories {
-          title
-        }
-        ${extraFields}
-      }
-    }
-  }`;
 }
 
 export default Yelp;

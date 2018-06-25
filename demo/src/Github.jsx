@@ -122,7 +122,7 @@ class GitHub extends Component {
     // start flache timer
     this.startTimer(true, num);
     // launch flache query
-    this.flache.it(flacheQuery, variables, this.endpoint, this.headers, options)
+    this.cache.it(flacheQuery, variables, this.endpoint, this.headers, options)
       .then(res => this.handleResponse(res.data, true));
   }
 
@@ -239,8 +239,22 @@ class GitHub extends Component {
           : <div></div>
         }
         {/* Document Body */}
-          {/* Timer Displays */}
-          <div id="top-right-wrapper">
+            <Form
+              handleSubmit={this.handleSubmit}
+              title={'Search Repositories'}
+              fields={[
+                { label: 'Terms: ', id: 'searchText' },
+                { label: 'Language: ', id: 'searchLang' },
+                { label: '# of stars: ', id: 'searchStars' },
+                { label: '# to fetch: ', id: 'searchNum' },
+              ]}
+              extras={[
+                { label: ' Created at', id: 'createdAt' },
+                { label: ' Database ID', id: 'databaseId' },
+                { label: ' Homepage URL', id: 'homepageUrl' },
+                { label: ' Updated at', id: 'updatedAt' },
+              ]}
+            />
             <div id="timer-wrapper">
               <QueryTimer
                 class={this.state.flacheTimerClass}
@@ -255,44 +269,10 @@ class GitHub extends Component {
                 timerText={this.state.apolloTimer.timerText}
               />
             </div>
-            <div id="buttons">
-              <input type="button" value="Search" onClick={() => this.handleSubmit([''])} />
-              <input type="button" value="Delete Session Storage" onClick={() => sessionStorage.clear()} />
-            </div>
-          <Form
-            handleSubmit={this.handleSubmit}
-            fields={[
-              { label: 'Terms: ', id: 'searchText' },
-              { label: 'Language: ', id: 'searchLang' },
-              { label: '# of stars: ', id: 'searchStars' },
-              { label: '# to fetch: ', id: 'searchNum' },
-            ]}
-            extras={[
-              { label: ' Created at', id: 'createdAt' },
-              { label: ' Database ID', id: 'databaseId' },
-              { label: ' Homepage URL', id: 'homepageUrl' },
-              { label: ' Updated at', id: 'updatedAt' },
-            ]}
-          />
-          <div id="timer-wrapper">
-            <QueryTimer
-              class={this.state.flacheTimerClass}
-              title="FlacheQL"
-              lastQueryTime={this.state.flacheTimer.lastQueryTime}
-              timerText={this.state.flacheTimer.timerText}
-            />
-            <QueryTimer
-              class={this.state.apolloTimerClass}
-              title="Apollo"
-              lastQueryTime={this.state.apolloTimer.lastQueryTime}
-              timerText={this.state.apolloTimer.timerText}
-            />
-          </div>
         </div>
         <div className="result-list">
           {this.state.gitBoxes}
         </div>
-      </div>
       </div>
     )
   }

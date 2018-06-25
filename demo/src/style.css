@@ -197,13 +197,6 @@ input[type=text] {
   width: 100%;
 }
 
-#form-wrapper {
-  width: 40%;
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-}
-
 #top-wrapper {
   width: 100%;
   display: flex;
