@@ -32,7 +32,7 @@ class Yelp extends Component {
       },
       apolloTimerClass: "timerF",
     };
-    this.getResturaunts = this.getResturaunts.bind(this);
+    this.getRestaurants = this.getRestaurants.bind(this);
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
     this.buildBoxes = this.buildBoxes.bind(this);
@@ -49,18 +49,18 @@ class Yelp extends Component {
     // cache persistence
     this.cache.readFromSessionStorage();
     setTimeout(() => {
-      this.getResturaunts('Venice', 10, [''], true);
+      this.getRestaurants('Venice', 10, [''], true);
     }, 1000);
   }
 
   componentWillUnmount() {
     // cache persistence
-    this.cache.saveToSessionStorage();
+    // this.cache.saveToSessionStorage();
   }
+
 
   getResturaunts(location, limit, extraFields, disableApollo) {
     const endpoint = 'http://ec2-54-153-36-136.us-west-1.compute.amazonaws.com:8000/yelp'
-    '
     const headers = { "Content-Type": "text/plain",
     "Authorization": "Bearer 1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx", }
     const variables = { 
@@ -215,7 +215,7 @@ class Yelp extends Component {
   /** Fired on search, collects input fields and calls getRepos */
   handleSubmit() {
     const extraFields = this.handleMoreOptions();
-    this.getResturaunts(
+    this.getRestaurants(
       document.getElementById('location').value,
       document.getElementById('limit').value,
       extraFields,
