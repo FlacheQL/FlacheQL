@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 
-import { HashRouter, Route, Link } from 'react-router-dom';
+import { HashRouter, Route, Link, Switch } from 'react-router-dom';
 
 import GitHub from './GitHub.jsx';
 import Home from './Home.jsx';
@@ -26,12 +26,14 @@ class App extends Component {
             <center><Link to="/documentation"><div>Docs</div></Link></center>
           </div>
           <hr />
-          <Route exact path="/documentation" component={Docs} />
-          <Route exact path="/github" render={() => <GitHub client={this.props.client} />} />
-          <Route exact path="/yelp" render={() => <Yelp />} />
-          <Route exact path="/home" component={Home} />
-          <Route exact path="/" component={Home} />
-          <Redirect from="/" to="/home" />
+          <Switch>
+            <Route exact path="/documentation" component={Docs} />
+            <Route exact path="/github" render={() => <GitHub client={this.props.client} />} />
+            <Route exact path="/yelp" render={() => <Yelp />} />
+            <Route exact path="/home" component={Home} />
+            <Route exact path="/" component={Home} />
+            <Redirect from="/" to="/home" />
+          </Switch>
         </div>
       </HashRouter>
     );
