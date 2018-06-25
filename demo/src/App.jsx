@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router';
 
 // import route Components here
 import Main from './Main.jsx';
@@ -10,7 +11,6 @@ import {
   Link,
 } from 'react-router-dom';
 
-import Main from './Main.jsx';
 import Home from './Home.jsx';
 
 class App extends Component {
@@ -25,8 +25,8 @@ class App extends Component {
         <div>
           <div className="navigation-bar">
             <center><Link to="/home"><div>Home</div></Link></center>
-            <center><Link to="/github"><div>Github</div></Link></center>
-            <center><Link to="/yelp"><div>Yelp</div></Link></center>
+            <center><Link to="/github"><div>Github Demo</div></Link></center>
+            <center><Link to="/yelp"><div>Yelp Demo</div></Link></center>
             <center><Link to="/documentation"><div>Docs</div></Link></center>
           </div>
           <hr />

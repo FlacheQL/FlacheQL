@@ -5,6 +5,7 @@ import QueryTimer from './QueryTimer.jsx';
 import CacheNotifier from './CacheNotifier.jsx';
 import Flache from '../flache';
 import Documentation from './Documentation.jsx';
+import Instructions from './InstructionModal.jsx';
 // import NavMenu from './nav.jsx';
 
 import { Router, Route, hashHistory } from 'react-router';
@@ -35,6 +36,7 @@ class Main extends Component {
       },
       apolloTimerClass: "timerF",
       showCacheHit: true,
+      activeModal: null
     };
     // this.equalityTimerStart = this.equalityTimerStart.bind(this);
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
@@ -46,9 +48,22 @@ class Main extends Component {
     this.endTimer = this.endTimer.bind(this);
     this.flashTimer = this.flashTimer.bind(this);
     this.apolloClient = this.props.client;
+  
+    this.hideModal = this.hideModal.bind(this);
+    this.showModal = this.showModal.bind(this);
   }
 
+  hideModal() {
+    this.setState({ activeModal: null })
+  }
+
+  showModal() {
+    this.setState({ activeModal: Instructions })
+  }  
+
   componentDidMount() {
+    console.log('mounted, active modal: ', this.state.activeModal);
+    setTimeout(() => {this.showModal();}, 250)
     this.cache.readFromSessionStorage();
     setTimeout(() => {
       this.getRepos('react', 'javascript', 50000, 100, ['']);
@@ -58,6 +73,8 @@ class Main extends Component {
   componentWillUnmount() {
     this.cache.saveToSessionStorage();
   }
+
+
 
   // function to call 
   getRepos(terms, languages, stars, num, extraFields) {
@@ -236,6 +253,12 @@ class Main extends Component {
     return (
       <div className="main-container">
         <div id="top-wrapper">
+        {this.state.activeModal === Instructions ? 
+          <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onEscape={this.escapeKey}>
+              <p>Modal</p>
+          </Instructions>
+          : <div></div>
+        }
           <div id="form-wrapper">
             <h2>Find Github Repositories</h2>
             <div className="searchBoxes">

@@ -5,6 +5,7 @@ import Flache from '../flache';
 import gql from 'graphql-tag';
 import Documentation from './documentation.jsx';
 import NavMenu from './nav.jsx';
+import Instructions from './InstructionModal.jsx';
 
 import { Router, Route, hashHistory } from 'react-router';
 
@@ -26,6 +27,7 @@ class Github extends Component {
         timerText: 'Last query fetched 0 results in',
       },
       apolloTimerClass: "timerF",
+      activeModal: null
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -36,13 +38,30 @@ class Github extends Component {
     this.endTimer = this.endTimer.bind(this);
     this.flashTimer = this.flashTimer.bind(this);
     this.apolloClient = this.props.client;
+    this.clickHandler = this.clickHandler.bind(this);
+    this.hideModal = this.hideModal.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
   }
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 50000, 100, ['']);
-    }, 1000)
+  // modal display/hiding
+  hideModal() {
+    this.setState({ activeModal: null })
   }
+
+  showModal() {
+    this.setState({ activeModal: Instructions });
+    document.getElementById('body-wrapper').style.filter = 'blur(10px)'
+  }
+
+  handleKeyUp(e) {
+    console.log('key press');
+    if (keys[e.keyCode] === 27) { 
+      e.preventDefault();
+        this.hideModal();
+        window.removeEventListener('keyup', this.handleKeyUp, false);
+    }
+  }
+
 
   getRepos(terms, languages, stars, num, extraFields) {
     const endpoint = 'https://api.github.com/graphql'
@@ -184,10 +203,25 @@ class Github extends Component {
     );
   }
 
+  componentDidMount() {
+    console.log('mounted, active modal: ', this.state.activeModal);
+    setTimeout(() => {
+      this.showModal();
+    }, 500);
+    window.addEventListener('keyup', this.handleKeyUp, false);
+}
+
   render() {
   
     return (
       <div className="main-container">
+        {this.state.activeModal === Instructions ? 
+          <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onEscape={this.handleKeyUp}>
+              <p>Modal</p>
+          </Instructions>
+          : <div></div>
+        }
+
         <div id="top-wrapper">
           <div id="form-wrapper">
             <h2>Find Github Repositories</h2>
