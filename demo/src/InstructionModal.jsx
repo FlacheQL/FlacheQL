@@ -8,7 +8,6 @@ class Instructions extends React.Component {
   render() {
 
     return (
-      <div className="backdrop"  >
        <div className="modal" >
         <h1>Git Demo</h1>
         <div className="description"> 
@@ -24,7 +23,6 @@ class Instructions extends React.Component {
           <button onClick={this.props.onClose}>Close</button>
         </div>
         </div>
-      </div>
     )
   }
 }
