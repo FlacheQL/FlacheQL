@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack-dev-server --mode development --open",
-    "dist": "rm -rf dist && npm run build"
+    "dist": "rm -rf dist && npm run build",
+    "start-server": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +16,7 @@
     "apollo-client": "^2.3.3",
     "apollo-link-context": "^1.0.8",
     "apollo-link-http": "^1.5.4",
+    "body-parser": "^1.18.3",
     "deep-diff": "^1.0.1",
     "express": "^4.16.3",
     "fast-clone": "^1.5.3",
@@ -24,6 +26,7 @@
     "graphql-tag": "^2.9.2",
     "http": "0.0.0",
     "lodash": "^4.17.10",
+    "node-fetch": "^2.1.2",
     "react": "^16.4.0",
     "react-bootcards": "^0.1.0",
     "react-bootstrap": "^0.32.1",
@@ -45,6 +48,7 @@
     "css-loader": "^0.28.11",
     "express-graphql": "^0.6.12",
     "html-webpack-plugin": "^3.2.0",
+    "nodemon": "^1.17.5",
     "react-apollo": "^2.1.5",
     "style-loader": "^0.21.0",
     "webpack": "^4.12.0",
