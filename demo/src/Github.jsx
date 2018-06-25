@@ -14,7 +14,6 @@ class GitHub extends Component {
   constructor(props) {
     super(props);
     /* Flache Implementation */
-    this.cache = new Flache();
     this.state = {
       moreOptions: {
         createdAt: false,  
@@ -37,8 +36,6 @@ class GitHub extends Component {
       apolloTimerClass: "timerF",
       activeModal: null
     };
-    this.headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
-    this.endpoint = 'https://api.github.com/graphql';
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getRepos = this.getRepos.bind(this);
@@ -64,13 +61,31 @@ class GitHub extends Component {
 
   /* initial modal render */
   componentDidMount() {
-    console.log('mounted, active modal: ', this.state.activeModal);
+    // console.log('mounted, active modal: ', this.state.activeModal);
     setTimeout(() => {this.showModal();}, 250)
-    // ---- SETUP CACHING ENGINES ----
+    // ---- SETUP PARAMS FOR CACHING ENGINES ----
+    const endpoint = 'https://api.github.com/graphql';
+    const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
+    const options = {
+      paramRetrieval: true,
+      fieldRetrieval: true,
+      subsets: {
+        terms: '=',
+        languages: '> string',
+        stars: '>= number',
+        num: '<= number',
+      },
+      queryPaths: { stars: 'node.stargazers.totalCount' },
+      pathToNodes: 'data.search.edges',
+    };
+    
+    // ---- INIT FLACHE CLIENT ----
+    this.cache = new Flache(endpoint, headers, options);
+
     // ---- INIT APOLLO CLIENT ----
-    const httpLink = new HttpLink({uri: this.endpoint });
+    const httpLink = new HttpLink({uri: endpoint });
     const authLink = setContext(() => ({
-      headers: this.headers,
+      headers: headers,
     }));
     const link = authLink.concat(httpLink)
     this.apolloClient = new ApolloClient({
@@ -96,24 +111,6 @@ class GitHub extends Component {
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
     // refer to the documentation for details on these options
     // FIXME: integrate this configuration with flache initialization, it never changes
-    const options = {
-      paramRetrieval: true,
-      fieldRetrieval: true,
-      defineSubsets: {
-        terms: '=',
-        languages: '> string',
-        stars: '>= number',
-        num: '<= number',
-      },
-      queryPaths: { stars: 'node.stargazers.totalCount' },
-      pathToNodes: 'data.search.edges',
-    };
-    const variables = { 
-      terms,
-      languages,
-      stars,
-      num,
-    };
     // start apollo timer - THAT'S RIGHT, WE RUN THEM FIRST - NO SHENANIGANS
     this.startTimer(false, num);
     // launch apollo query
@@ -122,7 +119,13 @@ class GitHub extends Component {
     // start flache timer
     this.startTimer(true, num);
     // launch flache query
-    this.cache.it(flacheQuery, variables, this.endpoint, this.headers, options)
+    const variables = { 
+      terms,
+      languages,
+      stars,
+      num,
+    }
+    this.cache.it(flacheQuery, variables)
       .then(res => this.handleResponse(res.data, true));
   }
 
