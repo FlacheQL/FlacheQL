@@ -4,7 +4,6 @@ import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import CacheNotifier from './CacheNotifier.jsx';
 import Flache from '../flache';
-import { CleanQuery } from '../helpers'
 import Documentation from './Documentation.jsx';
 import Instructions from './InstructionModal.jsx';
 import { Router, Route, hashHistory } from 'react-router';
@@ -68,6 +67,16 @@ class Main extends Component {
     setTimeout(() => {
       this.getRepos('react', 'javascript', 50000, 100, ['']);
     }, 1000);
+  }
+
+   // attempt for escape to close modal 
+   handleKeyUp(e) {
+    console.log('key press');
+    if (keys[e.keyCode] === 27) { 
+      e.preventDefault();
+        this.hideModal();
+        window.removeEventListener('keyup', this.handleKeyUp, false);
+    }
   }
 
   componentWillUnmount() {

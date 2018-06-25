@@ -37,14 +37,15 @@ export default class Flache {
     headers = { "Content-Type": "application/graphql" },
     options
   ) {
-    console.log('flache.it called');
+    console.log('flache.it called, import test, fetch func: ', Fetch);
     // create a key to store the payloads in the cache
     const stringifiedQuery = JSON.stringify(query);
     this.queryParams = CleanQuery(query);
+    console.log('testing flache, query params: ', this.queryParams);
 
     // create a children array to check params
     this.children = ConstructQueryChildren(query);
-   
+    console.log('testing, children array ', this.children);
     // if an identical query comes in return the cached result
     if (this.cache[stringifiedQuery]) {
       return new Promise((resolve) => {

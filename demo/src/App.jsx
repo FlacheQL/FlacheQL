@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
-
 // import route Components here
 import Main from './Main.jsx';
 import Docs from './Documentation.jsx';

@@ -4,7 +4,14 @@ import Gist from 'react-gist';
 
 
 class Caching extends React.Component {
-  
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.props.onKeyDown);
+  }
+
   render() {
 
     return (

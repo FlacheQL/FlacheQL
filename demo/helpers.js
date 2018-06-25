@@ -80,7 +80,8 @@ export default function Denormalize(pathsObject) {
   return payload;
 }
 
-export function Fetch(query, endpoint, headers, stringifiedQuery) {
+export default function Fetch(query, endpoint, headers, stringifiedQuery) {
+  console.log('Fetch called!!!');
   return new Promise((resolve, reject) => {
     fetch(endpoint, {
       method: "POST",
