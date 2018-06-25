@@ -1,7 +1,8 @@
 import denormalize from './denormalize';
 
 export default class Flache {
-  constructor(props) {
+  // TODO: have these parameters set-up on initialization rather than on each query
+  constructor(endpoint, options, headers) {
     this.cache = {};
     this.queryCache = {};
     this.fieldsCache = [];

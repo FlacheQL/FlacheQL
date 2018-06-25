@@ -5,6 +5,8 @@ import QueryTimer from './QueryTimer.jsx';
 import Flache from '../flache';
 import Form from './Form.jsx';
 
+console.log('yelp!');
+
 class Yelp extends Component {
   constructor(props) {
     super(props);
@@ -25,7 +27,7 @@ class Yelp extends Component {
       flacheTimerClass: "timerF",
       apolloTimer: {
         reqStartTime: null,
-        lastQueryTime: 'Please submit query...',
+        lastQueryTime: 'Apollo not running...',
         timerText: 'Last query fetched 0 results in',
       },
       apolloTimerClass: "timerF",
@@ -71,7 +73,7 @@ class Yelp extends Component {
       pathToNodes: "data.search.business"
     }
     const flacheQuery = buildQuery(location, limit, true, extraFields);
-    console.log(flacheQuery);
+    console.log('flachequery: ', flacheQuery);
     if (!disableApollo) {
       const apolloQuery = buildQuery(location, limit, false, extraFields);
       // start apollo timer
@@ -87,7 +89,7 @@ class Yelp extends Component {
     //     this.handleResponse(res.data, true)
     //   });
     fetch(endpoint, { headers, method: 'POST', body: flacheQuery }).then(resp => resp.json()).then((data) => {
-      this.handleResponse(data.data);
+      this.handleResponse(data.data, true);
     });
   }
 
@@ -100,34 +102,38 @@ class Yelp extends Component {
         saveOptions.push(options[i].value);
         updateOptions[options[i].value] = [true, options[i].value];
       } else updateOptions[options[i].value] = false;
-    } 
+    }
+    console.log('SAVEOPTIONS: ', saveOptions);
     this.setState({ moreOptions: updateOptions });
     return saveOptions;
   }
 
   handleResponse(data, flache) {
-    console.log('HANDLE RESPONSE: ', data);
     this.endTimer(flache, data.search.business.length);
     this.buildBoxes(data);
   }
 
   buildBoxes(data) {
-    console.log('buildBoxes: ', data)
-    // FIXME: TBD data structure
     const newBoxes = data.search.business.map((business, index) => {
       // yelp often does not return a business' hours, but still returns an empty hours array anyway
       const hours = business.hours[0] ? (business.hours[0].is_open_now ? 'yes' : 'no') : 'no info';
+      console.log('MOREOPTIONS: ', this.state.moreOptions);
       return (
-        <ResultBox
+        <YelpBox
           key={`b${index}`}
           name={business.name}
           rating={business.rating}
           hours={hours}
           categories={business.categories}
+          price={business.price}
+          distance={business.distance}
+          review_count={business.review_count}
+          phone={business.phone}
+          moreOptions={this.state.moreOptions}
         />
       );
     });
-    this.setState({ boxes: newBoxes });
+    this.setState({ yelpBoxes: newBoxes });
   }
 
   startTimer(flache, limit) {
@@ -161,12 +167,11 @@ class Yelp extends Component {
   /** Fired on search, collects input fields and calls getRepos */
   handleSubmit() {
     const extraFields = this.handleMoreOptions();
-    this.getRepos(
-      document.getElementById('searchText').value,
-      document.getElementById('searchLang').value,
-      Number(document.getElementById('searchStars').value),
-      document.getElementById('searchNum').value,
+    this.getResturaunts(
+      document.getElementById('location').value,
+      document.getElementById('limit').value,
       extraFields,
+      true
     );
   }
 

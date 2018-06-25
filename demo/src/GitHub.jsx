@@ -5,11 +5,14 @@ import Form from './Form.jsx';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import Documentation from './documentation.jsx';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { setContext } from 'apollo-link-context';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 
 class GitHub extends Component {
   constructor(props) {
     super(props);
-    this.cache = new Flache();
     this.state = {
       moreOptions: {
         createdAt: false,  
@@ -31,91 +34,37 @@ class GitHub extends Component {
       },
       apolloTimerClass: 'timerF',
     };
+    this.headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
+    this.endpoint = 'https://api.github.com/graphql';
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.buildQuery = this.buildQuery.bind(this);
     this.getRepos = this.getRepos.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
     this.buildBoxes = this.buildBoxes.bind(this);
     this.startTimer = this.startTimer.bind(this);
     this.endTimer = this.endTimer.bind(this);
     this.flashTimer = this.flashTimer.bind(this);
-    this.apolloClient = this.props.client;
+    this.flache = new Flache();
+    this.apolloClient;
   }
 
   componentDidMount() {
-    // cache persistence
-    this.cache.readFromSessionStorage();
+    // ---- SETUP CACHING ENGINES ----
+    // ---- INIT APOLLO CLIENT ----
+    const httpLink = new HttpLink({uri: this.endpoint });
+    const authLink = setContext(() => ({
+      headers: this.headers,
+    }));
+    const link = authLink.concat(httpLink)
+    this.apolloClient = new ApolloClient({
+      link,
+      cache: new InMemoryCache(),
+    });
+    // initial fetch
     setTimeout(() => {
       this.getRepos('react', 'javascript', 50000, 100, ['']);
     }, 1000);
   }
-
-  componentWillUnmount() {
-    // cache persistence
-    this.cache.saveToSessionStorage();
-  }
-
-  /**
-* Compiles a GraphQL query string tailored to the engine it's intended for
-* @param {string} terms The search string
-* @param {string} languages The languages to limit result set
-* @param {number} stars The minimum number of stars to limit result set
-* @param {number} num The number of results to fetch, entered by the user in an input box
-* @param {boolean} flache Determines which cache engine to build for, true for Flache, false for Apollo
-* @param {array} extraFields An array containing information on which checkbokes are ticked
-* @returns {string}
-*/
-buildQuery(terms, languages, stars, num, flache, extraFields) {
-  if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
-  if (!terms || terms === 'graphql');
-  if (num > 100) return window.alert('max 100 results!');
-  const searchQuery = `"${terms || ''}${languages ? ' language:' + languages : ''}${stars ? ' stars:>' + stars : ''}"`;
-  if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
-  let str = '';
-  extraFields.forEach((e) => { str += '\n' + e });
-  return flache ? `{
-    search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
-      repositoryCount
-      edges {
-        node {
-          ... on Repository {
-            name
-            ${str}
-            descriptionHTML
-            stargazers {
-              totalCount
-            }
-            forks {
-              totalCount
-            }
-            updatedAt
-          }
-        }
-      }
-    }
-  }` :
-  gql`{
-    search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
-      repositoryCount
-      edges {
-        node {
-          ... on Repository {
-            name
-            ${str}
-            description
-            stargazers {
-              totalCount
-            }
-            forks {
-              totalCount
-            }
-          }
-        }
-      }
-    }
-  }`;
-}
 
   /**
   * Prepares user input and developer configs together for fetches through the cache
@@ -126,15 +75,10 @@ buildQuery(terms, languages, stars, num, flache, extraFields) {
   * @param {array} extraFields An array containing information on which checkbokes are ticked
   */
   getRepos(terms, languages, stars, num, extraFields) {
-    const endpoint = 'https://api.github.com/graphql'
-    const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
-    const variables = { 
-      terms,
-      languages,
-      stars,
-      num,
-    }
+    const flacheQuery = buildQuery(terms, languages, stars, num, true, extraFields);
+    const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
     // refer to the documentation for details on these options
+    // FIXME: integrate this configuration with flache initialization, it never changes
     const options = {
       paramRetrieval: true,
       fieldRetrieval: true,
@@ -146,21 +90,23 @@ buildQuery(terms, languages, stars, num, flache, extraFields) {
       },
       queryPaths: { stars: 'node.stargazers.totalCount' },
       pathToNodes: 'data.search.edges',
-    }
-    const flacheQuery = this.buildQuery(terms, languages, stars, num, true, extraFields);
-    const apolloQuery = this.buildQuery(terms, languages, stars, num, false, extraFields);
-    console.log()
+    };
+    const variables = { 
+      terms,
+      languages,
+      stars,
+      num,
+    };
     // start apollo timer - THAT'S RIGHT, WE RUN THEM FIRST - NO SHENANIGANS
     this.startTimer(false, num);
     // launch apollo query
-    this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
+    this.apolloClient.query({ query: apolloQuery })
+      .then(res => this.handleResponse(res.data, false));
     // start flache timer
     this.startTimer(true, num);
     // launch flache query
-    this.cache.it(flacheQuery, variables, endpoint, headers, options)
-      .then(res => {
-        this.handleResponse(res.data, true)
-      });
+    this.flache.it(flacheQuery, variables, this.endpoint, this.headers, options)
+      .then(res => this.handleResponse(res.data, true));
   }
 
   /**
@@ -303,6 +249,67 @@ buildQuery(terms, languages, stars, num, flache, extraFields) {
       </div>
     )
   }
+}
+
+/**
+* Compiles a GraphQL query string tailored to the engine it's intended for
+* @param {string} terms The search string
+* @param {string} languages The languages to limit result set
+* @param {number} stars The minimum number of stars to limit result set
+* @param {number} num The number of results to fetch, entered by the user in an input box
+* @param {boolean} flache Determines which cache engine to build for, true for Flache, false for Apollo
+* @param {array} extraFields An array containing information on which checkbokes are ticked
+* @returns {string}
+*/
+function buildQuery(terms, languages, stars, num, flache, extraFields) {
+  if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
+  if (!terms || terms === 'graphql');
+  if (num > 100) return window.alert('max 100 results!');
+  const searchQuery = `"${terms || ''}${languages ? ' language:' + languages : ''}${stars ? ' stars:>' + stars : ''}"`;
+  if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
+  let str = '';
+  extraFields.forEach((e) => { str += '\n' + e });
+  return flache ? `{
+    search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
+      repositoryCount
+      edges {
+        node {
+          ... on Repository {
+            name
+            ${str}
+            descriptionHTML
+            stargazers {
+              totalCount
+            }
+            forks {
+              totalCount
+            }
+            updatedAt
+          }
+        }
+      }
+    }
+  }` :
+  gql`{
+    search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
+      repositoryCount
+      edges {
+        node {
+          ... on Repository {
+            name
+            ${str}
+            description
+            stargazers {
+              totalCount
+            }
+            forks {
+              totalCount
+            }
+          }
+        }
+      }
+    }
+  }`;
 }
 
 export default GitHub;
