@@ -39,16 +39,16 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getRepos('react', 'javascript', 30000, 100, ['']);
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 50000, 100, ['']);
-    }, 1500)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 20000, 100, ['']);
-    }, 6000)
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 25000, 100, ['']);
-    }, 10000)
+    // this.getRepos('react', 'javascript', 30000, 100, ['']);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 100, ['']);
+    // }, 1500)
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 20000, 100, ['']);
+    // }, 6000)
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 25000, 100, ['']);
+    // }, 10000)
   }
 
   getRepos(terms, languages, stars, num, extraFields) {
@@ -210,7 +210,7 @@ class App extends Component {
             <div className="searchBoxes">
               <label># to fetch: <input id="searchNum" type="text" className="text"/></label>
             </div>
-            <input type="button" value="Search" onClick={() => this.handleSubmit([''])} />
+            <input className={"search-no-params"} type="button" value="Search" onClick={() => this.handleSubmit([''])} />
             <input type="button" value="Search w/createdAt" onClick={() => this.handleSubmit(['createdAt'])} />
             <input type="button" value="Search w/createdAt and databaseId" onClick={() => this.handleSubmit(['createdAt', 'databaseId'])} />
             <input type="button" value="Search w/databaseId" onClick={() => this.handleSubmit(['databaseId'])} />

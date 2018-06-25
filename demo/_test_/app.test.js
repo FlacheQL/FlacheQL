@@ -9,9 +9,14 @@ import { configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import renderer from 'react-test-renderer';
 import { shallow, mount, render } from 'enzyme';
+import { spy } from 'sinon';
 
 configure({ adapter: new Adapter() });
 
+
+/**
+ * research waht reactShallowrendered,l adapter and renderer do here...
+ */
 
 /**
  * Snapshot testing of initial render
@@ -58,14 +63,19 @@ it('Git box is instantiated as empty array upon load', () => {
 
 it('Cache is instantiated as Flache Cache', () => {
   const wrapper = shallow(<App/>);
+  //console.log('wrapper', wrapper.find('.main-container'));
   expect(wrapper.instance().cache).toEqual(new Flache());
 });
 
-////
+/**
+ * Testing fake ajax calls and functionality of component with Sinon and Sinon Spies
+ * looks like you have to use sinon to create stub of data, whats suppossed to be returned from
+ * ajax call and then use a spy to make sure that clicking the button works- testing the functionality and the promise aspect of it
+ */
 it('Clicking search button with valid values makes AJAX call to the Github API', () => {
-  const wrapper = shallow(<App/>);
-  const instance = wrapper.instance();
-  expect(instance.handleClick;
-  instance.incrementCounter();
-  expect(instance.state.count).toBe(1);
+  //have to mount all the stuff with values!!!!!!
+  const wrapper = mount(<App/>);
+  wrapper.find('.search-no-params').simulate('click');
+  //wrapper.findWhere(node => node.innerText === 'Search w/createdAt').simulate('click');
+  expect(wrapper.state('gitBoxes')).to.equal([]);
 });
