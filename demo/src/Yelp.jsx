@@ -58,8 +58,9 @@ class Yelp extends Component {
     // this.cache.saveToSessionStorage();
   }
 
-  getRestaurants(location, limit, extraFields, disableApollo) {
-    const endpoint = 'http://localhost:8000/yelp'
+
+  getResturaunts(location, limit, extraFields, disableApollo) {
+    const endpoint = 'http://ec2-54-153-36-136.us-west-1.compute.amazonaws.com:8000/yelp'
     const headers = { "Content-Type": "text/plain",
     "Authorization": "Bearer 1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx", }
     const variables = { 
