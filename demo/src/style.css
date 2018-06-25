@@ -119,6 +119,11 @@ fieldset {
   box-shadow: 2px 2px rgba(165, 165, 165, .4);
 }
 
+.fieldset-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 /* TIMER STYLING */
 
 #timer-wrapper {
@@ -180,20 +185,20 @@ fieldset {
   width: 100%;
 }
 
-.gitbox {
+.result-item {
   width: 90%;
   margin: 20px 0px;
   box-shadow: 2px 2px rgba(165, 165, 165, .4);
   background-color: honeydew; 
 }
 
-.gitbox-repo-name h3 {
+.search-title h3 {
   margin-bottom: 5px;
   padding-left: 7px;
   background-color: rgb(211, 255, 211);
 }
 
-.gitbox-searchResult {
+.result-item-field {
   padding: 0 0 5 7;
 }
 

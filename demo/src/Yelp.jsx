@@ -5,7 +5,7 @@ import QueryTimer from './QueryTimer.jsx';
 import Flache from '../flache';
 import Form from './Form.jsx';
 
-class App extends Component {
+class Yelp extends Component {
   constructor(props) {
     super(props);
     this.cache = new Flache();
@@ -14,7 +14,7 @@ class App extends Component {
         price: false,  
         review_count: false,
         phone: false,
-        review_count: false
+        distance: false,
       },
       yelpBoxes: [],
       flacheTimer : {
@@ -30,22 +30,23 @@ class App extends Component {
       },
       apolloTimerClass: "timerF",
     };
-
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.getResturaunts = this.getResturaunts.bind(this);
+    this.handleMoreOptions = this.handleMoreOptions.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
     this.buildBoxes = this.buildBoxes.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.startTimer = this.startTimer.bind(this);
     this.endTimer = this.endTimer.bind(this);
     this.flashTimer = this.flashTimer.bind(this);
-    this.apolloClient = this.props.client;
+    // TODO: apollo
+    // this.apolloClient = this.props.client;
   }
 
   componentDidMount() {
     // cache persistence
     this.cache.readFromSessionStorage();
     setTimeout(() => {
-      this.getRepos('react', 'javascript', 50000, 100, ['']);
+      this.getResturaunts('Venice', 10, [''], true);
     }, 1000);
   }
 
@@ -55,8 +56,9 @@ class App extends Component {
   }
 
   getResturaunts(location, limit, extraFields, disableApollo) {
-    const endpoint = 'https://api.yelp.com/v3/graphql'
-    const headers = { "Content-Type": "application/graphql", "Authorization": "1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx" }
+    const endpoint = 'http://localhost:8000/yelp'
+    const headers = { "Content-Type": "text/plain",
+    "Authorization": "Bearer 1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx", }
     const variables = { 
       limit,
     }
@@ -68,9 +70,10 @@ class App extends Component {
       },
       pathToNodes: "data.search.business"
     }
-    const flacheQuery = this.buildQuery(location, limit, true, extraFields);
+    const flacheQuery = buildQuery(location, limit, true, extraFields);
+    console.log(flacheQuery);
     if (!disableApollo) {
-      const apolloQuery = this.buildQuery(location, limit, false, extraFields);
+      const apolloQuery = buildQuery(location, limit, false, extraFields);
       // start apollo timer
       this.startTimer(false, limit);
       // launch apollo query
@@ -79,48 +82,13 @@ class App extends Component {
     // start flache timer
     this.startTimer(true, limit);
     // launch flache query
-    this.cache.it(flacheQuery, variables, endpoint, headers, options)
-      .then(res => {
-        this.handleResponse(res.data, true)
-      });
-  }
-
-  buildQuery(location, limit, flache, extraFields) {
-    if (!limit || limit === 0) return window.alert('Bad query! You must enter a number to search for.');
-    if (!location || location === '') return window.alert('Bad query! You must enter a limit (less than 50).')
-    if (limit > 50) return window.alert('Bad query! Max 50 results!');
-    let str = '';
-    extraFields.forEach(e => str += '\n' + e);
-    return flache ? `{
-      search(location: ${location} limit: ${limit}) {
-        business {
-          name
-          rating
-          hours {
-            is_open_now
-          }
-          categories {
-            title
-          }
-          ${extraFields}
-        }
-      }
-    }` :
-    gql`{
-      search(location: ${location} limit: ${limit}) {
-        business {
-          name
-          rating
-          hours {
-            is_open_now
-          }
-          categories {
-            title
-          }
-          ${extraFields}
-        }
-      }
-    }`;
+    // this.cache.it(flacheQuery, variables, endpoint, headers, options)
+    //   .then(res => {
+    //     this.handleResponse(res.data, true)
+    //   });
+    fetch(endpoint, { headers, method: 'POST', body: flacheQuery }).then(resp => resp.json()).then((data) => {
+      this.handleResponse(data.data);
+    });
   }
 
   handleMoreOptions() {
@@ -137,16 +105,29 @@ class App extends Component {
     return saveOptions;
   }
 
-  handleResponse(res, flache) {
-    this.endTimer(flache, res.search.business.length);
-    this.buildBoxes(res);
+  handleResponse(data, flache) {
+    console.log('HANDLE RESPONSE: ', data);
+    this.endTimer(flache, data.search.business.length);
+    this.buildBoxes(data);
   }
 
-  buildBoxes(res) {
-    const newBoxes = res.search.edges.map((repo, index) => {
-      return <YelpBox key={`b${index}`} name={repo.node.name} stars={repo.node.stargazers.totalCount} forks={repo.node.forks.totalCount}/>
+  buildBoxes(data) {
+    console.log('buildBoxes: ', data)
+    // FIXME: TBD data structure
+    const newBoxes = data.search.business.map((business, index) => {
+      // yelp often does not return a business' hours, but still returns an empty hours array anyway
+      const hours = business.hours[0] ? (business.hours[0].is_open_now ? 'yes' : 'no') : 'no info';
+      return (
+        <ResultBox
+          key={`b${index}`}
+          name={business.name}
+          rating={business.rating}
+          hours={hours}
+          categories={business.categories}
+        />
+      );
     });
-    this.setState({ yelpBoxes: newBoxes });
+    this.setState({ boxes: newBoxes });
   }
 
   startTimer(flache, limit) {
@@ -177,11 +158,35 @@ class App extends Component {
     }
   }
 
+  /** Fired on search, collects input fields and calls getRepos */
+  handleSubmit() {
+    const extraFields = this.handleMoreOptions();
+    this.getRepos(
+      document.getElementById('searchText').value,
+      document.getElementById('searchLang').value,
+      Number(document.getElementById('searchStars').value),
+      document.getElementById('searchNum').value,
+      extraFields,
+    );
+  }
+
   render() {
     return (
       <div className="main-container">
         <div id="top-wrapper">
-          <Form handleSubmit={this.handleSubmit} />
+          <Form
+            handleSubmit={this.handleSubmit}
+            fields={[
+              { label: 'Search: ', id: 'location' },
+              { label: '# to fetch: ', id: 'limit' },
+            ]}
+            extras={[
+              { label: ' Price', id: 'price' },
+              { label: ' Review Count', id: 'review_count' },
+              { label: ' Distance from location', id: 'distance' },
+              { label: ' Phone number', id: 'phone' },
+            ]}
+          />
           <div id="timer-wrapper">
             <QueryTimer
               class={this.state.flacheTimerClass}
@@ -198,9 +203,57 @@ class App extends Component {
           </div>
         </div>
         <div className="result-list">
-          {this.state.gitBoxes}
+          {this.state.yelpBoxes}
         </div>
       </div>
     )
   }
 }
+
+/**
+* Compiles a GraphQL query string tailored to the engine it's intended for
+* @param {string} location The location to retrieve from
+* @param {number} limit The number of results to fetch, entered by the user in an input box
+* @param {boolean} flache Determines which cache engine to build for, true for Flache, false for Apollo
+* @param {array} extraFields An array containing information on which checkbokes are ticked
+* @returns {string}
+*/
+function buildQuery(location, limit, flache, extraFields) {
+  if (!limit || limit === 0) return window.alert('Bad query! You must enter a number to search for.');
+  if (!location || location === '') return window.alert('Bad query! You must enter a limit (less than 50).')
+  if (limit > 50) return window.alert('Bad query! Max 50 results!');
+  let str = '';
+  extraFields.forEach(e => str += '\n' + e);
+  return flache ? `{
+    search(location: "${location}" limit: ${limit}) {
+      business {
+        name
+        rating
+        hours {
+          is_open_now
+        }
+        categories {
+          title
+        }
+        ${extraFields}
+      }
+    }
+  }` :
+  gql`{
+    search(location: ${location} limit: ${limit}) {
+      business {
+        name
+        rating
+        hours {
+          is_open_now
+        }
+        categories {
+          title
+        }
+        ${extraFields}
+      }
+    }
+  }`;
+}
+
+export default Yelp;

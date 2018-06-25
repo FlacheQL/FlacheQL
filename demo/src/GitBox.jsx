@@ -14,11 +14,11 @@ class GitBox extends Component {
    
     
     return (
-      <div className="gitbox">
-        <div className="gitbox-repo-name"><h3>{this.props.name}</h3></div>
-        <div className="gitbox-searchResult"><strong>Description:</strong> {this.props.description}</div>
-        <div className="gitbox-searchResult"><strong>Stars:</strong> {this.props.stars} </div>
-        <div className="gitbox-searchResult"><strong>Forks:</strong> {this.props.forks}</div>
+      <div className="result-item">
+        <div className="search-title"><h3>{this.props.name}</h3></div>
+        <div className="search-item-field"><strong>Description:</strong> {this.props.description}</div>
+        <div className="search-item-field"><strong>Stars:</strong> {this.props.stars} </div>
+        <div className="search-item-field"><strong>Forks:</strong> {this.props.forks}</div>
         { displayOptions }
       </div>
 

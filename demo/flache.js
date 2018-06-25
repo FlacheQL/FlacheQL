@@ -43,12 +43,12 @@ export default class Flache {
 
     // create a children array to check params
     this.children = this.createChildren(query);
-    console.log('query children: ', this.children);
+    // console.log('query children: ', this.children);
 
     // if an identical query comes in return the cached result
     if (this.cache[stringifiedQuery]) {
       return new Promise((resolve) => {
-        console.log('resolving from cache')
+        // console.log('resolving from cache')
         resolve(this.cache[stringifiedQuery]);
       });
     }
@@ -173,7 +173,7 @@ export default class Flache {
         if (foundMatch) {
             return new Promise((resolve) => {
                 filtered = denormalize(filtered);
-                console.log(filtered);
+                // console.log(filtered);
                 resolve(filtered);
               });
         }
@@ -205,7 +205,7 @@ export default class Flache {
           this.cache[stringifiedQuery] = res;
           let normalizedData = this.flatten(res);
           this.fieldsCache.push({[this.queryParams]: {data: normalizedData, children: this.createChildren(query)}});
-            console.log(res)
+            // console.log(res)
           setTimeout(
             () => delete this.cache[stringifiedQuery],
             this.cacheExpiration

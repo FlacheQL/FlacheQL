@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { HashRouter, Route, Link } from 'react-router-dom';
 
-import Main from './Main.jsx';
+import GitHub from './GitHub.jsx';
 import Home from './Home.jsx';
+import Yelp from './Yelp.jsx';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    console.log(this);
   }
+
+  // TODO: here is where we should initialize or destroy apollo client depending on the page selected
 
   render() {
     return (
@@ -20,8 +22,8 @@ class App extends Component {
             <center><Link to="/yelp"><div>Yelp</div></Link></center>
           </div>
           <hr />
-          <Route exact path="/github" render={() => <Main client={this.props.client} />} />
-          <Route exact path="/yelp" render={() => <div><center>YELP DOESN'T EVEN EXIST YET</center></div>} />
+          <Route exact path="/github" render={() => <GitHub client={this.props.client} />} />
+          <Route exact path="/yelp" render={() => <Yelp />} />
           <Route exact path="/home" component={Home} />
           <Route exact path="/" component={Home} />
         </div>
