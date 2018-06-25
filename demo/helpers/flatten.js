@@ -1,4 +1,4 @@
-const Flatten = (object) => {
+const flatten = (object) => {
   return Object.assign( {}, ...function _flatten( objectBit, path = '') {
     return [].concat(
       ...Object.keys( objectBit ).map(
@@ -12,4 +12,4 @@ const Flatten = (object) => {
   }(object));
 }
 
-export default Flatten;
+export default flatten;

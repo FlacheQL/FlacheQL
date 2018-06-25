@@ -1,4 +1,4 @@
-const CreateCallbacksForPartialQueryValidation = (subsets) => {
+const createCallbacksForPartialQueryValidation = (subsets) => {
   return Object.values(subsets).reduce((obj, subsetRule) => {
     let func;
     switch (subsetRule) {
@@ -28,4 +28,4 @@ const CreateCallbacksForPartialQueryValidation = (subsets) => {
   }, {});
 }
 
-export default CreateCallbacksForPartialQueryValidation;
+export default createCallbacksForPartialQueryValidation;

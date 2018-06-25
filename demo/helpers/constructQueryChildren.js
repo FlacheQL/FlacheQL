@@ -1,4 +1,4 @@
-const ConstructQueryChildren = (query) => {
+const constructQueryChildren = (query) => {
   let childArr = [];
   let splitQ = query.split('\n');
   splitQ.forEach((ele, index, array) => {
@@ -12,4 +12,4 @@ const ConstructQueryChildren = (query) => {
   return childArr;
 }
 
-export default ConstructQueryChildren;
+export default constructQueryChildren;
