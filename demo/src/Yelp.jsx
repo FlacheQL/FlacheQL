@@ -61,6 +61,7 @@ class Yelp extends Component {
 
   getResturaunts(location, limit, extraFields, disableApollo) {
     const endpoint = 'http://www.flacheql.io:8000/yelp'
+
     const headers = { "Content-Type": "text/plain",
     "Authorization": "Bearer 1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx", }
     const variables = { 
