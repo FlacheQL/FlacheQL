@@ -1,7 +1,14 @@
-import denormalize from './denormalize';
+import CleanQuery from './helpers/CleanQuery';
+import ConstructQueryChildren from './helpers/ConstructQueryChildren';
+import ConstructResponsePath from './helpers/ConstructResponsePath';
+import CreateCallbacksForPartialQueryValidation from './helpers/CreateCallbacksForPartialQueryValidation';
+import Denormalize from './helpers/Denormalize';
+import Fetch from './helpers/Fetch';
+import Flatten from './helpers/Flatten';
 
 export default class Flache {
-  constructor(props) {
+  // TODO: have these parameters set-up on initialization rather than on each query
+  constructor(endpoint, options, headers) {
     this.cache = {};
     this.queryCache = {};
     this.fieldsCache = [];
@@ -15,11 +22,17 @@ export default class Flache {
     };
   }
 
+  /**
+  * Saves all Flache data to browser session storage for cache persistence. Purges after 200 seconds.
+  */
   saveToSessionStorage() {
     Object.keys(this).forEach(key => sessionStorage.setItem(key, JSON.stringify(this[key])));
     setTimeout(() => sessionStorage.clear(), 200000);
   }
 
+  /**
+  * Grabs any relevant Flache data from browser session storage.
+  */
   readFromSessionStorage() {
     Object.keys(this).forEach((key) => { if (sessionStorage.getItem(key)) this[key] = JSON.parse(sessionStorage.getItem(key)); });
   }
@@ -31,18 +44,18 @@ export default class Flache {
     headers = { "Content-Type": "application/graphql" },
     options
   ) {
+    console.log('flache.it called');
     // create a key to store the payloads in the cache
     const stringifiedQuery = JSON.stringify(query);
-    this.queryParams = this.cleanQuery(query);
+    this.queryParams = CleanQuery(query);
 
     // create a children array to check params
-    this.children = this.createChildren(query);
-    console.log('query children: ', this.children);
-
+    this.children = ConstructQueryChildren(query);
+   
     // if an identical query comes in return the cached result
     if (this.cache[stringifiedQuery]) {
       return new Promise((resolve) => {
-        console.log('resolving from cache')
+        // console.log('resolving from cache')
         resolve(this.cache[stringifiedQuery]);
       });
     }
@@ -50,14 +63,14 @@ export default class Flache {
     // set boolean to check for partial queries, else skip straight to fetch and return
     if (options.paramRetrieval) this.options.paramRetrieval = true;
     if (options.fieldRetrieval) this.options.fieldRetrieval = true;
-    else return this.fetchData(query, endpoint, headers, stringifiedQuery);
+    else return Fetch(query, endpoint, headers, stringifiedQuery);
 
     // save subsets to state
     if (options.defineSubsets) this.options.subsets = options.defineSubsets;
 
     // returns an object of callback functions that check query validity using subset options
     if (!this.cbs) {
-        this.cbs = this.createCallbacksForPartialQueryValidation(
+        this.cbs = CreateCallbacksForPartialQueryValidation(
           this.options.subsets
         );
     }
@@ -103,11 +116,9 @@ export default class Flache {
                             let arg2 = this.queryCache[currentKey][currentMatchedQuery];
                             let result = this.cbs[rule](arg1, arg2);
       
-                            // if the result of the callback is truthy, set the boolean to that value
                             if (result) {
                                 allQueriesPass = result;
                             } else {
-                                // reset the boolean and break out
                                 allQueriesPass = false;
                                 break;
                             }
@@ -116,11 +127,11 @@ export default class Flache {
                         if (allQueriesPass) {
                             let pathToNodes = options.pathToNodes;
                             let cached = Object.assign(this.cache[currentMatchedQuery], {});
-                            let { path, lastTerm } = this.constructResponsePath(pathToNodes, cached)
+                            let { path, lastTerm } = ConstructResponsePath(pathToNodes, cached)
             
                             for (let key in options.queryPaths) {
                             path[lastTerm] = path[lastTerm].filter(el => {
-                                let { path, lastTerm } = this.constructResponsePath(options.queryPaths[key], el)
+                                let { path, lastTerm } = ConstructResponsePath(options.queryPaths[key], el)
                                 return this.cbs[this.options.subsets[key]](path[lastTerm], variables[key])
                             });
                             }
@@ -166,8 +177,7 @@ export default class Flache {
 
         if (foundMatch) {
             return new Promise((resolve) => {
-                filtered = denormalize(filtered);
-                console.log(filtered);
+                filtered = Denormalize(filtered);
                 resolve(filtered);
               });
         }
@@ -178,117 +188,10 @@ export default class Flache {
             return resolve(this.cache[stringifiedQuery]);
         });
         } else {
-            return this.fetchData(query, endpoint, headers, stringifiedQuery);
+            return Fetch(query, endpoint, headers, stringifiedQuery);
         } 
     }
-    return this.fetchData(query, endpoint, headers, stringifiedQuery);
-  }
-  
-
-  fetchData(query, endpoint, headers, stringifiedQuery) {
-    return new Promise((resolve, reject) => {
-      fetch(endpoint, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          query
-        })
-      })
-        .then(res => res.json())
-        .then(res => {
-          this.cache[stringifiedQuery] = res;
-          let normalizedData = this.flatten(res);
-          this.fieldsCache.push({[this.queryParams]: {data: normalizedData, children: this.createChildren(query)}});
-            console.log(res)
-          setTimeout(
-            () => delete this.cache[stringifiedQuery],
-            this.cacheExpiration
-          );
-          resolve(res);
-          if (this.options.resultsVariable) {
-            // ADD PROPERTY ON QUERY IN CACHE TO INDICATE WHETHER NUMBER OF RETURNED RESULTS IS GREATER THAN MAX
-          }
-        })
-        .catch(err => err);
-    });
-  }
-
-  createCallbacksForPartialQueryValidation(subsets) {
-    return Object.values(subsets).reduce((obj, subsetRule) => {
-      let func;
-      switch (subsetRule) {
-        case "=":
-          func = (str1, str2) => {
-            return str1 == str2;
-          };
-          break;
-        case "> string":
-          func = (str1, str2) => {
-            return str1.includes(str2);
-          };
-          break;
-        case ">= number":
-          func = (num1, num2) => {
-            return num1 >= num2;
-          };
-          break;
-        case "<= number":
-          func = (num1, num2) => {
-            return num1 <= num2;
-          };
-          break;
-      }
-      obj[subsetRule] = func;
-      return obj;
-    }, {});
-  }
-
-  constructResponsePath(pathString, object) {
-    let terms = pathString.split(".");
-    let lastTerm = terms.pop();
-    let path = terms.reduce((acc, next) => {
-      return acc[next];
-    }, object);
-    return { path, lastTerm }
-  }
-
-  cleanQuery(query) {
-    let queryStr = JSON.stringify(query);
-    let resultStr = queryStr.replace(/\s+/g, '  ').trim();
-    resultStr = resultStr.replace(/\s+/g, ' ').trim();
-    resultStr = resultStr.replace(/\\n/g, ' ');
-    resultStr = resultStr.replace('/', '');
-    resultStr = resultStr.replace(/\\/g, '');
-    resultStr = resultStr.match(/\(.*\)/)[0];
-    return resultStr;
-  }
-
-  flatten(object) {
-    return Object.assign( {}, ...function _flatten( objectBit, path = '') {
-      return [].concat(
-        ...Object.keys( objectBit ).map(
-          key => {
-              return typeof objectBit[key] === 'object' ?
-           _flatten( objectBit[key], `${path}.${key}`) : 
-          ( { [`${ path }.${ key }` ]: objectBit[key]});
-          }
-        )
-      )
-    }(object));
-  }
-
-  createChildren(query) {
-    let childArr = [];
-    let splitQ = query.split('\n');
-    splitQ.forEach((ele, index, array) => {
-      if (index > 1) {
-        if ( array[index - 1].includes('{') && array[index + 1].includes('}') ) {
-          let pushThis = array[index - 1].replace(' {', '').trim() + '.' + ele.trim();
-          childArr.push(pushThis.trim());
-        } else if ( !ele.includes('{') && !ele.includes('}') && ele.trim() != "") childArr.push(ele.trim());
-      }
-    });
-    return childArr;
+    return Fetch(query, endpoint, headers, stringifiedQuery);
   }
 }
 

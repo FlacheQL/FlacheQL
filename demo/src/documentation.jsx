@@ -15,6 +15,7 @@ class Documentation extends Component {
 
     this.clickHandler = this.clickHandler.bind(this);
     this.hideModal = this.hideModal.bind(this);
+    this.onKey = this.onKey.bind(this);
   }
 
   clickHandler(e, index) {
@@ -27,10 +28,26 @@ class Documentation extends Component {
     this.setState({ activeModal: null })
   }
 
+  // blur background if modal is opened
+  // backgroundBlur() {
+  //   if (this.state.activeModal) {
+
+  //   }
+  // }
+
+  onKey(e) {
+    if (e.keycode === 27) this.setState({ activeModal: null });
+  } 
+
+  // componentWillMount() {
+  //   document.addEventListener("keydown", this.escapeKey.bind(this));
+  // }
+  //onKeyDown={(e) => this.escapeKey(e)}
+
   render () {
     let i = 0;
     let list = this.state.docTopics.map( (topic, index) => {
-      return <button className="doc-container" key={i++} onClick={(e) => this.clickHandler(e, index)}>{topic}</button>
+      return <button className="doc-container" key={i++} onClick={(e) => this.clickHandler(e, index)} onKeyDown={(e) => this.onKey(e)}>{topic}</button>
     });
 
     return (
@@ -38,7 +55,7 @@ class Documentation extends Component {
       {list}
 
       {this.state.activeModal === 0 ? 
-       <Setup isOpen={this.state.activeModal} onClose={this.hideModal}>
+        <Setup isOpen={this.state.activeModal} onClose={this.hideModal}>
             <p>Modal</p>
         </Setup>
         : <div></div>
@@ -55,6 +72,13 @@ class Documentation extends Component {
         <Features isOpen={this.state.activeModal} onClose={this.hideModal}>
           <p>Modal</p>
         </Features>
+        : <div></div>
+      }
+
+    
+      {this.state.activeModal ?
+        <div className="modal-overlay" id="modal-overlay">
+        </div>
         : <div></div>
       }
 
