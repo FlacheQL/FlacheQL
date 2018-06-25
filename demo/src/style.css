@@ -8,6 +8,10 @@ body {
   background-color: mintcream;
 }
 
+button {
+  font-family: inherit;
+}
+
 .body-wrapper {
   width: 100%;
   display: flex;
@@ -15,8 +19,32 @@ body {
   align-items: center;
 }
 
-.hidden {
-  display: none;
+/* NAV BAR */
+
+.navigation-bar {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  min-width: 800px;
+  width: 80%;
+}
+
+.navigation-bar a {
+  font-size: 24px;
+  text-decoration: none;
+}
+
+.navigation-bar div:hover {
+  background-color: #bad;
+  animation-name: colorNav;
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+}
+
+.navigation-bar div {
+  min-width: 150px;
+  padding: 20px;
+  border-radius: 5px;
 }
 
 #content {
@@ -26,19 +54,43 @@ body {
   flex-direction: column;
 }
 
-#navMenu {
-  position: fixed;
-  left: 0;
-  top: 0;
-  transform: translate3d(-100vw, 0, 0);
-  transition: transform .3s cubic-bezier(0, .52, 0, 1);
-  width: 100vw;
-  height: 100vh;
+.title * {
+  font-size: 46px;
+  margin: 20 0 10 0;
+  text-shadow: 2px 2px lightgray;
+}
 
+.main-container {
+  min-width: 800px !important;
+  width: 80%;
+  margin: 0 auto;
+}
+
+#top-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: flex;
+  justify-content: center;
+}
+
+/* FORM */
+
+#form-wrapper {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+#form-wrapper button {
+  width: 60%;
+  background-color: lightgreen;
+  padding: 5px;
+  margin: 5px auto 0 auto;
 }
 
 input {
-  background: #bada55;
+  background: lightgreen;
   padding: 5;
   width: 30%;
   margin-top: 2;
@@ -47,13 +99,6 @@ input {
 
 input.searchOptions {
   width: 5%;
-}
-
-input[type=button] {
-  margin: 5 0 0 80;
-  width: 70%;
-  font-size: 14px;
-  font-family: inherit;
 }
 
 input[type=text] {
@@ -66,28 +111,23 @@ input[type=text] {
   line-height: 2;
 }
 
-.result-list {
-  width: 90%;
+fieldset {
+  margin-bottom: 5px;
+  line-height: 1.4;
+  background-color: rgb(211, 255, 211);
+  border-style: ridge;
+  box-shadow: 2px 2px rgba(165, 165, 165, .4);
 }
 
-.cache-notifier {
-  
-}
-
-#form-wrapper {
-  width: 40%;
+.fieldset-wrapper {
   display: flex;
   flex-direction: column;
-  align-content: center;
 }
 
-#top-wrapper {
-  width: 100%;
-  display: flex;
-}
+/* TIMER STYLING */
 
 #timer-wrapper {
-  width: 50%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -139,68 +179,69 @@ input[type=text] {
   margin: 0 0 5 0;
 }
 
-fieldset {
-  width: %;
-  margin-bottom: 5px;
-  line-height: 1.4;
-  background-color: rgb(211, 255, 211);
-  border-style: ridge;
-  box-shadow: 2px 2px rgba(165, 165, 165, .4);
+/* RESULT LIST */
+
+.result-list {
+  width: 100%;
 }
 
-.gitbox {
+.result-item {
   width: 90%;
-  margin: 20px;
+  margin: 20px 0px;
   box-shadow: 2px 2px rgba(165, 165, 165, .4);
   background-color: honeydew; 
 }
 
-.gitbox-repo-name h3 {
+.search-title h3 {
   margin-bottom: 5px;
   padding-left: 7px;
   background-color: rgb(211, 255, 211);
 }
 
-.gitbox-searchResult {
+.result-item-field {
   padding: 0 0 5 7;
 }
 
 /* LANDING PAGE */
 
-.navigation-bar {
+.landing-container {
+  padding: 10px;
   margin: 0 auto;
-  display: flex;
-  justify-content: space-around;
   min-width: 800px;
   width: 80%;
-}
-
-.navigation-bar a {
   font-size: 20px;
-  text-decoration: none;
-}
-
-.navigation-bar div:hover {
-  background-color: #bad;
-}
-
-.navigation-bar div {
-  min-width: 100px;
-  padding: 20px;
 }
 
 .landing-link {
+  font-size: 18px;
+  text-decoration: none;
+  color: rgb(202, 187, 233);
+  min-width: 100px;
   padding: 15px;
   border: 2px solid rgb(202, 187, 233);
   border-radius: 5px;
-  margin: 0 20px;
+  margin: 10px 20px;
   background: linear-gradient(rgb(98, 66, 161), rgb(49, 9, 128));
 }
 
-.landing-link a {
-  text-decoration: none;
-  color: #bad;
-  font-size: 18px;
+.landing-link:hover {
+  background: rgb(49, 9, 128);
+  background-color:  rgb(49, 9, 128);
+  animation-name: colorLink;
+  animation-duration: 1.2s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes colorLink {
+  0% { background-color: rgb(49, 9, 128); }
+  50% { background-color: rgb(98, 66, 161); }
+	100% { background-color: rgb(49, 9, 128); }
+}
+
+@keyframes colorNav {
+  0% { background-color: rgb(198, 182, 229); }
+  50% { background-color: rgb(222, 209, 248); }
+	100% { background-color: rgb(198, 182, 229); }
 }
 
 .landing-link-wrapper {

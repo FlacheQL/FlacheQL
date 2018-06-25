@@ -1,7 +1,8 @@
 import denormalize from './denormalize';
 
 export default class Flache {
-  constructor(props) {
+  // TODO: have these parameters set-up on initialization rather than on each query
+  constructor(endpoint, options, headers) {
     this.cache = {};
     this.queryCache = {};
     this.fieldsCache = [];
@@ -13,6 +14,21 @@ export default class Flache {
       fieldRetrieval: false,
       subsets: {},
     };
+  }
+
+  /**
+  * Saves all Flache data to browser session storage for cache persistence. Purges after 200 seconds.
+  */
+  saveToSessionStorage() {
+    Object.keys(this).forEach(key => sessionStorage.setItem(key, JSON.stringify(this[key])));
+    setTimeout(() => sessionStorage.clear(), 200000);
+  }
+
+  /**
+  * Grabs any relevant Flache data from browser session storage.
+  */
+  readFromSessionStorage() {
+    Object.keys(this).forEach((key) => { if (sessionStorage.getItem(key)) this[key] = JSON.parse(sessionStorage.getItem(key)); });
   }
 
   it(
@@ -28,12 +44,12 @@ export default class Flache {
 
     // create a children array to check params
     this.children = this.createChildren(query);
-    console.log('query children: ', this.children);
+    // console.log('query children: ', this.children);
 
     // if an identical query comes in return the cached result
     if (this.cache[stringifiedQuery]) {
       return new Promise((resolve) => {
-        console.log('resolving from cache')
+        // console.log('resolving from cache')
         resolve(this.cache[stringifiedQuery]);
       });
     }
@@ -158,7 +174,7 @@ export default class Flache {
         if (foundMatch) {
             return new Promise((resolve) => {
                 filtered = denormalize(filtered);
-                console.log(filtered);
+                // console.log(filtered);
                 resolve(filtered);
               });
         }
@@ -190,7 +206,7 @@ export default class Flache {
           this.cache[stringifiedQuery] = res;
           let normalizedData = this.flatten(res);
           this.fieldsCache.push({[this.queryParams]: {data: normalizedData, children: this.createChildren(query)}});
-            console.log(res)
+            // console.log(res)
           setTimeout(
             () => delete this.cache[stringifiedQuery],
             this.cacheExpiration
