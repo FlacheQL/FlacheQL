@@ -39,8 +39,14 @@ export default class Flache {
   }
 
   it(query, variables) {
+    console.log('variables', variables)
+    console.log('headers', this.headers)
+    console.log('options', this.options)
+    console.log('endpoint', this.endpoint)
+    console.log('fetching:')
     // create a key to store the payloads in the cache
     const stringifiedQuery = JSON.stringify(query);
+    return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery)
     this.queryParams = cleanQuery(query);
 
     // create a children array to check params
@@ -203,11 +209,12 @@ export default class Flache {
       fetch(endpoint, {
         method: "POST",
         headers,
-        body: JSON.stringify({query})
+        body: query
       })
       .then(res => res.json())
       .then(res => {
-          this.cache[stringifiedQuery] = res;
+        console.log('getting res from fetch:', res)  
+        this.cache[stringifiedQuery] = res;
           let normalizedData = flatten(res);
           this.fieldsCache.push({
             [this.queryParams]: {
