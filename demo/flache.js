@@ -38,24 +38,6 @@ export default class Flache {
     });
   }
 
-<<<<<<< HEAD
-  it(
-    query,
-    variables,
-    endpoint,
-    headers = { "Content-Type": "application/graphql" },
-    options
-  ) {
-    console.log('flache.it called, import test, fetch func: ', Fetch);
-    // create a key to store the payloads in the cache
-    const stringifiedQuery = JSON.stringify(query);
-    this.queryParams = CleanQuery(query);
-    console.log('testing flache, query params: ', this.queryParams);
-
-    // create a children array to check params
-    this.children = ConstructQueryChildren(query);
-    console.log('testing, children array ', this.children);
-=======
   it(query, variables) {
     // create a key to store the payloads in the cache
     const stringifiedQuery = JSON.stringify(query);
@@ -64,7 +46,6 @@ export default class Flache {
     // create a children array to check params
     this.children = constructQueryChildren(query);
 
->>>>>>> b8da6cfa72486b900593dcad9a0a2f024fc96040
     // if an identical query comes in return the cached result
     if (this.cache[stringifiedQuery]) {
       return new Promise(resolve => {

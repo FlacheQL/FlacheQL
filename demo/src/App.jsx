@@ -1,19 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
-<<<<<<< HEAD
-// import route Components here
-import Main from './Main.jsx';
-import Docs from './Documentation.jsx';
-
-import {
-  HashRouter,
-  Route,
-  Link,
-} from 'react-router-dom';
-=======
 
 import { HashRouter, Route, Link } from 'react-router-dom';
->>>>>>> b8da6cfa72486b900593dcad9a0a2f024fc96040
 
 import GitHub from './GitHub.jsx';
 import Home from './Home.jsx';
