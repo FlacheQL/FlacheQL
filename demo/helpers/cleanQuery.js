@@ -1,4 +1,4 @@
-const CleanQuery = (query) => {
+const cleanQuery = (query) => {
   let queryStr = JSON.stringify(query);
     let resultStr = queryStr.replace(/\s+/g, '  ').trim();
     resultStr = resultStr.replace(/\s+/g, ' ').trim();
@@ -9,4 +9,4 @@ const CleanQuery = (query) => {
     return resultStr;
 }
 
-export default CleanQuery;
+export default cleanQuery;

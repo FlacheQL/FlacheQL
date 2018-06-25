@@ -1,4 +1,4 @@
-const ConstructResponsePath = (pathString, object) => {
+const constructResponsePath = (pathString, object) => {
   let terms = pathString.split(".");
   let lastTerm = terms.pop();
   let path = terms.reduce((acc, next) => {
@@ -7,4 +7,4 @@ const ConstructResponsePath = (pathString, object) => {
   return { path, lastTerm }
 }
 
-export default ConstructResponsePath;
+export default constructResponsePath;
