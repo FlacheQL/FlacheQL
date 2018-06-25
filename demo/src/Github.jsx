@@ -107,8 +107,11 @@ class GitHub extends Component {
   * @param {array} extraFields An array containing information on which checkbokes are ticked
   */
   getRepos(terms, languages, stars, num, extraFields) {
-    const flacheQuery = buildQuery(terms, languages, stars, num, true, extraFields);
+    const query = buildQuery(terms, languages, stars, num, true, extraFields);
+    console.log('github flache query:', query)
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
+    console.log('github apollo query:', apolloQuery.loc.source.body)
+    console.log('check equivalence', JSON.stringify(query) == JSON.stringify(apolloQuery))
     // refer to the documentation for details on these options
     // FIXME: integrate this configuration with flache initialization, it never changes
     // start apollo timer - THAT'S RIGHT, WE RUN THEM FIRST - NO SHENANIGANS
@@ -125,7 +128,7 @@ class GitHub extends Component {
       stars,
       num,
     }
-    this.cache.it(flacheQuery, variables)
+    this.cache.it(JSON.stringify({query}), variables)
       .then(res => this.handleResponse(res.data, true));
   }
 
@@ -307,14 +310,12 @@ function buildQuery(terms, languages, stars, num, flache, extraFields) {
           ... on Repository {
             name
             ${str}
-            descriptionHTML
             stargazers {
               totalCount
             }
             forks {
               totalCount
             }
-            updatedAt
           }
         }
       }
@@ -328,7 +329,6 @@ function buildQuery(terms, languages, stars, num, flache, extraFields) {
           ... on Repository {
             name
             ${str}
-            description
             stargazers {
               totalCount
             }

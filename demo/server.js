@@ -20,8 +20,6 @@ app.get('/', (req, res) => res.sendFile('./dist/index.html'));
 
 // workaround for yelp CORS issue
 app.post('/yelp', (req, res) => {
-  console.log("TYPEOF ", typeof req.body);
-  console.log("REQ: ", req.body);
   const { body } = req;
   fetch(yelpAPI, {
     headers: {
@@ -30,7 +28,7 @@ app.post('/yelp', (req, res) => {
     },
     method: 'POST',
     body,
-  }).then(resp => resp.json()).then(data => res.json(data));
+  }).then(resp => resp.json()).then(data => data);
 });
 
 app.listen(port, () => console.log(`Listening on ${port}...`));
