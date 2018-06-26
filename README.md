@@ -46,7 +46,7 @@ npm install --save flacheQL
 ### Usage
 
 Initialize FlacheQL.
-```
+```javascript
 import Flache from 'flacheql'
 const yourCache = new Flache(endpoint, headers, options);
 ```
@@ -54,7 +54,7 @@ const yourCache = new Flache(endpoint, headers, options);
 Set up the options on initialization, by passing in config objects.
 
 For example:
-```
+```javascript
     const endpoint = 'https://<yoursite>.com/graphql';
     const headers = { "Content-Type": "application/graphql", "Authorization": "token <SOMETOKEN>" }
     const options = {
