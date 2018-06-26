@@ -86,26 +86,26 @@ class Yelp extends Component {
     const flacheQuery = this.buildQuery(location, limit, true, extraFields);
     console.log('flachequery: ', flacheQuery);
     const apolloQuery = this.buildQuery(location, limit, false, extraFields);
-    console.log('apolloquery:', apolloQuery)
-    console.log('apolloquery:', apolloQuery.loc.source.body)
+    // console.log('apolloquery:', apolloQuery)
+    // console.log('apolloquery:', apolloQuery.loc.source.body)
     // start apollo timer
     this.startTimer(false, limit);
     // launch apollo query
-    this.apolloClient.query({ query: gql`{
-      search(location: ${location} limit: ${limit}) {
-        business {
-          name
-          rating
-          hours {
-            is_open_now
-          }
-          categories {
-            title
-          }
-          ${extraFields}
-        }
-      }
-    }` }).then(res => this.handleResponse(res.data, false));
+    // this.apolloClient.query({ query: gql`{
+    //   search(location: ${location} limit: ${limit}) {
+    //     business {
+    //       name
+    //       rating
+    //       hours {
+    //         is_open_now
+    //       }
+    //       categories {
+    //         title
+    //       }
+    //       ${extraFields}
+    //     }
+    //   }
+    // }` }).then(res => this.handleResponse(res.data, false));
     // start flache timer
     this.startTimer(true, limit);
     // launch flache query
