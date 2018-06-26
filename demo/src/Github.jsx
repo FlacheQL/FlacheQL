@@ -51,18 +51,21 @@ class GitHub extends Component {
   /* Modal Display */
   hideModal() {
     this.setState({ activeModal: null })
-    this.flache = new Flache();
-    this.apolloClient;
+    document.getElementById("modal-overlay").style.display = "none"
   }
 
   showModal() {
-    this.setState({ activeModal: Instructions })
+    this.setState({ activeModal: Instructions });
+    document.getElementById("modal-overlay").style.display = "block"
   }  
+
+  onKeyDown(e) {
+    if (e.keyCode === 27) this.hideModal();
+  } 
 
   /* initial modal render */
   componentDidMount() {
-    // console.log('mounted, active modal: ', this.state.activeModal);
-// setTimeout(() => {this.showModal();}, 250)
+    setTimeout(() => {this.showModal();}, 250)
     // ---- SETUP PARAMS FOR CACHING ENGINES ----
     const endpoint = 'https://api.github.com/graphql';
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
@@ -80,10 +83,8 @@ class GitHub extends Component {
       },
       pathToNodes: 'data.search.edges',
     };
-    
     // ---- INIT FLACHE CLIENT ----
     this.cache = new Flache(endpoint, headers, options);
-
     // ---- INIT APOLLO CLIENT ----
     const httpLink = new HttpLink({uri: endpoint });
     const authLink = setContext(() => ({
@@ -124,14 +125,18 @@ class GitHub extends Component {
   * @param {array} extraFields An array containing information on which checkbokes are ticked
   */
   getRepos(terms, languages, stars, num, extraFields) {
+<<<<<<< HEAD
     // console.log('extra fields', extraFields)
     const query = buildQuery(terms, languages, stars, num, true, extraFields);
     // console.log('github flache query:', query)
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
     // console.log('github apollo query:', apolloQuery.loc.source.body)
     // console.log('check equivalence', JSON.stringify(query) == JSON.stringify(apolloQuery))
+=======
+    const query = buildQuery(terms, languages, stars, num, true, extraFields);
+    const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
+>>>>>>> ae315715b60fd4b933befdf27927bf3a6d8654d9
     // refer to the documentation for details on these options
-    // FIXME: integrate this configuration with flache initialization, it never changes
     // start apollo timer - THAT'S RIGHT, WE RUN THEM FIRST - NO SHENANIGANS
     this.startTimer(false, num);
     // launch apollo query
@@ -257,7 +262,7 @@ class GitHub extends Component {
         <div id="top-wrapper">
         {/* Modal Control */}
         {this.state.activeModal === Instructions ? 
-          <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onEscape={this.escapeKey}>
+          <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onKeyDown={(e) => this.onKeyDown(e)}>
               <p>Modal</p>
           </Instructions>
           : <div></div>
