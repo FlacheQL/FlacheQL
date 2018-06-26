@@ -26,13 +26,14 @@ All HTTP requests from a browser are first routed to the browser cache.
 **Partial Cache:**
 
 * If a request is a subset of a query that was previously made, then it reads the matching response from cache.
-    
 
 * If a request consists of a previous query and a new query, then it reads the matching response from cache and fetches the new query from the data source.
 
 ## Getting Started
 
 ### Installing
+
+Install the module with npm install flacheQL or place into your package.json and run npm install.
 
 ```
 npm install --save flacheQL
@@ -41,15 +42,15 @@ npm install --save flacheQL
 ### Usage
 
 Initialize FlacheQL.
-```
+```javascript
 import Flache from 'flacheql'
 const yourCache = new Flache(endpoint, headers, options);
 ```
 
-Set up these parameters on initialization rather than on each query.
+Set up the options on initialization, by passing in config objects.
 
 For example:
-```
+```javascript
     const endpoint = 'https://<yoursite>.com/graphql';
     const headers = { "Content-Type": "application/graphql", "Authorization": "token <SOMETOKEN>" }
     const options = {
@@ -61,10 +62,9 @@ For example:
         stars: '>= number',
         num: '<= number',
       },
-      // the path to the array in the response:
-      pathToNodes: 'data.search.edges',
+      pathToNodes: 'data.search.edges', // the path to the array in the response
       // if you have a field which does not translate directly to its parameter,
-      // the path to that data from the must be specified:
+      // the path to that data from the its parent array must be specified:
       queryPaths: { stars: 'node.stargazers.totalCount' },
     };
 ```

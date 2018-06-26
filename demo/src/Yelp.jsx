@@ -36,7 +36,6 @@ class Yelp extends Component {
   }
 
   componentDidMount() {
-    // const endpoint = 'http://localhost:8000/yelp'
     const endpoint = 'http://www.flacheql.io:8000/yelp'
     const headers = { "Content-Type": "application/json",
     "Authorization": "Bearer 1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx", }

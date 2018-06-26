@@ -50,13 +50,14 @@ class GitHub extends Component {
 
   /* Modal Display */
   hideModal() {
-    // this.setState({ activeModal: null })
-    // document.getElementById("modal-overlay").style.display = "none"
+    this.setState({ activeModal: null })
+    document.getElementById("modal-overlay").style.display = "none"
+    sessionStorage.setItem('modalShown', 'true');
   }
 
   showModal() {
-    // this.setState({ activeModal: Instructions });
-    // document.getElementById("modal-overlay").style.display = "block"
+    this.setState({ activeModal: Instructions });
+    document.getElementById("modal-overlay").style.display = "block"
   }  
 
   onKeyDown(e) {
@@ -65,7 +66,8 @@ class GitHub extends Component {
 
   /* initial modal render */
   componentDidMount() {
-    setTimeout(() => {this.showModal();}, 250)
+    console.log('MODAL SHOWN: ', sessionStorage.getItem('modalShown'))
+    if (sessionStorage.getItem('modalShown') !== 'true') setTimeout(this.showModal, 250);
     // ---- SETUP PARAMS FOR CACHING ENGINES ----
     const endpoint = 'https://api.github.com/graphql';
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
@@ -102,18 +104,6 @@ class GitHub extends Component {
     setTimeout(() => {
       this.getRepos('react', 'javascript', 15000, 70, ['homepageUrl']);
     }, 4000);
-    // setTimeout(() => {
-    //   this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
-    // }, 6000);
-    // setTimeout(() => {
-    //   this.getRepos('graphql', 'javascript', 500, 25, ['homepageUrl']);
-    // }, 10000);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
-    // }, 2000);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
-    // }, 5000);
   }
 
   /**
@@ -253,44 +243,45 @@ class GitHub extends Component {
     return (
       <div className="main-container">
         <div id="top-wrapper">
-        {/* Modal Control */}
-        {this.state.activeModal === Instructions ? 
-          <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onKeyDown={(e) => this.onKeyDown(e)}>
-              <p>Modal</p>
-          </Instructions>
-          : <div></div>
-        }
-        {/* Document Body */}
-            <Form
-              handleSubmit={this.handleSubmit}
-              title={'Search Repositories'}
-              fields={[
-                { label: 'Terms: ', id: 'searchText' },
-                { label: 'Language: ', id: 'searchLang' },
-                { label: '# of stars: ', id: 'searchStars' },
-                { label: '# to fetch: ', id: 'searchNum' },
-              ]}
-              extras={[
-                { label: ' Created at', id: 'createdAt' },
-                { label: ' Database ID', id: 'databaseId' },
-                { label: ' Homepage URL', id: 'homepageUrl' },
-                { label: ' Updated at', id: 'updatedAt' },
-              ]}
+          {/* Modal Control */}
+          {this.state.activeModal === Instructions ? 
+            <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onKeyDown={(e) => this.onKeyDown(e)}>
+                <p>Modal</p>
+            </Instructions>
+            : <div />
+          }
+          {/* Document Body */}
+          <Form
+            handleSubmit={this.handleSubmit}
+            title="Search Repositories"
+            fields={[
+              { label: 'Terms: ', id: 'searchText' },
+              { label: 'Language: ', id: 'searchLang' },
+              { label: '# of stars: ', id: 'searchStars' },
+              { label: '# to fetch: ', id: 'searchNum' },
+            ]}
+            extras={[
+              { label: ' Created at', id: 'createdAt' },
+              { label: ' Database ID', id: 'databaseId' },
+              { label: ' Homepage URL', id: 'homepageUrl' },
+              { label: ' Updated at', id: 'updatedAt' },
+            ]}
+            showModal={this.showModal}
+          />
+          <div id="timer-wrapper">
+            <QueryTimer
+              class={this.state.flacheTimerClass}
+              title="FlacheQL"
+              lastQueryTime={this.state.flacheTimer.lastQueryTime}
+              timerText={this.state.flacheTimer.timerText}
             />
-            <div id="timer-wrapper">
-              <QueryTimer
-                class={this.state.flacheTimerClass}
-                title="FlacheQL"
-                lastQueryTime={this.state.flacheTimer.lastQueryTime}
-                timerText={this.state.flacheTimer.timerText}
-              />
-              <QueryTimer
-                class={this.state.apolloTimerClass}
-                title="Apollo"
-                lastQueryTime={this.state.apolloTimer.lastQueryTime}
-                timerText={this.state.apolloTimer.timerText}
-              />
-            </div>
+            <QueryTimer
+              class={this.state.apolloTimerClass}
+              title="Apollo"
+              lastQueryTime={this.state.apolloTimer.lastQueryTime}
+              timerText={this.state.apolloTimer.timerText}
+            />
+          </div>
         </div>
         <div className="result-list">
           {this.state.gitBoxes}
