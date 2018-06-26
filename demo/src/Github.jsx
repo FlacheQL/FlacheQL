@@ -61,7 +61,6 @@ class GitHub extends Component {
 
   /* initial modal render */
   componentDidMount() {
-    // console.log('mounted, active modal: ', this.state.activeModal);
     setTimeout(() => {this.showModal();}, 250)
     // ---- SETUP PARAMS FOR CACHING ENGINES ----
     const endpoint = 'https://api.github.com/graphql';
@@ -78,10 +77,8 @@ class GitHub extends Component {
       queryPaths: { stars: 'node.stargazers.totalCount' },
       pathToNodes: 'data.search.edges',
     };
-    
     // ---- INIT FLACHE CLIENT ----
     this.cache = new Flache(endpoint, headers, options);
-
     // ---- INIT APOLLO CLIENT ----
     const httpLink = new HttpLink({uri: endpoint });
     const authLink = setContext(() => ({
@@ -108,12 +105,8 @@ class GitHub extends Component {
   */
   getRepos(terms, languages, stars, num, extraFields) {
     const query = buildQuery(terms, languages, stars, num, true, extraFields);
-    console.log('github flache query:', query)
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
-    console.log('github apollo query:', apolloQuery.loc.source.body)
-    console.log('check equivalence', JSON.stringify(query) == JSON.stringify(apolloQuery))
     // refer to the documentation for details on these options
-    // FIXME: integrate this configuration with flache initialization, it never changes
     // start apollo timer - THAT'S RIGHT, WE RUN THEM FIRST - NO SHENANIGANS
     this.startTimer(false, num);
     // launch apollo query

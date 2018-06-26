@@ -39,11 +39,9 @@ export default class Flache {
   }
 
   it(query, variables) {
-    console.log('variables', variables)
-    console.log('headers', this.headers)
-    console.log('options', this.options)
-    console.log('endpoint', this.endpoint)
-    console.log('fetching:')
+    // console.log('variables', variables);
+    // console.log('options', this.options);
+    // console.log('endpoint', this.endpoint);
     // create a key to store the payloads in the cache
     const stringifiedQuery = JSON.stringify(query);
     return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery)
