@@ -99,7 +99,7 @@ class GitHub extends Component {
       this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
     }, 1);
     setTimeout(() => {
-      this.getRepos('graphql', 'javascript', 500, 5, ['homepageUrl']);
+      this.getRepos('graphql', 'javascript', 10000, 5, ['homepageUrl']);
     }, 3000);
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);

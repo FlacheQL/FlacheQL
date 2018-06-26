@@ -74,6 +74,9 @@ class Yelp extends Component {
 
     setTimeout(() => {
       this.getRestaurants('Venice', 10, ['']);
+    }, 100);
+    setTimeout(() => {
+      this.getRestaurants('Venice', 5, ['']);
     }, 1000);
   }
 
