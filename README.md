@@ -1,6 +1,6 @@
 # FlascheQL
 
-FlacheQL is a __*fast, light weight*__ client caching library for GraphQL.
+FlacheQL is a __*fast, lightweight*__ client caching library for GraphQL.
 
 ## Why use FlacheQL?
 
