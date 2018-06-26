@@ -50,13 +50,13 @@ class GitHub extends Component {
 
   /* Modal Display */
   hideModal() {
-    this.setState({ activeModal: null })
-    document.getElementById("modal-overlay").style.display = "none"
+    // this.setState({ activeModal: null })
+    // document.getElementById("modal-overlay").style.display = "none"
   }
 
   showModal() {
-    this.setState({ activeModal: Instructions });
-    document.getElementById("modal-overlay").style.display = "block"
+    // this.setState({ activeModal: Instructions });
+    // document.getElementById("modal-overlay").style.display = "block"
   }  
 
   onKeyDown(e) {
@@ -121,6 +121,7 @@ class GitHub extends Component {
   getRepos(terms, languages, stars, num, extraFields) {
     const query = buildQuery(terms, languages, stars, num, true, extraFields);
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
+    console.log(apolloQuery.loc.source.body === query);
     // refer to the documentation for details on these options
     // start apollo timer - THAT'S RIGHT, WE RUN THEM FIRST - NO SHENANIGANS
     this.startTimer(false, num);

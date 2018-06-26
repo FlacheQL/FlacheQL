@@ -49,7 +49,7 @@ class Yelp extends Component {
   componentDidMount() {
     // const endpoint = 'http://localhost:8000/yelp'
     const endpoint = 'http://www.flacheql.io:8000/yelp'
-    const headers = { "Content-Type": "text/plain",
+    const headers = { "Content-Type": "application/json",
     "Authorization": "Bearer 1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx", }
     const options = {
       paramRetrieval: true,
@@ -84,6 +84,8 @@ class Yelp extends Component {
     }
     const flacheQuery = this.buildQuery(location, limit, true, extraFields);
     const apolloQuery = this.buildQuery(location, limit, false, extraFields);
+    console.log(apolloQuery.loc.source.body === flacheQuery);
+    console.log(apolloQuery.loc.source.body.length, flacheQuery.length);
     // start apollo timer
     this.startTimer(false, limit);
     // launch apollo query
@@ -117,21 +119,6 @@ class Yelp extends Component {
     location = '"' + location + '"'
     if (flache) {
       return ( `{
-      search(location: ${location} limit: ${limit}) {
-        business {
-          name
-          rating
-          hours {
-            is_open_now
-          }
-          categories {
-            title
-          }
-          ${extraFields}
-        }
-      }
-    }`);
-  } else return gql`{
       search(location: "Venice" limit: 10) {
         business {
           name
@@ -142,6 +129,13 @@ class Yelp extends Component {
           categories {
             title
           }
+        }
+      }
+    }`);
+  } else return gql`{
+      search(location: "Venice" limit: 10) {
+        business {
+          name
         }
       }
     }`;

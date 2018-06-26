@@ -71,7 +71,8 @@ export default class Flache {
     // if the developer specifies in App.jsx
     if (this.options.paramRetrieval) {
       let childrenMatch = false;
-      //check if query children match
+      // check if query children match 
+      console.log('fields cache', this.fieldsCache);
       childrenMatch = this.fieldsCache.some(obj => {
         let objChildren = Object.values(obj)[0].children;
         return (
@@ -81,14 +82,15 @@ export default class Flache {
       });
 
       // no need to run partial query check on first query
+      console.log('children match', childrenMatch)
       if (childrenMatch) {
         if (this.cacheLength > 0) {
           let currentMatchedQuery;
           for (let key in variables) {
             for (let query in this.queryCache[key]) {
-              console.log('thing', this.cbs)
-              console.log('thing', this.options.subsets)
-              console.log('thing', this.options.subsets[key])
+              // console.log('thing', this.cbs)
+              // console.log('thing', this.options.subsets)
+              // console.log('thing', this.options.subsets[key])
               if (
                 this.cbs[this.options.subsets[key]](
                   variables[key],
@@ -136,7 +138,7 @@ export default class Flache {
                       this.options.queryPaths[key],
                       el
                     );
-                    console.log(this.cbs)
+                    // console.log(this.cbs)
                     return this.cbs[this.options.subsets[key]](
                       path[lastTerm],
                       variables[key]
@@ -168,10 +170,12 @@ export default class Flache {
       let filtered;
       let foundMatch = false;
       this.fieldsCache.forEach(node => {
+        console.log('im up in there')
         if (node.hasOwnProperty(this.queryParams)) {
           foundMatch = this.children.every(child => {
             return node[this.queryParams].children.includes(child);
           });
+          console.log('im up in here')
           if (foundMatch) {
             filtered = JSON.parse(JSON.stringify(node[this.queryParams].data));
             for (let key in filtered) {
