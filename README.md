@@ -27,12 +27,8 @@ All HTTP requests from a browser are first routed to the browser cache.
 
 * If a request is a subset of a query that was previously made, then it reads the matching response from cache.
     
-    Example:
 
 * If a request consists of a previous query and a new query, then it reads the matching response from cache and fetches the new query from the data source.
-    
-    Example:
-
 
 ## Getting Started
 
@@ -77,3 +73,4 @@ For example:
 More information on configuration....
 
 ## Demo
+http://www.flacheql.io/
