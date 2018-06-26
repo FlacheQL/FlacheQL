@@ -1,18 +1,41 @@
 
 body {
-  font-family: "Open Sans";
+  font-family: "Open Sans", sans-serif;
   font-size: 16px;
+  background-color: #5600CD;
+  text-align: left;
+  text-decoration: none;
+  margin: 0 !important;
 }
 
 button {
-  padding: 7px;
-  background-color: #bad;
+  
+  background-color: white;
   font-family: inherit;
   margin: 5px;
   font-size:14px;
   text-align: center;
   border-radius: 0 !important;
-  border: 1px solid black
+  text-decoration: none;
+  border: 1px solid #5600CD;
+}
+
+
+
+center {
+  text-decoration: none;
+}
+
+p {
+  color: white;
+  text-align: left;
+}
+
+h2 {
+  color: white;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  text-align: left;
 }
 
 .title * {
@@ -27,33 +50,67 @@ button {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
+  position: absolute;
+  top: 0;
+  z-index: 100;
+}
+
+#content {
+  width: 100%;
+  min-width: 800px !important;
+  display: flex;
+  flex-direction: column;
 }
 
 /* NAV BAR */
 
+#img-logo {
+  height: 90%;
+  margin: auto auto;
+}
+
 .navigation-bar {
+  text-transform: uppercase;
+  font-weight: 700;
   margin: 0 auto;
   display: flex;
-  justify-content: center;
-  min-width: 800px;
-  width: 80%;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 215px;
+  background-color: #5600C6;
+  color: white;
 }
 
 .navigation-bar a {
-  font-size: 24px;
+  color: white;
+  font-size: 16px;
+  letter-spacing: 4px;
   text-decoration: none;
 }
 
-.navigation-bar div:hover {
+.navigation-bar a:hover {
+  color: rgb(224, 200, 255);
+}
+
+#nav-bar-links {
+  height: 100%;
+  max-width: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+/* .navigation-bar div:hover {
   background-color: #bad;
   animation-name: colorNav;
   animation-duration: 1.4s;
   animation-iteration-count: infinite;
-}
+} */
 
 .navigation-bar div {
-  min-width: 150px;
   padding: 20px;
   border-radius: 5px;
 }
@@ -63,6 +120,7 @@ button {
   min-width: 800px !important;
   display: flex;
   flex-direction: column;
+  align: left;
 }
 
 .title * {
@@ -78,6 +136,15 @@ button {
   background: white;
   color: rgb(44, 3, 101)
  }
+
+#top-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: flex;
+  justify-content: center;
+}
+
+/* MODAL */
 
 .backdrop {
   position: relative;
@@ -103,7 +170,8 @@ button {
   overflow: auto;
   font-size: 18px;
   z-index: 1010;
-  padding: 10px;
+  padding: 20px;
+  font-family: "Open Sans" sans-serif;
 
   -webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
        -moz-animation: fadein 1s; /* Firefox < 16 */
@@ -118,11 +186,42 @@ button {
   to   { opacity: 1; }
 }
 
-#top-wrapper {
-  width: 100%;
+.flex-container {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  float: center;
+  text-align: center;
+  position: relative;
+}
+
+.doc-container {
+  font-size: 18px;
+  text-decoration: none;
+  padding: 15px;
+  color: #5600CD;
+  border: 3px white;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-style: italic;
+  font-weight: bold;
+  font-family: "Open Sans" sans-serif;
   display: flex;
   align-items: flex;
   justify-content: center;
+  text-align: center;
+  margin: auto;
+  line-height: 2;
+  width: 30%;
+  height: 75px;
+
+  margin: 10px;
+  box-shadow: 2px 2px rgba(165, 165, 165, .4);
+}
+
+.doc-container:hover {
+  background: rgb(224, 200, 255);
 }
 
 /* FORM */
@@ -317,26 +416,30 @@ fieldset {
   min-width: 800px;
   width: 80%;
   font-size: 20px;
+  background-color: #5600CD;
+  justify-content: left;
+  align-items: left;
+  text-decoration: none;
 }
 
 .landing-link {
   font-size: 18px;
   text-decoration: none;
-  color: rgb(202, 187, 233);
-  min-width: 100px;
   padding: 15px;
-  border: 2px solid rgb(202, 187, 233);
-  border-radius: 5px;
+  color: #5600CD;
+  border: 3px white;
+  min-width: 100px;
   margin: 10px 20px;
-  background: linear-gradient(rgb(98, 66, 161), rgb(49, 9, 128));
+  background: white;
+}
+
+.landing-link a {
+  font-family: inherit;
+  text-decoration: none;
 }
 
 .landing-link:hover {
-  background: rgb(49, 9, 128);
-  background-color:  rgb(49, 9, 128);
-  animation-name: colorLink;
-  animation-duration: 1.2s;
-  animation-iteration-count: infinite;
+  background: rgb(224, 200, 255);
 }
 
 @keyframes colorLink {
@@ -354,8 +457,18 @@ fieldset {
 .landing-link-wrapper {
   margin-top: 30px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: left;
+  justify-content: left;
+  text-decoration: none;
+}
+
+.landing-link-wrapper a {
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-style: italic;
+  font-weight: bold;
+  font-family: "Open Sans" sans-serif;
 }
 
 .popup {
