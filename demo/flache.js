@@ -149,6 +149,7 @@ export default class Flache {
                   resolve(cached);
                 });
               }
+    
             }
           }
         }
