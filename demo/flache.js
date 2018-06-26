@@ -262,6 +262,7 @@ export default class Flache {
             () => delete this.cache[stringifiedQuery],
             this.cacheExpiration
           );
+          console.log('LOGGING RES', res)
           resolve(res);
           if (this.options.resultsVariable) {
             // ADD PROPERTY ON QUERY IN CACHE TO INDICATE WHETHER NUMBER OF RETURNED RESULTS IS GREATER THAN MAX
