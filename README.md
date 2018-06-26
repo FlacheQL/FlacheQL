@@ -34,7 +34,6 @@ All HTTP requests from a browser are first routed to the browser cache.
 
 ### Installing
 
-Install the module with npm install flacheQL or place into your package.json and run npm install.
 ```
 npm install --save flacheQL
 ```
