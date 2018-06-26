@@ -68,7 +68,6 @@ class Yelp extends Component {
       limit,
     }
     const flacheQuery = this.buildQuery(location, limit, true, extraFields);
-
     // start flache timer
     this.startTimer(true, limit);
     // launch flache query
