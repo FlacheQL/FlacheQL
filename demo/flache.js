@@ -142,6 +142,7 @@ export default class Flache {
                 console.log('last term', lastTerm)
 
                 for (let key in this.options.queryPaths) {
+
                   console.log('key in query path loop', key)
                   console.log('query paths', this.options.queryPaths)
                   path[lastTerm] = path[lastTerm].filter(el => {
@@ -220,9 +221,7 @@ export default class Flache {
   }
 
   fetchData(query, endpoint, headers, stringifiedQuery) {
-    // console.log('query', query)
-    // console.log('headers', headers)
-    // console.log('endpoint', endpoint)
+
     return new Promise((resolve, reject) => {
       fetch(endpoint, {
         method: "POST",
@@ -230,7 +229,6 @@ export default class Flache {
         body: query
       })
       .then(res => {
-        // console.log('resres,',res)
         return res.json()})
       .then(res => {
         console.log('getting res from fetch:', res)  
@@ -238,13 +236,14 @@ export default class Flache {
         console.log('THIS IS query params,', this.queryParams)
         let normalizedData = flatten(res);
         console.log('THIS IS normalized data', flatten(res))
+
           this.fieldsCache.push({
             [this.queryParams]: {
               data: normalizedData,
               children: constructQueryChildren(query)
             }
           });
-          console.log('THIS IS THE FIELDS CACHE,', this.fieldsCache)
+
           setTimeout(
             () => delete this.cache[stringifiedQuery],
             this.cacheExpiration
