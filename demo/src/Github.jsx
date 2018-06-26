@@ -102,8 +102,23 @@ class GitHub extends Component {
       this.getRepos('react', 'javascript', 10000, 80, ['updatedAt', 'homepageUrl']);
     }, 1);
     setTimeout(() => {
-      this.getRepos('react', 'javascript', 15000, 70, ['homepageUrl']);
-    }, 4000);
+      this.getRepos('graphql', 'javascript', 10000, 5, ['homepageUrl']);
+    }, 3000);
+    setTimeout(() => {
+      this.getRepos('graphql', 'javascript', 15000, 70, ['homepageUrl']);
+    }, 6000);
+    // setTimeout(() => {
+    //   this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
+    // }, 6000);
+    // setTimeout(() => {
+    //   this.getRepos('graphql', 'javascript', 500, 25, ['homepageUrl']);
+    // }, 10000);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
+    // }, 2000);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
+    // }, 5000);
   }
 
   /**
@@ -309,6 +324,7 @@ function buildQuery(terms, languages, stars, num, flache, extraFields) {
   if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
   let str = '';
   extraFields.forEach((e) => { str += '\n' + e });
+  console.log('extra', JSON.stringify(str))
   return flache ? `{
     search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
       repositoryCount

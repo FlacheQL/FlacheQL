@@ -37,13 +37,14 @@ class Yelp extends Component {
 
   componentDidMount() {
     const endpoint = 'http://www.flacheql.io:8000/yelp'
-    const headers = { "Content-Type": "application/json",
+    const headers = { "Content-Type": "text/plain",
     "Authorization": "Bearer 1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx", }
     const options = {
       paramRetrieval: true,
       fieldRetrieval: true,
       subsets: {
-        limit: 'limit',
+        location: "=",
+        limit: "limit"
       },
       pathToNodes: "data.search.business"
     }
@@ -52,14 +53,27 @@ class Yelp extends Component {
 
     setTimeout(() => {
       this.getRestaurants('Venice', 10, ['']);
-    }, 1000);
+    }, 100);
+    setTimeout(() => {
+      this.getRestaurants('Venice', 10, ['']);
+    }, 5000);
+    // setTimeout(() => {
+    //   this.getRestaurants('Venice', 20, ['']);
+    // }, 15000);
   }
 
   getRestaurants(location, limit, extraFields) {
-    const variables = { 
+    const variables = {
+      location, 
       limit,
     }
     const flacheQuery = this.buildQuery(location, limit, true, extraFields);
+    const apolloQuery = this.buildQuery(location, limit, false, extraFields);
+    console.log('flacheq', flacheQuery)
+    // start apollo timer
+    this.startTimer(false, limit);
+    // launch apollo query
+    this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
     // start flache timer
     this.startTimer(true, limit);
     // launch flache query
@@ -89,7 +103,7 @@ class Yelp extends Component {
     location = '"' + location + '"'
     if (flache) {
       return ( `{
-      search(location: "Venice" limit: 10) {
+      search(location: ${location} limit: ${limit}) {
         business {
           name
           rating
@@ -99,6 +113,7 @@ class Yelp extends Component {
           categories {
             title
           }
+          ${str}
         }
       }
     }`);

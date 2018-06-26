@@ -1,5 +1,7 @@
 const constructQueryChildren = (query) => {
+  console.log('query', query)
   query = JSON.stringify(query);
+  console.log('strquery', query)
   let childArr = [];
   let splitQ = query.split('\\n');
   splitQ.forEach((ele, index, array) => {
@@ -10,6 +12,7 @@ const constructQueryChildren = (query) => {
       } else if (!ele.includes('{') && !ele.includes('}') && ele.trim() != "") childArr.push(ele.trim());
     }
   });
+  console.log('babies', childArr)
   return childArr;
 }
 
