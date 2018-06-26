@@ -15,6 +15,10 @@ app.use(bodyParser.text());
 app.use(cors());
 app.use(express.static(path.join(__dirname, './dist')));
 
+app.use((req, res, next) => {
+  console.log('INCOMING REQUEST: ', req.body);
+  next();
+});
 
 app.get('/', (req, res) => res.sendFile('./dist/index.html'));
 
@@ -28,7 +32,7 @@ app.post('/yelp', (req, res) => {
     },
     method: 'POST',
     body,
-  }).then(resp => resp.json()).then(data => data);
+  }).then(resp => resp.json()).then(data => res.json(data));
 });
 
 app.listen(port, () => console.log(`Listening on ${port}...`));

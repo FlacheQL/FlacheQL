@@ -5,8 +5,6 @@ import QueryTimer from './QueryTimer.jsx';
 import Flache from '../flache';
 import Form from './Form.jsx';
 
-console.log('yelp!');
-
 class Yelp extends Component {
   constructor(props) {
     super(props);
@@ -38,14 +36,15 @@ class Yelp extends Component {
   }
 
   componentDidMount() {
+    // const endpoint = 'http://localhost:8000/yelp'
     const endpoint = 'http://www.flacheql.io:8000/yelp'
-    const headers = { "Content-Type": "text/plain",
+    const headers = { "Content-Type": "application/json",
     "Authorization": "Bearer 1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx", }
     const options = {
       paramRetrieval: true,
       fieldRetrieval: true,
       subsets: {
-        limit: '<= number',
+        limit: 'limit',
       },
       pathToNodes: "data.search.business"
     }
@@ -62,14 +61,12 @@ class Yelp extends Component {
       limit,
     }
     const flacheQuery = this.buildQuery(location, limit, true, extraFields);
-    console.log('flachequery: ', flacheQuery);
     // start flache timer
     this.startTimer(true, limit);
     // launch flache query
     this.cache.it(flacheQuery, variables)
       .then(res => {
-        console.log('cache res', res)
-        this.handleResponse(res.data, true)
+        return this.handleResponse(res.data, true)
       });
     // fetch(endpoint, { headers, method: 'POST', body: flacheQuery }).then(resp => resp.json()).then((data) => {
     //   this.handleResponse(data.data, true);
@@ -91,8 +88,9 @@ class Yelp extends Component {
     let str = '';
     extraFields.forEach(e => str += '\n' + e);
     location = '"' + location + '"'
-    return flache ? `{
-      search(location: ${location} limit: ${limit}) {
+    if (flache) {
+      return ( `{
+      search(location: "Venice" limit: 10) {
         business {
           name
           rating
@@ -102,22 +100,13 @@ class Yelp extends Component {
           categories {
             title
           }
-          ${extraFields}
         }
       }
-    }` :
-    gql`{
-      search(location: ${location} limit: ${limit}) {
+    }`);
+  } else return gql`{
+      search(location: "Venice" limit: 10) {
         business {
           name
-          rating
-          hours {
-            is_open_now
-          }
-          categories {
-            title
-          }
-          ${extraFields}
         }
       }
     }`;

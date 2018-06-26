@@ -50,18 +50,21 @@ class GitHub extends Component {
 
   /* Modal Display */
   hideModal() {
-    this.setState({ activeModal: null })
-    this.flache = new Flache();
-    this.apolloClient;
+    // this.setState({ activeModal: null })
+    // document.getElementById("modal-overlay").style.display = "none"
   }
 
   showModal() {
-    this.setState({ activeModal: Instructions })
+    // this.setState({ activeModal: Instructions });
+    // document.getElementById("modal-overlay").style.display = "block"
   }  
+
+  onKeyDown(e) {
+    if (e.keyCode === 27) this.hideModal();
+  } 
 
   /* initial modal render */
   componentDidMount() {
-    // console.log('mounted, active modal: ', this.state.activeModal);
     setTimeout(() => {this.showModal();}, 250)
     // ---- SETUP PARAMS FOR CACHING ENGINES ----
     const endpoint = 'https://api.github.com/graphql';
@@ -71,17 +74,17 @@ class GitHub extends Component {
       fieldRetrieval: true,
       subsets: {
         terms: '=',
-        languages: '> string',
+        languages: '=',
         stars: '>= number',
-        num: '<= number',
+        num: 'first',
       },
-      queryPaths: { stars: 'node.stargazers.totalCount' },
+      queryPaths: { 
+        stars: 'node.stargazers.totalCount', 
+      },
       pathToNodes: 'data.search.edges',
     };
-    
     // ---- INIT FLACHE CLIENT ----
     this.cache = new Flache(endpoint, headers, options);
-
     // ---- INIT APOLLO CLIENT ----
     const httpLink = new HttpLink({uri: endpoint });
     const authLink = setContext(() => ({
@@ -94,8 +97,23 @@ class GitHub extends Component {
     });
     // initial fetch
     setTimeout(() => {
-      this.getRepos('react', 'javascript', 50000, 100, ['']);
-    }, 1000);
+      this.getRepos('react', 'javascript', 10000, 80, ['updatedAt', 'homepageUrl']);
+    }, 1);
+    setTimeout(() => {
+      this.getRepos('react', 'javascript', 15000, 70, ['homepageUrl']);
+    }, 4000);
+    // setTimeout(() => {
+    //   this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
+    // }, 6000);
+    // setTimeout(() => {
+    //   this.getRepos('graphql', 'javascript', 500, 25, ['homepageUrl']);
+    // }, 10000);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
+    // }, 2000);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
+    // }, 5000);
   }
 
   /**
@@ -107,13 +125,11 @@ class GitHub extends Component {
   * @param {array} extraFields An array containing information on which checkbokes are ticked
   */
   getRepos(terms, languages, stars, num, extraFields) {
+    // console.log('extra fields', extraFields)
     const query = buildQuery(terms, languages, stars, num, true, extraFields);
-    console.log('github flache query:', query)
+    // console.log('github flache query:', query)
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
-    console.log('github apollo query:', apolloQuery.loc.source.body)
-    console.log('check equivalence', JSON.stringify(query) == JSON.stringify(apolloQuery))
     // refer to the documentation for details on these options
-    // FIXME: integrate this configuration with flache initialization, it never changes
     // start apollo timer - THAT'S RIGHT, WE RUN THEM FIRST - NO SHENANIGANS
     this.startTimer(false, num);
     // launch apollo query
@@ -239,7 +255,7 @@ class GitHub extends Component {
         <div id="top-wrapper">
         {/* Modal Control */}
         {this.state.activeModal === Instructions ? 
-          <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onEscape={this.escapeKey}>
+          <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onKeyDown={(e) => this.onKeyDown(e)}>
               <p>Modal</p>
           </Instructions>
           : <div></div>
