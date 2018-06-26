@@ -4,6 +4,7 @@ import constructResponsePath from "./helpers/constructResponsePath";
 import createCallbacksForPartialQueryValidation from "./helpers/createCallbacksForPartialQueryValidation";
 import denormalize from "./helpers/denormalize";
 import flatten from "./helpers/flatten";
+
 export default class Flache {
   // TODO: have these parameters set-up on initialization rather than on each query
   constructor(endpoint, headers = { "Content-Type": "application/graphql" }, options) {
@@ -39,14 +40,8 @@ export default class Flache {
   }
 
   it(query, variables) {
-    // console.log('variables', variables)
-    // console.log('headers', this.headers)
-    // console.log('options', this.options)
-    // console.log('endpoint', this.endpoint)
-    
     // create a key to store the payloads in the cache
     const stringifiedQuery = JSON.stringify(query);
-    // console.log('fetching:', stringifiedQuery)
     // return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery)
     this.queryParams = cleanQuery(query);
 
@@ -56,7 +51,6 @@ export default class Flache {
     // if an identical query comes in return the cached result
     if (this.cache[stringifiedQuery]) {
       return new Promise(resolve => {
-        console.log("resolving from cache");
         resolve(this.cache[stringifiedQuery]);
       });
     }
@@ -110,8 +104,6 @@ export default class Flache {
               for (let currentKey in this.queryCache) {
                 // skip the first key since this is the one that just matched
                 if (key === currentKey) continue;
-                console.log('im key', key)
-                console.log('im current', currentKey)
                 /* run the value on that query on each callback 
                 such that if the callback of the current symbol passes
                 given the current query variable as the first argument, 
@@ -119,9 +111,6 @@ export default class Flache {
                 the queriesPass boolean is set to the return value of the callback */
                 let rule = this.options.subsets[currentKey];
                 let arg1 = variables[currentKey];
-                console.log('arg1', arg1)
-                console.log('variables', variables)
-                console.log('arg2', arg2)
                 let arg2 = this.queryCache[currentKey][currentMatchedQuery];
                 let result = this.cbs[rule](arg1, arg2);
 
@@ -134,22 +123,14 @@ export default class Flache {
               }
 
               if (allParamsPass) {
-                console.log('super, all params pass')
                 let pathToNodes = this.options.pathToNodes;
                 let cached = JSON.parse(JSON.stringify(this.cache[currentMatchedQuery]));
                 let { path, lastTerm } = constructResponsePath(
                   pathToNodes,
                   cached
                 );
-                console.log('path', path)
-                console.log('last term', lastTerm)
 
                 for (let key in this.options.queryPaths) {
-                  console.log('subsets', this.options.subsets)
-
-                  console.log(this.options.subsets)
-                  console.log('key in query path loop', key)
-                  console.log('query paths', this.options.queryPaths)
                   path[lastTerm] = path[lastTerm].filter(el => {
                     let { path, lastTerm } = constructResponsePath(
                       this.options.queryPaths[key],
@@ -219,15 +200,11 @@ export default class Flache {
         return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery);
       }
     }
-    console.log('cache', this.cache)
-    console.log('fieldscache', this.fieldsCache)
-    console.log('querycache', this.queryCache)
     return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery);
     
   }
 
   fetchData(query, endpoint, headers, stringifiedQuery) {
-
     return new Promise((resolve, reject) => {
       fetch(endpoint, {
         method: "POST",
@@ -237,19 +214,14 @@ export default class Flache {
       .then(res => {
         return res.json()})
       .then(res => {
-        console.log('getting res from fetch:', res)  
         this.cache[stringifiedQuery] = res;
-        console.log('THIS IS query params,', this.queryParams)
         let normalizedData = flatten(res);
-        console.log('THIS IS normalized data', flatten(res))
-
           this.fieldsCache.push({
             [this.queryParams]: {
               data: normalizedData,
               children: constructQueryChildren(query)
             }
           });
-
           setTimeout(
             () => delete this.cache[stringifiedQuery],
             this.cacheExpiration
