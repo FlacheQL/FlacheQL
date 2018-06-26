@@ -78,7 +78,9 @@ class GitHub extends Component {
         stars: '>= number',
         num: 'limit',
       },
-      queryPaths: { stars: 'node.stargazers.totalCount' },
+      queryPaths: { 
+        stars: 'node.stargazers.totalCount', 
+      },
       pathToNodes: 'data.search.edges',
     };
     // ---- INIT FLACHE CLIENT ----

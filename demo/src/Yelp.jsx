@@ -55,7 +55,7 @@ class Yelp extends Component {
       paramRetrieval: true,
       fieldRetrieval: true,
       subsets: {
-        limit: '<= number',
+        limit: 'limit',
       },
       pathToNodes: "data.search.business"
     }
