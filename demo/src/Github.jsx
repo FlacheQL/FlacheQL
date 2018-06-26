@@ -50,13 +50,14 @@ class GitHub extends Component {
 
   /* Modal Display */
   hideModal() {
-    // this.setState({ activeModal: null })
-    // document.getElementById("modal-overlay").style.display = "none"
+    this.setState({ activeModal: null })
+    document.getElementById("modal-overlay").style.display = "none"
+    sessionStorage.setItem('modalShown', 'true');
   }
 
   showModal() {
-    // this.setState({ activeModal: Instructions });
-    // document.getElementById("modal-overlay").style.display = "block"
+    this.setState({ activeModal: Instructions });
+    document.getElementById("modal-overlay").style.display = "block"
   }  
 
   onKeyDown(e) {
@@ -65,7 +66,7 @@ class GitHub extends Component {
 
   /* initial modal render */
   componentDidMount() {
-    setTimeout(() => {this.showModal();}, 250)
+    if (sessionStorage.getItem('modalShown') !== 'true') setTimeout(this.showModal, 250);
     // ---- SETUP PARAMS FOR CACHING ENGINES ----
     const endpoint = 'https://api.github.com/graphql';
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }

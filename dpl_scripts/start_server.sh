@@ -1,3 +1,3 @@
 #!/bin/sh
-cd /home/ubuntu/FlacheQL/demo
-nodejs server.js &
+cd /home/ubuntu
+nodejs FlacheQL/demo/server.js & > mylog.out
