@@ -47,8 +47,9 @@ class Yelp extends Component {
   }
 
   componentDidMount() {
+    // const endpoint = 'http://localhost:8000/yelp'
     const endpoint = 'http://www.flacheql.io:8000/yelp'
-    const headers = { "Content-Type": "text/plain",
+    const headers = { "Content-Type": "application/json",
     "Authorization": "Bearer 1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx", }
     const options = {
       paramRetrieval: true,
@@ -85,9 +86,9 @@ class Yelp extends Component {
       limit,
     }
     const flacheQuery = this.buildQuery(location, limit, true, extraFields);
-    console.log('flachequery: ', flacheQuery);
     const apolloQuery = this.buildQuery(location, limit, false, extraFields);
-    console.log('apolloquery:', apolloQuery)
+    console.log(apolloQuery.loc.source.body === flacheQuery);
+    console.log(apolloQuery.loc.source.body.length, flacheQuery.length);
     // start apollo timer
     this.startTimer(false, limit);
     // launch apollo query
@@ -97,7 +98,6 @@ class Yelp extends Component {
     // launch flache query
     this.cache.it(flacheQuery, variables)
       .then(res => {
-        console.log('yelp res', res)
         return this.handleResponse(res.data, true)
       });
     // fetch(endpoint, { headers, method: 'POST', body: flacheQuery }).then(resp => resp.json()).then((data) => {
@@ -120,8 +120,9 @@ class Yelp extends Component {
     let str = '';
     extraFields.forEach(e => str += '\n' + e);
     location = '"' + location + '"'
-    return flache ? `{
-      search(location: ${location} limit: ${limit}) {
+    if (flache) {
+      return ( `{
+      search(location: "Venice" limit: 10) {
         business {
           name
           rating
@@ -131,22 +132,13 @@ class Yelp extends Component {
           categories {
             title
           }
-          ${extraFields}
         }
       }
-    }` :
-    gql`{
-      search(location: ${location} limit: ${limit}) {
+    }`);
+  } else return gql`{
+      search(location: "Venice" limit: 10) {
         business {
           name
-          rating
-          hours {
-            is_open_now
-          }
-          categories {
-            title
-          }
-          ${extraFields}
         }
       }
     }`;
