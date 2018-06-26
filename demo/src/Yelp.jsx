@@ -84,7 +84,6 @@ class Yelp extends Component {
     }
     const flacheQuery = this.buildQuery(location, limit, true, extraFields);
     const apolloQuery = this.buildQuery(location, limit, false, extraFields);
-    // console.log('apolloquery:', apolloQuery.loc.source.body)
     // start apollo timer
     this.startTimer(false, limit);
     // launch apollo query
@@ -94,8 +93,7 @@ class Yelp extends Component {
     // launch flache query
     this.cache.it(flacheQuery, variables)
       .then(res => {
-        console.log('cache res', res)
-        this.handleResponse(res.data, true)
+        return this.handleResponse(res.data, true)
       });
     // fetch(endpoint, { headers, method: 'POST', body: flacheQuery }).then(resp => resp.json()).then((data) => {
     //   this.handleResponse(data.data, true);

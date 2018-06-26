@@ -72,7 +72,7 @@ class GitHub extends Component {
         terms: '=',
         languages: '> string',
         stars: '>= number',
-        num: '<= number',
+        num: 'limit',
       },
       queryPaths: { stars: 'node.stargazers.totalCount' },
       pathToNodes: 'data.search.edges',
@@ -91,8 +91,17 @@ class GitHub extends Component {
     });
     // initial fetch
     setTimeout(() => {
-      this.getRepos('react', 'javascript', 50000, 100, ['']);
-    }, 1000);
+      this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
+    }, 1);
+    setTimeout(() => {
+      this.getRepos('graphql', 'javascript', 500, 5, ['homepageUrl']);
+    }, 3000);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
+    // }, 2000);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
+    // }, 5000);
   }
 
   /**

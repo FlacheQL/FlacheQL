@@ -19,9 +19,7 @@ class Documentation extends Component {
   }
 
   clickHandler(e, index) {
-    console.log('modal clicked: ', index);
     this.setState({ activeModal: index });
-    console.log(this.state.activeModal);
   }
 
   hideModal() {
