@@ -10,7 +10,7 @@ Third party solutions such as Apollo and Relay exist.  However, they are large f
 
 * Full cache
 * Partial cache
-* nomalized data structure that ensures minimum network latency which results to a decrease data charges for data transfer
+* nomalized data structure that ensures minimum network latency 
 * easy to implement
 
 *This is a work in progress.  Cache persistence and "smart" expiration of cached items are some of the features considered to be added.*
