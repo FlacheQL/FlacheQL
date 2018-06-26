@@ -5,6 +5,10 @@ import ReactDom from 'react-dom';
 
 class Instructions extends React.Component {
   
+  componentDidMount() {
+    window.addEventListener('keydown', this.props.onKeyDown);
+  }
+
   render() {
 
     return (

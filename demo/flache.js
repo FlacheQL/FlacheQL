@@ -120,17 +120,17 @@ export default class Flache {
               }
 
               if (allQueriesPass) {
-                let pathToNodes = options.pathToNodes;
+                let pathToNodes = this.options.pathToNodes;
                 let cached = Object.assign(this.cache[currentMatchedQuery], {});
                 let { path, lastTerm } = constructResponsePath(
                   pathToNodes,
                   cached
                 );
 
-                for (let key in options.queryPaths) {
+                for (let key in this.options.queryPaths) {
                   path[lastTerm] = path[lastTerm].filter(el => {
                     let { path, lastTerm } = constructResponsePath(
-                      options.queryPaths[key],
+                      this.options.queryPaths[key],
                       el
                     );
                     return this.cbs[this.options.subsets[key]](
@@ -199,6 +199,7 @@ export default class Flache {
   }
 
   fetchData(query, endpoint, headers, stringifiedQuery) {
+    console.log(stringifiedQuery);
     return new Promise((resolve, reject) => {
       fetch(endpoint, {
         method: "POST",
@@ -207,14 +208,17 @@ export default class Flache {
       })
       .then(res => res.json())
       .then(res => {
+        console.log('response from fetch: ', res);
           this.cache[stringifiedQuery] = res;
           let normalizedData = flatten(res);
+          console.log('flache normalized: ', normalizedData);
           this.fieldsCache.push({
             [this.queryParams]: {
               data: normalizedData,
               children: constructQueryChildren(query)
             }
           });
+          console.log('this is fields cache: ', this.fieldsCache);
           setTimeout(
             () => delete this.cache[stringifiedQuery],
             this.cacheExpiration
