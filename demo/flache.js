@@ -92,9 +92,9 @@ export default class Flache {
           let currentMatchedQuery;
           for (let key in variables) {
             for (let query in this.queryCache[key]) {
-              console.log('thing', this.cbs)
-              console.log('thing', this.options.subsets)
-              console.log('thing', this.options.subsets[key])
+              // console.log('thing', this.cbs)
+              // console.log('thing', this.options.subsets)
+              // console.log('thing', this.options.subsets[key])
               if (
                 this.cbs[this.options.subsets[key]](
                   variables[key],
@@ -104,69 +104,9 @@ export default class Flache {
                 // if the callback returns true, set the currentMatchedQuery to be the current query
                 currentMatchedQuery = query;
               } else {
-                continue;
+                // continue;
               }
-
-              for (let currentKey in this.queryCache) {
-                // skip the first key since this is the one that just matched
-                if (key === currentKey) continue;
-                console.log('im key', key)
-                console.log('im current', currentKey)
-                /* run the value on that query on each callback 
-                such that if the callback of the current symbol passes
-                given the current query variable as the first argument, 
-                and the cached value on the current matched query key as the second,
-                the queriesPass boolean is set to the return value of the callback */
-                let rule = this.options.subsets[currentKey];
-                let arg1 = variables[currentKey];
-                console.log('arg1', arg1)
-                console.log('variables', variables)
-                console.log('arg2', arg2)
-                let arg2 = this.queryCache[currentKey][currentMatchedQuery];
-                let result = this.cbs[rule](arg1, arg2);
-
-                if (result) {
-                  allParamsPass = result;
-                } else {
-                  allParamsPass = false;
-                  break;
-                }
-              }
-
-              if (allParamsPass) {
-                console.log('super, all params pass')
-                let pathToNodes = this.options.pathToNodes;
-                let cached = JSON.parse(JSON.stringify(this.cache[currentMatchedQuery]));
-                let { path, lastTerm } = constructResponsePath(
-                  pathToNodes,
-                  cached
-                );
-                console.log('path', path)
-                console.log('last term', lastTerm)
-
-                for (let key in this.options.queryPaths) {
-                  
-                  console.log('subsets', this.options.subsets)
-
-                  console.log(this.options.subsets)
-                  console.log('key in query path loop', key)
-                  console.log('query paths', this.options.queryPaths)
-                  path[lastTerm] = path[lastTerm].filter(el => {
-                    let { path, lastTerm } = constructResponsePath(
-                      this.options.queryPaths[key],
-                      el
-                    );
-                    console.log(this.cbs)
-                    return this.cbs[this.options.subsets[key]](
-                      path[lastTerm],
-                      variables[key]
-                    );
-                  });
-                }
-                return new Promise((resolve, reject) => {
-                  resolve(cached);
-                });
-              }
+    
             }
           }
         }
@@ -220,9 +160,9 @@ export default class Flache {
         return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery);
       }
     }
-    console.log('cache', this.cache)
-    console.log('fieldscache', this.fieldsCache)
-    console.log('querycache', this.queryCache)
+    // console.log('cache', this.cache)
+    // console.log('fieldscache', this.fieldsCache)
+    // console.log('querycache', this.queryCache)
     return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery);
     
   }
@@ -241,18 +181,17 @@ export default class Flache {
         // console.log('resres,',res)
         return res.json()})
       .then(res => {
-        console.log('getting res from fetch:', res)  
+        // console.log('getting res from fetch:', res)  
         this.cache[stringifiedQuery] = res;
-        console.log('THIS IS query params,', this.queryParams)
+        // console.log('THIS IS query params,', this.queryParams)
         let normalizedData = flatten(res);
-        console.log('THIS IS normalized data', flatten(res))
+        // console.log('THIS IS normalized data', flatten(res))
           this.fieldsCache.push({
             [this.queryParams]: {
               data: normalizedData,
               children: constructQueryChildren(query)
             }
           });
-          console.log('THIS IS THE FIELDS CACHE,', this.fieldsCache)
           setTimeout(
             () => delete this.cache[stringifiedQuery],
             this.cacheExpiration

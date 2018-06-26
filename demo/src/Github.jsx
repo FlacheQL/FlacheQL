@@ -71,9 +71,9 @@ class GitHub extends Component {
       fieldRetrieval: true,
       subsets: {
         terms: '=',
-        languages: '> string',
+        languages: '=',
         stars: '>= number',
-        num: 'limit',
+        num: 'first',
       },
       queryPaths: { 
         stars: 'node.stargazers.totalCount', 
@@ -96,11 +96,17 @@ class GitHub extends Component {
     });
     // initial fetch
     setTimeout(() => {
-      this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
+      this.getRepos('react', 'javascript', 10000, 80, ['updatedAt', 'homepageUrl']);
     }, 1);
     setTimeout(() => {
-      this.getRepos('graphql', 'javascript', 500, 5, ['homepageUrl']);
-    }, 3000);
+      this.getRepos('react', 'javascript', 15000, 70, ['homepageUrl']);
+    }, 4000);
+    // setTimeout(() => {
+    //   this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
+    // }, 6000);
+    // setTimeout(() => {
+    //   this.getRepos('graphql', 'javascript', 500, 25, ['homepageUrl']);
+    // }, 10000);
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
     // }, 2000);
@@ -118,11 +124,11 @@ class GitHub extends Component {
   * @param {array} extraFields An array containing information on which checkbokes are ticked
   */
   getRepos(terms, languages, stars, num, extraFields) {
-    console.log('extra fields', extraFields)
+    // console.log('extra fields', extraFields)
     const query = buildQuery(terms, languages, stars, num, true, extraFields);
-    console.log('github flache query:', query)
+    // console.log('github flache query:', query)
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
-    console.log('github apollo query:', apolloQuery.loc.source.body)
+    // console.log('github apollo query:', apolloQuery.loc.source.body)
     // console.log('check equivalence', JSON.stringify(query) == JSON.stringify(apolloQuery))
     // refer to the documentation for details on these options
     // FIXME: integrate this configuration with flache initialization, it never changes
