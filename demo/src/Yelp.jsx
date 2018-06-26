@@ -4,10 +4,6 @@ import YelpBox from "./YelpBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import Flache from '../flache';
 import Form from './Form.jsx';
-import { ApolloClient } from 'apollo-client';
-import { HttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
-import { InMemoryCache } from 'apollo-cache-inmemory';
 
 class Yelp extends Component {
   constructor(props) {
@@ -26,12 +22,7 @@ class Yelp extends Component {
         timerText: 'Last query fetched 0 results in',
       },
       flacheTimerClass: "timerF",
-      apolloTimer: {
-        reqStartTime: null,
-        lastQueryTime: 'Apollo not running...',
-        timerText: 'Last query fetched 0 results in',
-      },
-      apolloTimerClass: "timerF",
+
     };
     this.getRestaurants = this.getRestaurants.bind(this);
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
@@ -42,8 +33,6 @@ class Yelp extends Component {
     this.startTimer = this.startTimer.bind(this);
     this.endTimer = this.endTimer.bind(this);
     this.flashTimer = this.flashTimer.bind(this);
-    // TODO: apollo
-    // this.apolloClient = this.props.client;
   }
 
   componentDidMount() {
@@ -62,17 +51,6 @@ class Yelp extends Component {
     // ---- INIT FLACHE CLIENT ----
     this.cache = new Flache(endpoint, headers, options);
 
-    // ---- INIT APOLLO CLIENT ----
-    const httpLink = new HttpLink({uri: endpoint });
-    const authLink = setContext(() => ({
-      headers: headers,
-    }));
-    const link = authLink.concat(httpLink)
-    this.apolloClient = new ApolloClient({
-      link,
-      cache: new InMemoryCache(),
-    });
-
     setTimeout(() => {
       this.getRestaurants('Venice', 10, ['']);
     }, 1000);
@@ -83,13 +61,6 @@ class Yelp extends Component {
       limit,
     }
     const flacheQuery = this.buildQuery(location, limit, true, extraFields);
-    const apolloQuery = this.buildQuery(location, limit, false, extraFields);
-    console.log(apolloQuery.loc.source.body === flacheQuery);
-    console.log(apolloQuery.loc.source.body.length, flacheQuery.length);
-    // start apollo timer
-    this.startTimer(false, limit);
-    // launch apollo query
-    this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
     // start flache timer
     this.startTimer(true, limit);
     // launch flache query
@@ -187,7 +158,6 @@ class Yelp extends Component {
     const updatedTimer = { timerText: `Fetching ${limit} items...`, reqStartTime, lastQueryTime: 'Please wait...' };
     // update either the flache or apollo timer
     if (flache) this.setState({ flacheTimer: updatedTimer });
-    else this.setState({ apolloTimer: updatedTimer });
   }
 
   endTimer(flache, limit) {
@@ -195,7 +165,6 @@ class Yelp extends Component {
     const updatedTimer = { timerText: `Last query fetched ${limit} results in`, lastQueryTime, reqStartTime: null };
     // update either the flache or apollo timer
     if (flache) this.setState({ flacheTimer: updatedTimer });
-    else this.setState({ apolloTimer: updatedTimer });
     this.flashTimer(flache);
   }
 
@@ -204,10 +173,7 @@ class Yelp extends Component {
     if (flache) {
       this.setState({ flacheTimerClass: "timerF flashF" });
       setTimeout(() => this.setState({ flacheTimerClass: "timerF" }), 200);
-    } else {
-      this.setState({ apolloTimerClass: "timerA flashA" });
-      setTimeout(() => this.setState({ apolloTimerClass: "timerA" }), 200);
-    }
+    } 
   }
 
   /** Fired on search, collects input fields and calls getRepos */
@@ -226,6 +192,7 @@ class Yelp extends Component {
         <div id="top-wrapper">
           <Form
             handleSubmit={this.handleSubmit}
+            title={'Search Yelp'}
             fields={[
               { label: 'Search: ', id: 'location' },
               { label: '# to fetch: ', id: 'limit' },
@@ -243,12 +210,6 @@ class Yelp extends Component {
               title="FlacheQL"
               lastQueryTime={this.state.flacheTimer.lastQueryTime}
               timerText={this.state.flacheTimer.timerText}
-            />
-            <QueryTimer
-              class={this.state.apolloTimerClass}
-              title="Apollo"
-              lastQueryTime={this.state.apolloTimer.lastQueryTime}
-              timerText={this.state.apolloTimer.timerText}
             />
           </div>
         </div>
