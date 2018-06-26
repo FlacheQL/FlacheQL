@@ -98,9 +98,6 @@ export default class Flache {
                 // if the callback returns true, set the currentMatchedQuery to be the current query
                 currentMatchedQuery = query;
               } else {
-<<<<<<< HEAD
-                // continue;
-=======
                 continue;
               }
 
@@ -149,7 +146,6 @@ export default class Flache {
                 return new Promise((resolve, reject) => {
                   resolve(cached);
                 });
->>>>>>> ae315715b60fd4b933befdf27927bf3a6d8654d9
               }
     
             }
@@ -205,12 +201,6 @@ export default class Flache {
         return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery);
       }
     }
-<<<<<<< HEAD
-    // console.log('cache', this.cache)
-    // console.log('fieldscache', this.fieldsCache)
-    // console.log('querycache', this.queryCache)
-=======
->>>>>>> ae315715b60fd4b933befdf27927bf3a6d8654d9
     return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery);
     
   }
@@ -225,16 +215,8 @@ export default class Flache {
       .then(res => {
         return res.json()})
       .then(res => {
-<<<<<<< HEAD
-        // console.log('getting res from fetch:', res)  
-        this.cache[stringifiedQuery] = res;
-        // console.log('THIS IS query params,', this.queryParams)
-        let normalizedData = flatten(res);
-        // console.log('THIS IS normalized data', flatten(res))
-=======
         this.cache[stringifiedQuery] = res;
         let normalizedData = flatten(res);
->>>>>>> ae315715b60fd4b933befdf27927bf3a6d8654d9
           this.fieldsCache.push({
             [this.queryParams]: {
               data: normalizedData,

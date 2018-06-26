@@ -125,17 +125,12 @@ class GitHub extends Component {
   * @param {array} extraFields An array containing information on which checkbokes are ticked
   */
   getRepos(terms, languages, stars, num, extraFields) {
-<<<<<<< HEAD
     // console.log('extra fields', extraFields)
     const query = buildQuery(terms, languages, stars, num, true, extraFields);
     // console.log('github flache query:', query)
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
     // console.log('github apollo query:', apolloQuery.loc.source.body)
     // console.log('check equivalence', JSON.stringify(query) == JSON.stringify(apolloQuery))
-=======
-    const query = buildQuery(terms, languages, stars, num, true, extraFields);
-    const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
->>>>>>> ae315715b60fd4b933befdf27927bf3a6d8654d9
     // refer to the documentation for details on these options
     // start apollo timer - THAT'S RIGHT, WE RUN THEM FIRST - NO SHENANIGANS
     this.startTimer(false, num);
