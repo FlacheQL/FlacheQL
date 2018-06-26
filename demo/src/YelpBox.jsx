@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 
 const YelpBox = (props) => {
-  console.log('BOX PROPS: ', props)
   const displayOptions = [];
   for(let key in props.moreOptions) {
     let index = 0;

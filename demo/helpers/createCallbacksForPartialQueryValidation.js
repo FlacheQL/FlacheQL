@@ -17,7 +17,7 @@ const createCallbacksForPartialQueryValidation = (subsets) => {
           return num1 >= num2;
         };
         break;
-      case "<= number":
+      case "limit":
         func = (num1, num2) => {
           return num1 <= num2;
         };

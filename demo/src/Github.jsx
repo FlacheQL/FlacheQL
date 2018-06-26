@@ -66,7 +66,7 @@ class GitHub extends Component {
   /* initial modal render */
   componentDidMount() {
     // console.log('mounted, active modal: ', this.state.activeModal);
-    setTimeout(() => {this.showModal();}, 250)
+// setTimeout(() => {this.showModal();}, 250)
     // ---- SETUP PARAMS FOR CACHING ENGINES ----
     const endpoint = 'https://api.github.com/graphql';
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
@@ -77,7 +77,7 @@ class GitHub extends Component {
         terms: '=',
         languages: '> string',
         stars: '>= number',
-        num: '<= number',
+        num: 'limit',
       },
       queryPaths: { stars: 'node.stargazers.totalCount' },
       pathToNodes: 'data.search.edges',
@@ -98,8 +98,17 @@ class GitHub extends Component {
     });
     // initial fetch
     setTimeout(() => {
-      this.getRepos('react', 'javascript', 50000, 100, ['']);
-    }, 1000);
+      this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
+    }, 1);
+    setTimeout(() => {
+      this.getRepos('graphql', 'javascript', 500, 5, ['homepageUrl']);
+    }, 3000);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
+    // }, 2000);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
+    // }, 5000);
   }
 
   /**
@@ -111,8 +120,12 @@ class GitHub extends Component {
   * @param {array} extraFields An array containing information on which checkbokes are ticked
   */
   getRepos(terms, languages, stars, num, extraFields) {
-    const flacheQuery = buildQuery(terms, languages, stars, num, true, extraFields);
+    console.log('extra fields', extraFields)
+    const query = buildQuery(terms, languages, stars, num, true, extraFields);
+    console.log('github flache query:', query)
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
+    console.log('github apollo query:', apolloQuery.loc.source.body)
+    // console.log('check equivalence', JSON.stringify(query) == JSON.stringify(apolloQuery))
     // refer to the documentation for details on these options
     // FIXME: integrate this configuration with flache initialization, it never changes
     // start apollo timer - THAT'S RIGHT, WE RUN THEM FIRST - NO SHENANIGANS
@@ -129,7 +142,7 @@ class GitHub extends Component {
       stars,
       num,
     }
-    this.cache.it(flacheQuery, variables)
+    this.cache.it(JSON.stringify({query}), variables)
       .then(res => this.handleResponse(res.data, true));
   }
 
@@ -311,14 +324,12 @@ function buildQuery(terms, languages, stars, num, flache, extraFields) {
           ... on Repository {
             name
             ${str}
-            descriptionHTML
             stargazers {
               totalCount
             }
             forks {
               totalCount
             }
-            updatedAt
           }
         }
       }
@@ -332,7 +343,6 @@ function buildQuery(terms, languages, stars, num, flache, extraFields) {
           ... on Repository {
             name
             ${str}
-            description
             stargazers {
               totalCount
             }

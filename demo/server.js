@@ -20,8 +20,6 @@ app.get('/', (req, res) => res.sendFile('./dist/index.html'));
 
 // workaround for yelp CORS issue
 app.post('/yelp', (req, res) => {
-  console.log("TYPEOF ", typeof req.body);
-  console.log("REQ: ", req.body);
   const { body } = req;
   fetch(yelpAPI, {
     headers: {

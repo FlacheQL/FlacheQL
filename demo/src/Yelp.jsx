@@ -4,13 +4,14 @@ import YelpBox from "./YelpBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import Flache from '../flache';
 import Form from './Form.jsx';
-
-console.log('yelp!');
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { setContext } from 'apollo-link-context';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 
 class Yelp extends Component {
   constructor(props) {
     super(props);
-    this.cache = new Flache();
     this.state = {
       moreOptions: {
         price: false,  
@@ -46,53 +47,59 @@ class Yelp extends Component {
   }
 
   componentDidMount() {
-    // cache persistence
-    this.cache.readFromSessionStorage();
-    setTimeout(() => {
-      this.getRestaurants('Venice', 10, [''], true);
-    }, 1000);
-  }
-
-  componentWillUnmount() {
-    // cache persistence
-    // this.cache.saveToSessionStorage();
-  }
-
-
-  getResturaunts(location, limit, extraFields, disableApollo) {
     const endpoint = 'http://www.flacheql.io:8000/yelp'
     const headers = { "Content-Type": "text/plain",
     "Authorization": "Bearer 1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx", }
-    const variables = { 
-      limit,
-    }
     const options = {
       paramRetrieval: true,
       fieldRetrieval: true,
-      defineSubsets: {
+      subsets: {
         limit: '<= number',
       },
       pathToNodes: "data.search.business"
     }
+    // ---- INIT FLACHE CLIENT ----
+    this.cache = new Flache(endpoint, headers, options);
+
+    // ---- INIT APOLLO CLIENT ----
+    const httpLink = new HttpLink({uri: endpoint });
+    const authLink = setContext(() => ({
+      headers: headers,
+    }));
+    const link = authLink.concat(httpLink)
+    this.apolloClient = new ApolloClient({
+      link,
+      cache: new InMemoryCache(),
+    });
+
+    setTimeout(() => {
+      this.getRestaurants('Venice', 10, ['']);
+    }, 1000);
+  }
+
+  getRestaurants(location, limit, extraFields) {
+    const variables = { 
+      limit,
+    }
     const flacheQuery = this.buildQuery(location, limit, true, extraFields);
     console.log('flachequery: ', flacheQuery);
-    if (!disableApollo) {
-      const apolloQuery = this.buildQuery(location, limit, false, extraFields);
-      // start apollo timer
-      this.startTimer(false, limit);
-      // launch apollo query
-      this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
-    }
+    const apolloQuery = this.buildQuery(location, limit, false, extraFields);
+    console.log('apolloquery:', apolloQuery)
+    // start apollo timer
+    this.startTimer(false, limit);
+    // launch apollo query
+    this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
     // start flache timer
     this.startTimer(true, limit);
     // launch flache query
-    // this.cache.it(flacheQuery, variables, endpoint, headers, options)
-    //   .then(res => {
-    //     this.handleResponse(res.data, true)
-    //   });
-    fetch(endpoint, { headers, method: 'POST', body: flacheQuery }).then(resp => resp.json()).then((data) => {
-      this.handleResponse(data.data, true);
-    });
+    this.cache.it(flacheQuery, variables)
+      .then(res => {
+        console.log('yelp res', res)
+        return this.handleResponse(res.data, true)
+      });
+    // fetch(endpoint, { headers, method: 'POST', body: flacheQuery }).then(resp => resp.json()).then((data) => {
+    //   this.handleResponse(data.data, true);
+    // });
   }
 
   /**
@@ -109,8 +116,9 @@ class Yelp extends Component {
     if (limit > 50) return window.alert('Bad query! Max 50 results!');
     let str = '';
     extraFields.forEach(e => str += '\n' + e);
+    location = '"' + location + '"'
     return flache ? `{
-      search(location: "${location}" limit: ${limit}) {
+      search(location: ${location} limit: ${limit}) {
         business {
           name
           rating
@@ -151,7 +159,6 @@ class Yelp extends Component {
         updateOptions[options[i].value] = [true, options[i].value];
       } else updateOptions[options[i].value] = false;
     }
-    console.log('SAVEOPTIONS: ', saveOptions);
     this.setState({ moreOptions: updateOptions });
     return saveOptions;
   }
@@ -165,7 +172,6 @@ class Yelp extends Component {
     const newBoxes = data.search.business.map((business, index) => {
       // yelp often does not return a business' hours, but still returns an empty hours array anyway
       const hours = business.hours[0] ? (business.hours[0].is_open_now ? 'yes' : 'no') : 'no info';
-      console.log('MOREOPTIONS: ', this.state.moreOptions);
       return (
         <YelpBox
           key={`b${index}`}
@@ -219,7 +225,6 @@ class Yelp extends Component {
       document.getElementById('location').value,
       document.getElementById('limit').value,
       extraFields,
-      true
     );
   }
 
