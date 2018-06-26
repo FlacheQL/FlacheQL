@@ -20,14 +20,18 @@ class Documentation extends Component {
 
   clickHandler(e, index) {
     this.setState({ activeModal: index });
+    document.getElementById("modal-overlay").style.display = "block";
   }
 
   hideModal() {
-    this.setState({ activeModal: null })
+    this.setState({ activeModal: null });
+    document.getElementById("modal-overlay").style.display = "none";
   }
 
   onKeyDown(e) {
-    if (e.keycode === 27) this.hideModal();
+    if (e.keyCode === 27) this.hideModal();
+    console.log('keypress, keycode: ', e.keyCode);
+    document.getElementById("modal-overlay").style.display = "none";
   } 
 
   render () {

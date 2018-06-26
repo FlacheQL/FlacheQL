@@ -51,13 +51,17 @@ class GitHub extends Component {
   /* Modal Display */
   hideModal() {
     this.setState({ activeModal: null })
-    this.flache = new Flache();
-    this.apolloClient;
+    document.getElementById("modal-overlay").style.display = "none"
   }
 
   showModal() {
-    this.setState({ activeModal: Instructions })
+    this.setState({ activeModal: Instructions });
+    document.getElementById("modal-overlay").style.display = "block"
   }  
+
+  onKeyDown(e) {
+    if (e.keyCode === 27) this.hideModal();
+  } 
 
   /* initial modal render */
   componentDidMount() {
@@ -241,7 +245,7 @@ class GitHub extends Component {
         <div id="top-wrapper">
         {/* Modal Control */}
         {this.state.activeModal === Instructions ? 
-          <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onEscape={this.escapeKey}>
+          <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onKeyDown={(e) => this.onKeyDown(e)}>
               <p>Modal</p>
           </Instructions>
           : <div></div>
