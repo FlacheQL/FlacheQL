@@ -15,7 +15,10 @@ const Form = props => {
         })}
       </div>
     </fieldset>
-    <button onClick={props.handleSubmit}>Search</button>
+    <div id="form-button-box">
+      <button onClick={props.handleSubmit}>Search</button>
+      <button id="get-modal" onClick={props.showModal}>Show Help</button>
+    </div>
   </div>
 )};
 
