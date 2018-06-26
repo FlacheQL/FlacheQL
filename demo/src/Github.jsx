@@ -321,6 +321,7 @@ function buildQuery(terms, languages, stars, num, flache, extraFields) {
   if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
   let str = '';
   extraFields.forEach((e) => { str += '\n' + e });
+  console.log('extra', JSON.stringify(str))
   return flache ? `{
     search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
       repositoryCount

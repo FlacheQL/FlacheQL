@@ -23,20 +23,20 @@ export default class Flache {
    * Saves all Flache data to browser session storage for cache persistence. Purges after 200 seconds.
    */
   saveToSessionStorage() {
-    Object.keys(this).forEach(key =>
-      sessionStorage.setItem(key, JSON.stringify(this[key]))
-    );
-    setTimeout(() => sessionStorage.clear(), 200000);
+    // Object.keys(this).forEach(key =>
+    //   sessionStorage.setItem(key, JSON.stringify(this[key]))
+    // );
+    // setTimeout(() => sessionStorage.clear(), 200000);
   }
 
   /**
    * Grabs any relevant Flache data from browser session storage.
    */
   readFromSessionStorage() {
-    Object.keys(this).forEach(key => {
-      if (sessionStorage.getItem(key))
-        this[key] = JSON.parse(sessionStorage.getItem(key));
-    });
+    // Object.keys(this).forEach(key => {
+    //   if (sessionStorage.getItem(key))
+    //     this[key] = JSON.parse(sessionStorage.getItem(key));
+    // });
   }
 
   it(query, variables) {
@@ -89,9 +89,13 @@ export default class Flache {
           let currentMatchedQuery;
           for (let key in variables) {
             for (let query in this.queryCache[key]) {
-              // console.log('thing', this.cbs)
-              // console.log('thing', this.options.subsets)
-              // console.log('thing', this.options.subsets[key])
+              console.log('thing1', variables[key])
+              console.log('thing2', this.queryCache[key][query])
+              console.log('thing3', this.cbs[this.options.subsets[key]])
+              console.log('result', this.cbs[this.options.subsets[key]](
+                variables[key],
+                this.queryCache[key][query]
+              ))
               if (
                 this.cbs[this.options.subsets[key]](
                   variables[key],
@@ -103,12 +107,14 @@ export default class Flache {
               } else {
                 continue;
               }
-
+              console.log('current query cache', this.queryCache)
               for (let currentKey in this.queryCache) {
                 // skip the first key since this is the one that just matched
-                if (key === currentKey) continue;
-                console.log('variables', variables)
+                console.log('im key', key)
                 console.log('im current', currentKey)
+                console.log('variables', variables)
+                
+                if (key === currentKey) continue;
                 console.log('im current rule', this.options.subsets[currentKey])
                 /* run the value on that query on each callback 
                 such that if the callback of the current symbol passes
@@ -200,10 +206,12 @@ export default class Flache {
       this.fieldsCache.forEach(node => {
         console.log('im up in there')
         if (node.hasOwnProperty(this.queryParams)) {
+          console.log('thischildren', this.children)
           foundMatch = this.children.every(child => {
+            console.log('nodechidlren', node[this.queryParams].children)
             return node[this.queryParams].children.includes(child);
           });
-          console.log('im up in here')
+          console.log('im up in here,', foundMatch)
           if (foundMatch) {
             filtered = JSON.parse(JSON.stringify(node[this.queryParams].data));
             for (let key in filtered) {
@@ -258,6 +266,7 @@ export default class Flache {
               children: constructQueryChildren(query)
             }
           });
+          console.log('stringified fields cache', this.fieldsCache)
           setTimeout(
             () => delete this.cache[stringifiedQuery],
             this.cacheExpiration
