@@ -6,7 +6,6 @@ export default class Flache {
     }
 
     it(query, variables, endpoint, headers = { "Content-Type": "application/graphql" }) {
-        console.log(variables)
         const key = JSON.stringify(query);
         Object.keys(variables).forEach(variable => {
             if (this.queryCache[variable]) {
@@ -14,7 +13,6 @@ export default class Flache {
             }
             else this.queryCache[variable] = { [variables[variable]]: variables[variable] }
         }) 
-        console.log('query cache:', this.queryCache)
         if (this.cache[key]) {
             return new Promise((resolve, reject) => {
                 resolve(this.cache[key]);
