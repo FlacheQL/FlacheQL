@@ -92,6 +92,9 @@ export default class Flache {
           let currentMatchedQuery;
           for (let key in variables) {
             for (let query in this.queryCache[key]) {
+              console.log('thing', this.cbs)
+              console.log('thing', this.options.subsets)
+              console.log('thing', this.options.subsets[key])
               if (
                 this.cbs[this.options.subsets[key]](
                   variables[key],
@@ -142,7 +145,9 @@ export default class Flache {
                 console.log('last term', lastTerm)
 
                 for (let key in this.options.queryPaths) {
+                  console.log('subsets', this.options.subsets)
 
+                  console.log(this.options.subsets)
                   console.log('key in query path loop', key)
                   console.log('query paths', this.options.queryPaths)
                   path[lastTerm] = path[lastTerm].filter(el => {
@@ -150,6 +155,7 @@ export default class Flache {
                       this.options.queryPaths[key],
                       el
                     );
+                    console.log(this.cbs)
                     return this.cbs[this.options.subsets[key]](
                       path[lastTerm],
                       variables[key]
