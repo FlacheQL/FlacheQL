@@ -6,8 +6,7 @@ import Gist from 'react-gist';
 class Features extends React.Component {
   render() {
     return (
-      <div className="backdrop"  >
-       <div className="modal" >
+      <div className="modal" >
         <h1>Features</h1>
         <div className="description"> 
           FlacheQL offers developers useful features not found in other GraphQL caching libraries. Notably, the ability to define subsets of response data and retrieve them from the cache when similar queries are dispatched to an endpoint.
@@ -17,10 +16,7 @@ class Features extends React.Component {
           A developer must also define the retrieval features they would like to employ via a boolean on the retrieval fields of the options object.
           <Gist id='b121f9bbac8cd353b77ad44f034fdbe2' />
         </div>
-        <button onClick={this.props.onClose}>Close</button>
-        </div>
-        {/* <div className="modal-overlay" id="modal-overlay">
-        </div> */}
+      <button onClick={this.props.onClose}>Close</button>
       </div>
     )
   }
