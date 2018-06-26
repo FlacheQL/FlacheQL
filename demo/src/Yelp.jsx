@@ -9,8 +9,6 @@ import { HttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
-console.log('yelp!');
-
 class Yelp extends Component {
   constructor(props) {
     super(props);
@@ -87,32 +85,17 @@ class Yelp extends Component {
     console.log('flachequery: ', flacheQuery);
     const apolloQuery = this.buildQuery(location, limit, false, extraFields);
     console.log('apolloquery:', apolloQuery)
-    console.log('apolloquery:', apolloQuery.loc.source.body)
     // start apollo timer
     this.startTimer(false, limit);
     // launch apollo query
-    this.apolloClient.query({ query: gql`{
-      search(location: ${location} limit: ${limit}) {
-        business {
-          name
-          rating
-          hours {
-            is_open_now
-          }
-          categories {
-            title
-          }
-          ${extraFields}
-        }
-      }
-    }` }).then(res => this.handleResponse(res.data, false));
+    this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
     // start flache timer
     this.startTimer(true, limit);
     // launch flache query
     this.cache.it(flacheQuery, variables)
       .then(res => {
-        console.log('cache res', res)
-        this.handleResponse(res.data, true)
+        console.log('yelp res', res)
+        return this.handleResponse(res.data, true)
       });
     // fetch(endpoint, { headers, method: 'POST', body: flacheQuery }).then(resp => resp.json()).then((data) => {
     //   this.handleResponse(data.data, true);

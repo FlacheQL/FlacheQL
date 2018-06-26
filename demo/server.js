@@ -28,7 +28,7 @@ app.post('/yelp', (req, res) => {
     },
     method: 'POST',
     body,
-  }).then(resp => resp.json()).then(data => data);
+  }).then(resp => resp.json()).then(data => res.json(data));
 });
 
 app.listen(port, () => console.log(`Listening on ${port}...`));
