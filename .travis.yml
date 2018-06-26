@@ -5,9 +5,9 @@ node_js:
 install:
   - cd demo
   - npm install
+  - npm run dist
 
 before_deploy:
-  - npm run dist
   - git add -f node_modules/
 
 deploy:
