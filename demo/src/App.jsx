@@ -21,8 +21,8 @@ class App extends Component {
         <div>
           <div className="navigation-bar">
             <center><Link to="/home"><div>Home</div></Link></center>
-            <center><Link to="/github"><div>Github Demo</div></Link></center>
             <center><Link to="/yelp"><div>Yelp Demo</div></Link></center>
+            <center><Link to="/github"><div>Github Demo</div></Link></center>
             <center><Link to="/documentation"><div>Docs</div></Link></center>
           </div>
           <hr />

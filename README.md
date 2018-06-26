@@ -51,7 +51,7 @@ import Flache from 'flacheql'
 const yourCache = new Flache(endpoint, headers, options);
 ```
 
-Set up these parameters on initialization rather than on each query.
+Set up the options on initialization, by passing in config objects.
 
 For example:
 ```
@@ -66,10 +66,9 @@ For example:
         stars: '>= number',
         num: '<= number',
       },
-      // the path to the array in the response:
-      pathToNodes: 'data.search.edges',
+      pathToNodes: 'data.search.edges', // the path to the array in the response
       // if you have a field which does not translate directly to its parameter,
-      // the path to that data from the must be specified:
+      // the path to that data from the its parent array must be specified:
       queryPaths: { stars: 'node.stargazers.totalCount' },
     };
 ```
