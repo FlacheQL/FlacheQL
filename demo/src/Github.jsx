@@ -65,8 +65,8 @@ class GitHub extends Component {
 
   /* initial modal render */
   componentDidMount() {
-    // console.log('mounted, active modal: ', this.state.activeModal);
-// setTimeout(() => {this.showModal();}, 250)
+    console.log('mounted, active modal: ', this.state.activeModal);
+setTimeout(() => {this.showModal();}, 250)
     // ---- SETUP PARAMS FOR CACHING ENGINES ----
     const endpoint = 'https://api.github.com/graphql';
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
