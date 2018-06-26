@@ -1,6 +1,6 @@
-# FlascheQL
+# FlacheQL
 
-FlacheQL is a __*fast, light weight*__ client caching library for GraphQL.
+FlacheQL is a __*fast, lightweight*__ client caching library for GraphQL.
 
 ## Why use FlacheQL?
 
@@ -10,7 +10,7 @@ Third party solutions such as Apollo and Relay exist.  However, they are large f
 
 * Full cache
 * Partial cache
-* nomalized data structure that ensures minimum network latency which results to a decrease data charges for data transfer
+* nomalized data structure that ensures minimum network latency 
 * easy to implement
 
 *This is a work in progress.  Cache persistence and "smart" expiration of cached items are some of the features considered to be added.*
@@ -26,19 +26,15 @@ All HTTP requests from a browser are first routed to the browser cache.
 **Partial Cache:**
 
 * If a request is a subset of a query that was previously made, then it reads the matching response from cache.
-    
-    Example:
 
 * If a request consists of a previous query and a new query, then it reads the matching response from cache and fetches the new query from the data source.
-    
-    Example:
-
 
 ## Getting Started
 
 ### Installing
 
 Install the module with npm install flacheQL or place into your package.json and run npm install.
+
 ```
 npm install --save flacheQL
 ```
@@ -76,3 +72,4 @@ For example:
 More information on configuration....
 
 ## Demo
+http://www.flacheql.io/
