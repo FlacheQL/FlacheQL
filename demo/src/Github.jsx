@@ -24,7 +24,7 @@ class GitHub extends Component {
       gitBoxes: [],
       flacheTimer: {
         reqStartTime: null,
-        lastQueryTime: 'Please wait...',
+        lastQueryTime: 'Please submit query...',
         timerText: 'Last query fetched 0 results in',
       },
       flacheTimerClass: 'timerF',
@@ -51,13 +51,12 @@ class GitHub extends Component {
   /* Modal Display */
   hideModal() {
     this.setState({ activeModal: null })
-    document.getElementById("modal-overlay").style.display = "none"
-    sessionStorage.setItem('modalShown', 'true');
+    //document.getElementById("modal-overlay").style.display = "none"
   }
 
   showModal() {
     this.setState({ activeModal: Instructions });
-    document.getElementById("modal-overlay").style.display = "block"
+    //document.getElementById("modal-overlay").style.display = "block"
   }  
 
   onKeyDown(e) {
@@ -66,8 +65,8 @@ class GitHub extends Component {
 
   /* initial modal render */
   componentDidMount() {
-    console.log('MODAL SHOWN: ', sessionStorage.getItem('modalShown'))
-    if (sessionStorage.getItem('modalShown') !== 'true') setTimeout(this.showModal, 250);
+    console.log('mounted, active modal: ', this.state.activeModal);
+    setTimeout(() => {this.showModal();}, 250)
     // ---- SETUP PARAMS FOR CACHING ENGINES ----
     const endpoint = 'https://api.github.com/graphql';
     const headers = { "Content-Type": "application/graphql", "Authorization": "token d5db50499aa5e2c144546249bff744d6b99cf87d" }
@@ -76,17 +75,17 @@ class GitHub extends Component {
       fieldRetrieval: true,
       subsets: {
         terms: '=',
-        languages: '=',
+        languages: '> string',
         stars: '>= number',
-        num: 'first',
+        num: 'limit',
       },
-      queryPaths: { 
-        stars: 'node.stargazers.totalCount', 
-      },
+      queryPaths: { stars: 'node.stargazers.totalCount' },
       pathToNodes: 'data.search.edges',
     };
+    
     // ---- INIT FLACHE CLIENT ----
     this.cache = new Flache(endpoint, headers, options);
+
     // ---- INIT APOLLO CLIENT ----
     const httpLink = new HttpLink({uri: endpoint });
     const authLink = setContext(() => ({
@@ -98,21 +97,12 @@ class GitHub extends Component {
       cache: new InMemoryCache(),
     });
     // initial fetch
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 10000, 80, ['updatedAt', 'homepageUrl']);
-    }, 1);
-    setTimeout(() => {
-      this.getRepos('graphql', 'javascript', 10000, 5, ['homepageUrl']);
-    }, 3000);
-    setTimeout(() => {
-      this.getRepos('graphql', 'javascript', 15000, 70, ['homepageUrl']);
-    }, 6000);
     // setTimeout(() => {
     //   this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
-    // }, 6000);
+    // }, 1);
     // setTimeout(() => {
-    //   this.getRepos('graphql', 'javascript', 500, 25, ['homepageUrl']);
-    // }, 10000);
+    //   this.getRepos('graphql', 'javascript', 500, 5, ['homepageUrl']);
+    // }, 3000);
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
     // }, 2000);
@@ -130,11 +120,14 @@ class GitHub extends Component {
   * @param {array} extraFields An array containing information on which checkbokes are ticked
   */
   getRepos(terms, languages, stars, num, extraFields) {
-    // console.log('extra fields', extraFields)
+    console.log('extra fields', extraFields)
     const query = buildQuery(terms, languages, stars, num, true, extraFields);
-    // console.log('github flache query:', query)
+    console.log('github flache query:', query)
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
+    console.log('github apollo query:', apolloQuery.loc.source.body)
+    // console.log('check equivalence', JSON.stringify(query) == JSON.stringify(apolloQuery))
     // refer to the documentation for details on these options
+    // FIXME: integrate this configuration with flache initialization, it never changes
     // start apollo timer - THAT'S RIGHT, WE RUN THEM FIRST - NO SHENANIGANS
     this.startTimer(false, num);
     // launch apollo query
@@ -258,45 +251,47 @@ class GitHub extends Component {
     return (
       <div className="main-container">
         <div id="top-wrapper">
-          {/* Modal Control */}
-          {this.state.activeModal === Instructions ? 
-            <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onKeyDown={(e) => this.onKeyDown(e)}>
-                <p>Modal</p>
-            </Instructions>
-            : <div />
-          }
-          {/* Document Body */}
-          <Form
-            handleSubmit={this.handleSubmit}
-            title="Search Repositories"
-            fields={[
-              { label: 'Terms: ', id: 'searchText' },
-              { label: 'Language: ', id: 'searchLang' },
-              { label: '# of stars: ', id: 'searchStars' },
-              { label: '# to fetch: ', id: 'searchNum' },
-            ]}
-            extras={[
-              { label: ' Created at', id: 'createdAt' },
-              { label: ' Database ID', id: 'databaseId' },
-              { label: ' Homepage URL', id: 'homepageUrl' },
-              { label: ' Updated at', id: 'updatedAt' },
-            ]}
-            showModal={this.showModal}
-          />
-          <div id="timer-wrapper">
-            <QueryTimer
-              class={this.state.flacheTimerClass}
-              title="FlacheQL"
-              lastQueryTime={this.state.flacheTimer.lastQueryTime}
-              timerText={this.state.flacheTimer.timerText}
+        {/* Modal Control */}
+        {this.state.activeModal === Instructions ? 
+          <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onKeyDown={(e) => this.onKeyDown(e)}>
+              <p>Modal</p>
+          </Instructions>
+          : <div></div>
+        }
+        {/* Document Body */}
+            <Form
+              showModal={this.showModal}
+              onClose={this.hideModal}
+              onKeyDown={(e) => this.onKeyDown(e)}
+              handleSubmit={this.handleSubmit}
+              title={'Search Repositories'}
+              fields={[
+                { label: 'Terms: ', id: 'searchText' },
+                { label: 'Language: ', id: 'searchLang' },
+                { label: '# of stars: ', id: 'searchStars' },
+                { label: '# to fetch: ', id: 'searchNum' },
+              ]}
+              extras={[
+                { label: ' Created at', id: 'createdAt' },
+                { label: ' Database ID', id: 'databaseId' },
+                { label: ' Homepage URL', id: 'homepageUrl' },
+                { label: ' Updated at', id: 'updatedAt' },
+              ]}
             />
-            <QueryTimer
-              class={this.state.apolloTimerClass}
-              title="Apollo"
-              lastQueryTime={this.state.apolloTimer.lastQueryTime}
-              timerText={this.state.apolloTimer.timerText}
-            />
-          </div>
+            <div id="timer-wrapper">
+              <QueryTimer
+                class={this.state.flacheTimerClass}
+                title="FlacheQL"
+                lastQueryTime={this.state.flacheTimer.lastQueryTime}
+                timerText={this.state.flacheTimer.timerText}
+              />
+              <QueryTimer
+                class={this.state.apolloTimerClass}
+                title="Apollo"
+                lastQueryTime={this.state.apolloTimer.lastQueryTime}
+                timerText={this.state.apolloTimer.timerText}
+              />
+            </div>
         </div>
         <div className="result-list">
           {this.state.gitBoxes}
@@ -324,7 +319,6 @@ function buildQuery(terms, languages, stars, num, flache, extraFields) {
   if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
   let str = '';
   extraFields.forEach((e) => { str += '\n' + e });
-  console.log('extra', JSON.stringify(str))
   return flache ? `{
     search(query: ${searchQuery}, type: REPOSITORY, first: ${num}) {
       repositoryCount
