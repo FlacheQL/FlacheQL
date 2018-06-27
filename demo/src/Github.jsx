@@ -51,12 +51,12 @@ class GitHub extends Component {
   /* Modal Display */
   hideModal() {
     this.setState({ activeModal: null })
-    document.getElementById("modal-overlay").style.display = "none"
+    //document.getElementById("modal-overlay").style.display = "none"
   }
 
   showModal() {
     this.setState({ activeModal: Instructions });
-    document.getElementById("modal-overlay").style.display = "block"
+    //document.getElementById("modal-overlay").style.display = "block"
   }  
 
   onKeyDown(e) {
@@ -260,6 +260,9 @@ class GitHub extends Component {
         }
         {/* Document Body */}
             <Form
+              showModal={this.showModal}
+              onClose={this.hideModal}
+              onKeyDown={(e) => this.onKeyDown(e)}
               handleSubmit={this.handleSubmit}
               title={'Search Repositories'}
               fields={[
