@@ -41,7 +41,7 @@ class Documentation extends Component {
     });
 
     return (
-      <div id="documentation-wrapper">
+      <div id="docs-wrapper">
         <div className="flex-container">
           {list}
 

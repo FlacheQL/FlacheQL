@@ -9,7 +9,6 @@ body {
 }
 
 button {
-  
   background-color: white;
   font-family: inherit;
   margin: 5px;
@@ -17,7 +16,11 @@ button {
   text-align: center;
   border-radius: 0 !important;
   text-decoration: none;
-  border: 1px solid #5600CD;
+  border: 1px solid rgb(44, 3, 101);
+}
+
+center {
+  text-decoration: none;
 }
 
 p {
@@ -43,6 +46,12 @@ h2 {
 .body-wrapper {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  position: absolute;
+  top: 0;
+  z-index: 100;
 }
 
 #content {
@@ -51,12 +60,23 @@ h2 {
   min-width: 800px !important;
 }
 
-/* NAV BAR */
+.main-container {
+  padding-left: 50px;
+  min-width: 800px !important;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  color: rgb(44, 3, 101);
+ }
 
-#img-logo {
-  height: 90%;
-  margin: auto auto;
+#top-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: flex;
+  justify-content: center;
 }
+
+/* NAV BAR */
 
 .navigation-bar {
   text-transform: uppercase;
@@ -68,6 +88,11 @@ h2 {
   height: 215px;
   background-color: #5600CD;
   color: white;
+}
+
+#img-logo {
+  height: 90%;
+  margin: auto auto;
 }
 
 .navigation-bar a {
@@ -90,37 +115,17 @@ h2 {
   justify-content: space-evenly;
 }
 
-/* .navigation-bar div:hover {
-  background-color: #bad;
-  animation-name: colorNav;
-  animation-duration: 1.4s;
-  animation-iteration-count: infinite;
-} */
-
 .navigation-bar div {
-  padding: 20px;
-  border-radius: 5px;
+  padding: 35 15;
 }
 
-.title * {
-  font-size: 46px;
-  margin: 20 0 10 0;
-  text-shadow: 2px 2px lightgray;
+
+#git-logo:hover #git-logo-svg {
+  fill: rgb(224, 200, 255);
 }
 
-.main-container {
-  min-width: 800px !important;
-  width: 80%;
-  margin: 0 auto;
-  background: white;
-  color: rgb(44, 3, 101)
- }
-
-#top-wrapper {
-  width: 100%;
-  display: flex;
-  align-items: flex;
-  justify-content: center;
+#npm-logo:hover #npm-logo-svg {
+  fill: rgb(224, 200, 255);
 }
 
 /* MODAL */
@@ -134,6 +139,16 @@ h2 {
   top: -300;
   padding: 50;
   overflow: auto;
+}
+
+.flex-container {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  float: center;
+  text-align: center;
+  position: relative;
 }
 
 .modal {
@@ -165,9 +180,11 @@ h2 {
   to   { opacity: 1; }
 }
 
-#documentation-wrapper {
-  height: 100%;
+/* DOCUMENTATION */
+
+#docs-wrapper {
   width: 100%;
+  height: 100%;
   background-color: #5600CD;
 }
 
@@ -186,7 +203,6 @@ h2 {
   text-decoration: none;
   padding: 15px;
   color: #5600CD;
-  border: 3px white;
   text-transform: uppercase;
   letter-spacing: 3px;
   font-style: italic;
@@ -200,9 +216,7 @@ h2 {
   line-height: 2;
   width: 30%;
   height: 75px;
-
   margin: 10px;
-  box-shadow: 2px 2px rgba(165, 165, 165, .4);
 }
 
 .doc-container:hover {
@@ -221,10 +235,15 @@ h2 {
 #form-wrapper h2 {
   text-transform: uppercase;
   font-weight: 600;
+  color: rgb(44, 3, 101);
+}
+
+#form-button-box {
+  display: flex;
 }
 
 #form-wrapper button {
-  width: 60%;
+  width: 40%;
   background: #5600CD;
   color: white;
   padding: 5px;
@@ -253,39 +272,12 @@ input[type=text] {
   line-height: 2;
 }
 
-.flex-container {
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  float: center;
-  text-align: center;
-  position: relative;
-}
-
-.doc-container {
-  display: flex;
-  position: relative;
-  justify-content: center;
-  text-align: center;
-  margin: auto;
-  line-height: 2;
-  width: 30%;
-  height: 75px;
-  font-size: 18px;
-  border-radius: 5px;
-  margin: 10px;
-  background: linear-gradient(rgb(98, 66, 161), rgb(49, 9, 128));
-  color: white;
-  box-shadow: 2px 2px rgba(165, 165, 165, .4);
-}
-
-
 .result-list {
   width: 100%;
 }
 
 #top-wrapper {
+  margin: 0 auto;
   width: 100%;
   display: flex;
   align-items: flex;
@@ -374,6 +366,7 @@ fieldset {
 
 .result-list {
   width: 100%;
+  height: 100%;
 }
 
 .result-item {
@@ -406,12 +399,12 @@ fieldset {
   text-decoration: none;
 }
 
-.landing-content {
-  width: 88%;
+#landing-content {
+  width: 90%;
   margin: 0 auto;
 }
 
-.landing-content h2 {
+#landing-content h2 {
   margin-top: 0;
 }
 

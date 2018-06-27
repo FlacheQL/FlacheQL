@@ -24,7 +24,7 @@ class GitHub extends Component {
       gitBoxes: [],
       flacheTimer: {
         reqStartTime: null,
-        lastQueryTime: 'Please wait...',
+        lastQueryTime: 'Please submit query...',
         timerText: 'Last query fetched 0 results in',
       },
       flacheTimerClass: 'timerF',
@@ -97,12 +97,12 @@ class GitHub extends Component {
       cache: new InMemoryCache(),
     });
     // initial fetch
-    setTimeout(() => {
-      this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
-    }, 1);
-    setTimeout(() => {
-      this.getRepos('graphql', 'javascript', 500, 5, ['homepageUrl']);
-    }, 3000);
+    // setTimeout(() => {
+    //   this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
+    // }, 1);
+    // setTimeout(() => {
+    //   this.getRepos('graphql', 'javascript', 500, 5, ['homepageUrl']);
+    // }, 3000);
     // setTimeout(() => {
     //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
     // }, 2000);
