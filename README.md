@@ -1,3 +1,5 @@
+[![Build Status](https://img.shields.io/travis/FlacheQL/FlacheQL.svg)]
+
 # FlacheQL
 
 FlacheQL is a __*fast, lightweight, and flexible*__ client-side cache for GraphQL.
