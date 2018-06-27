@@ -4,6 +4,7 @@ import YelpBox from "./YelpBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
 import Flache from '../flache';
 import Form from './Form.jsx';
+import YelpModal from './YelpModal.jsx';
 
 class Yelp extends Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class Yelp extends Component {
         review_count: false,
         phone: false,
         distance: false,
+
       },
       yelpBoxes: [],
       flacheTimer : {
@@ -22,7 +24,7 @@ class Yelp extends Component {
         timerText: 'Last query fetched 0 results in',
       },
       flacheTimerClass: "timerF",
-
+      activeModal: null
     };
     this.getRestaurants = this.getRestaurants.bind(this);
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
@@ -33,9 +35,29 @@ class Yelp extends Component {
     this.startTimer = this.startTimer.bind(this);
     this.endTimer = this.endTimer.bind(this);
     this.flashTimer = this.flashTimer.bind(this);
+    this.showModal = this.showModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
   }
 
+    /* Modal Display */
+    hideModal() {
+      this.setState({ activeModal: null })
+      //document.getElementById("modal-overlay").style.display = "none"
+    }
+  
+    showModal() {
+      this.setState({ activeModal: YelpModal });
+      //document.getElementById("modal-overlay").style.display = "block"
+    }  
+  
+    onKeyDown(e) {
+      if (e.keyCode === 27) this.hideModal();
+    } 
+  
+    /* initial modal render */
   componentDidMount() {
+    console.log('mounted, active modal: ', this.state.activeModal);
+    this.showModal();
     const endpoint = 'http://www.flacheql.io:8000/yelp'
     const headers = { "Content-Type": "text/plain",
     "Authorization": "Bearer 1jLQPtNw6ziTJy36QLlmQeZkvvEXHT53yekL8kLN8nkvXudgTZ_Z0-VVjBOf483Flq-WDxtD2jsuwS8qkpkFa08yOgEAKIchAk2RI-avamh9jxGyxhPxgyKRbgIwW3Yx", }
@@ -205,6 +227,9 @@ class Yelp extends Component {
       <div className="main-container">
         <div id="top-wrapper">
           <Form
+            showModal={this.showModal}
+            onClose={this.hideModal}
+            onKeyDown={(e) => this.onKeyDown(e)}
             handleSubmit={this.handleSubmit}
             title={'Search Yelp'}
             fields={[

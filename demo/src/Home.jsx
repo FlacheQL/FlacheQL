@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Home = () => (
   <div className="landing-container">
-    <center>
+    <div className="landing-content">
       <h2>Simple Deployment. Outperforming Results</h2>
       <p>FlacheQL is a fast caching library for GraphQL. Here you will find a demonstration of our performance compared with a leading GraphQL caching engine, Apollo Client's inMemoryCache.</p>
       <p>We have provided 2 APIs to run queries against. You can choose an API below:</p>
@@ -17,7 +17,7 @@ const Home = () => (
       <div className="landing-link-wrapper">
         <Link to="/documentation"><div className="landing-link">Docs</div></Link>
       </div>
-    </center>
+    </div>
   </div>
 );
 

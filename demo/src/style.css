@@ -2,7 +2,7 @@
 body {
   font-family: "Open Sans", sans-serif;
   font-size: 16px;
-  background-color: #5600CD;
+  background-color: white;
   text-align: left;
   text-decoration: none;
   margin: 0 !important;
@@ -18,12 +18,6 @@ button {
   border-radius: 0 !important;
   text-decoration: none;
   border: 1px solid #5600CD;
-}
-
-
-
-center {
-  text-decoration: none;
 }
 
 p {
@@ -48,19 +42,13 @@ h2 {
 
 .body-wrapper {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  position: absolute;
-  top: 0;
-  z-index: 100;
+  height: 100%;
 }
 
 #content {
   width: 100%;
+  height: 100%;
   min-width: 800px !important;
-  display: flex;
-  flex-direction: column;
 }
 
 /* NAV BAR */
@@ -73,13 +61,12 @@ h2 {
 .navigation-bar {
   text-transform: uppercase;
   font-weight: 700;
-  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   height: 215px;
-  background-color: #5600C6;
+  background-color: #5600CD;
   color: white;
 }
 
@@ -113,14 +100,6 @@ h2 {
 .navigation-bar div {
   padding: 20px;
   border-radius: 5px;
-}
-
-#content {
-  width: 100%;
-  min-width: 800px !important;
-  display: flex;
-  flex-direction: column;
-  align: left;
 }
 
 .title * {
@@ -184,6 +163,12 @@ h2 {
 @keyframes fadein {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+#documentation-wrapper {
+  height: 100%;
+  width: 100%;
+  background-color: #5600CD;
 }
 
 .flex-container {
@@ -411,15 +396,23 @@ fieldset {
 /* LANDING PAGE */
 
 .landing-container {
-  padding: 10px;
-  margin: 0 auto;
   min-width: 800px;
-  width: 80%;
+  width: 100%;
+  height: 100%;
   font-size: 20px;
   background-color: #5600CD;
   justify-content: left;
   align-items: left;
   text-decoration: none;
+}
+
+.landing-content {
+  width: 88%;
+  margin: 0 auto;
+}
+
+.landing-content h2 {
+  margin-top: 0;
 }
 
 .landing-link {
