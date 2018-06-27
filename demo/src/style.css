@@ -60,12 +60,23 @@ h2 {
   min-width: 800px !important;
 }
 
-/* NAV BAR */
+.main-container {
+  padding-left: 50px;
+  min-width: 800px !important;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  color: rgb(44, 3, 101);
+ }
 
-#img-logo {
-  height: 90%;
-  margin: auto auto;
+#top-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: flex;
+  justify-content: center;
 }
+
+/* NAV BAR */
 
 .navigation-bar {
   text-transform: uppercase;
@@ -77,6 +88,11 @@ h2 {
   height: 215px;
   background-color: #5600CD;
   color: white;
+}
+
+#img-logo {
+  height: 90%;
+  margin: auto auto;
 }
 
 .navigation-bar a {
@@ -99,38 +115,17 @@ h2 {
   justify-content: space-evenly;
 }
 
-/* .navigation-bar div:hover {
-  background-color: #bad;
-  animation-name: colorNav;
-  animation-duration: 1.4s;
-  animation-iteration-count: infinite;
-} */
-
 .navigation-bar div {
-  padding: 20px;
-  border-radius: 5px;
+  padding: 35 15;
 }
 
-.title * {
-  font-size: 46px;
-  margin: 20 0 10 0;
-  text-shadow: 2px 2px lightgray;
+
+#git-logo:hover #git-logo-svg {
+  fill: rgb(224, 200, 255);
 }
 
-.main-container {
-  padding-left: 50px;
-  min-width: 800px !important;
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-  color: rgb(44, 3, 101);
- }
-
-#top-wrapper {
-  width: 100%;
-  display: flex;
-  align-items: flex;
-  justify-content: center;
+#npm-logo:hover #npm-logo-svg {
+  fill: rgb(224, 200, 255);
 }
 
 /* MODAL */
@@ -184,6 +179,8 @@ h2 {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+/* DOCUMENTATION */
 
 #docs-wrapper {
   width: 100%;
