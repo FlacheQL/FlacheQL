@@ -8,6 +8,7 @@ import Home from './Home.jsx';
 import Yelp from './Yelp.jsx';
 import Docs from './Documentation.jsx';
 import logo from './img/logo.png';
+import { GitIcon, NPMIcon } from './Icon.jsx';
 
 class App extends Component {
   constructor(props) {
@@ -23,13 +24,15 @@ class App extends Component {
           <div className="navigation-bar">
             {/* <img src="./" */}
             <div id="logo">
-              <img id="img-logo" src={logo} />
+              <Link to="/home"><img id="img-logo" src={logo} /></Link>
             </div>
             <div id="nav-bar-links">
-              <center><Link to="/home"><div>Home</div></Link></center>
-              <center><Link to="/yelp"><div>Yelp Demo</div></Link></center>
-              <center><Link to="/github"><div>Github Demo</div></Link></center>
-              <center><Link to="/documentation"><div>Documentation</div></Link></center>
+              <Link to="/home"><div>Home</div></Link>
+              <Link to="/yelp"><div>Yelp Demo</div></Link>
+              <Link to="/github"><div>Github Demo</div></Link>
+              <Link to="/documentation"><div>Documentation</div></Link>
+              <a href="http://www.github.com/FlacheQL/FlacheQL"><GitIcon /></a>
+              <a href="https://www.npmjs.com/package/flacheql"><NPMIcon /></a>
             </div>
           </div>
           <Switch>
