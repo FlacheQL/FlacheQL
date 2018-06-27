@@ -61,7 +61,7 @@ h2 {
 }
 
 .main-container {
-  padding-left: 50px;
+  padding: 0px 100px;
   min-width: 800px !important;
   width: 100%;
   height: 100%;
@@ -85,9 +85,10 @@ h2 {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 215px;
+  height: 25%;
   background-color: #5600CD;
   color: white;
+  overflow: hidden;
 }
 
 #img-logo {
@@ -103,7 +104,7 @@ h2 {
 }
 
 .navigation-bar a:hover {
-  color: rgb(224, 200, 255);
+  color: rgb(212, 182, 255);
 }
 
 #nav-bar-links {
@@ -115,17 +116,62 @@ h2 {
   justify-content: space-evenly;
 }
 
-.navigation-bar div {
+.nav-bar-link {
   padding: 35 15;
 }
 
+.dropdown-wrapper {
+  overflow: hidden;
+  letter-spacing: 4px;
+  padding: 30 15;
+}
+
+.dropdown-wrapper:hover {
+  color: rgb(212, 182, 255);
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #5600CD;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  transform: translate(-25%, 0%);
+  padding-top: 10px;
+}
+
+.dropdown-item a, .dropdown-item {
+  color: #5600CD;
+}
+
+.dropdown-content-wrapper {
+  background-color: white;
+}
+
+.dropdown-content-wrapper div {
+  padding: 15px;
+}
+
+.dropdown-content-wrapper div:hover {
+  background-color: rgb(212, 182, 255);
+}
+
+.dropdown-wrapper:hover .dropdown-content {
+  display: block;
+}
 
 #git-logo:hover #git-logo-svg {
-  fill: rgb(224, 200, 255);
+  fill: rgb(212, 182, 255);
+}
+
+#npm-logo {
+  margin-right: 20px;
 }
 
 #npm-logo:hover #npm-logo-svg {
-  fill: rgb(224, 200, 255);
+  fill: rgb(212, 182, 255);
 }
 
 /* MODAL */
@@ -220,7 +266,7 @@ h2 {
 }
 
 .doc-container:hover {
-  background: rgb(224, 200, 255);
+  background: rgb(212, 182, 255);
 }
 
 /* FORM */
@@ -251,7 +297,7 @@ h2 {
 }
 
 input {
-  background: rgb(224, 200, 255);
+  background: rgb(212, 182, 255);
   padding: 5;
   width: 30%;
   margin-top: 2;
@@ -294,7 +340,7 @@ input[type=text] {
 fieldset {
   margin-bottom: 5px;
   line-height: 1.4;
-  background-color: rgb(224, 200, 255); 
+  background-color: rgb(212, 182, 255)); 
   border-style: ridge;
   box-shadow: 2px 2px rgba(165, 165, 165, .4);
 }
@@ -379,7 +425,7 @@ fieldset {
 .search-title h3 {
   margin-bottom: 5px;
   padding-left: 7px;
-  background-color: rgb(224, 200, 255);
+  background-color: rgb(212, 182, 255);
 }
 
 .result-item-field {
