@@ -1,4 +1,4 @@
-![Build Status](https://img.shields.io/travis/FlacheQL/FlacheQL.svg)
+[![Build Status](https://img.shields.io/circleci/FlacheQL/FlacheQL.svg)](https://travis-ci.org/FlacheQL/FlacheQL)
 
 # FlacheQL
 
