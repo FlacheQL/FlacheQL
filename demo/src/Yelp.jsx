@@ -51,15 +51,15 @@ class Yelp extends Component {
     // ---- INIT FLACHE CLIENT ----
     this.cache = new Flache(endpoint, headers, options);
 
-    setTimeout(() => {
-      this.getRestaurants('Venice', 10, ['']);
-    }, 100);
-    setTimeout(() => {
-      this.getRestaurants('Venice', 10, ['']);
-    }, 5000);
     // setTimeout(() => {
-    //   this.getRestaurants('Venice', 20, ['']);
-    // }, 15000);
+    //   this.getRestaurants('Venice', 10, ['']);
+    // }, 100);
+    // setTimeout(() => {
+    //   this.getRestaurants('Venice', 10, ['']);
+    // }, 5000);
+    // // setTimeout(() => {
+    // //   this.getRestaurants('Venice', 20, ['']);
+    // // }, 15000);
   }
 
   getRestaurants(location, limit, extraFields) {

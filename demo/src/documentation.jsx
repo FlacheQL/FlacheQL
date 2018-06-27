@@ -41,31 +41,33 @@ class Documentation extends Component {
     });
 
     return (
-    <div className="flex-container">
-      {list}
+      <div id="docs-wrapper">
+        <div className="flex-container">
+          {list}
 
-      {this.state.activeModal === 0 ? 
-        <Setup isOpen={this.state.activeModal} onClose={this.hideModal}>
-            <p>Modal</p>
-        </Setup>
-        : <div></div>
-      }
-    
-      {this.state.activeModal === 1 ?
-        <Caching isOpen={this.state.activeModal} onClose={this.hideModal}>
-          <p>Modal</p>
-        </Caching>
-        : <div></div>
-      }
+          {this.state.activeModal === 0 ? 
+            <Setup isOpen={this.state.activeModal} onClose={this.hideModal}>
+                <p>Modal</p>
+            </Setup>
+            : <div></div>
+          }
+        
+          {this.state.activeModal === 1 ?
+            <Caching isOpen={this.state.activeModal} onClose={this.hideModal}>
+              <p>Modal</p>
+            </Caching>
+            : <div></div>
+          }
 
-      {this.state.activeModal === 2 ?
-        <Features isOpen={this.state.activeModal} onClose={this.hideModal}>
-          <p>Modal</p>
-        </Features>
-        : <div></div>
-      }
+          {this.state.activeModal === 2 ?
+            <Features isOpen={this.state.activeModal} onClose={this.hideModal}>
+              <p>Modal</p>
+            </Features>
+            : <div></div>
+          }
 
-    </div>
+        </div>
+      </div>
     )
   } 
 }

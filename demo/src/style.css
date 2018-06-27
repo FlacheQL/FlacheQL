@@ -2,14 +2,13 @@
 body {
   font-family: "Open Sans", sans-serif;
   font-size: 16px;
-  background-color: #5600CD;
+  background-color: white;
   text-align: left;
   text-decoration: none;
   margin: 0 !important;
 }
 
 button {
-  
   background-color: white;
   font-family: inherit;
   margin: 5px;
@@ -17,10 +16,8 @@ button {
   text-align: center;
   border-radius: 0 !important;
   text-decoration: none;
-  border: 1px solid #5600CD;
+  border: 1px solid rgb(44, 3, 101);
 }
-
-
 
 center {
   text-decoration: none;
@@ -48,6 +45,7 @@ h2 {
 
 .body-wrapper {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: left;
@@ -79,7 +77,7 @@ h2 {
   justify-content: space-between;
   width: 100%;
   height: 215px;
-  background-color: #5600C6;
+  background-color: #5600CD;
   color: white;
 }
 
@@ -130,11 +128,12 @@ h2 {
 }
 
 .main-container {
+  padding-left: 50px;
   min-width: 800px !important;
-  width: 80%;
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
-  background: white;
-  color: rgb(44, 3, 101)
+  color: rgb(44, 3, 101);
  }
 
 #top-wrapper {
@@ -155,6 +154,16 @@ h2 {
   top: -300;
   padding: 50;
   overflow: auto;
+}
+
+.flex-container {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  float: center;
+  text-align: center;
+  position: relative;
 }
 
 .modal {
@@ -186,6 +195,12 @@ h2 {
   to   { opacity: 1; }
 }
 
+#docs-wrapper {
+  width: 100%;
+  height: 100%;
+  background-color: #5600CD;
+}
+
 .flex-container {
   align-items: center;
   justify-content: center;
@@ -201,7 +216,6 @@ h2 {
   text-decoration: none;
   padding: 15px;
   color: #5600CD;
-  border: 3px white;
   text-transform: uppercase;
   letter-spacing: 3px;
   font-style: italic;
@@ -215,9 +229,7 @@ h2 {
   line-height: 2;
   width: 30%;
   height: 75px;
-
   margin: 10px;
-  box-shadow: 2px 2px rgba(165, 165, 165, .4);
 }
 
 .doc-container:hover {
@@ -238,8 +250,12 @@ h2 {
   font-weight: 600;
 }
 
+#form-button-box {
+  display: flex;
+}
+
 #form-wrapper button {
-  width: 60%;
+  width: 40%;
   background: #5600CD;
   color: white;
   padding: 5px;
@@ -268,39 +284,12 @@ input[type=text] {
   line-height: 2;
 }
 
-.flex-container {
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  float: center;
-  text-align: center;
-  position: relative;
-}
-
-.doc-container {
-  display: flex;
-  position: relative;
-  justify-content: center;
-  text-align: center;
-  margin: auto;
-  line-height: 2;
-  width: 30%;
-  height: 75px;
-  font-size: 18px;
-  border-radius: 5px;
-  margin: 10px;
-  background: linear-gradient(rgb(98, 66, 161), rgb(49, 9, 128));
-  color: white;
-  box-shadow: 2px 2px rgba(165, 165, 165, .4);
-}
-
-
 .result-list {
   width: 100%;
 }
 
 #top-wrapper {
+  margin: 0 auto;
   width: 100%;
   display: flex;
   align-items: flex;
@@ -389,6 +378,7 @@ fieldset {
 
 .result-list {
   width: 100%;
+  height: 100%;
 }
 
 .result-item {
@@ -414,12 +404,18 @@ fieldset {
   padding: 10px;
   margin: 0 auto;
   min-width: 800px;
-  width: 80%;
+  width: 100%;
+  height: 100%;
   font-size: 20px;
   background-color: #5600CD;
   justify-content: left;
   align-items: left;
   text-decoration: none;
+}
+
+#landing-content {
+  width: 90%;
+  margin: 0 auto;
 }
 
 .landing-link {

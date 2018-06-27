@@ -14,7 +14,7 @@ const YelpBox = (props) => {
     <div className="result-item">
       <div className="search-title"><h3>{props.name}</h3></div>
       <div className="result-item-field"><strong>Rating:</strong> {props.rating}</div>
-      <div className="result-item-field"><strong>Open now?:</strong> {props.hours} </div>
+      <div className="result-item-field"><strong>Open now:</strong> {props.hours} </div>
       <div className="result-item-field"><strong>Categories:</strong> {categories}</div>
       { displayOptions }
     </div>
