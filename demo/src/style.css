@@ -238,6 +238,7 @@ h2 {
 #form-wrapper h2 {
   text-transform: uppercase;
   font-weight: 600;
+  color: rgb(44, 3, 101);
 }
 
 #form-button-box {
@@ -404,6 +405,10 @@ fieldset {
 #landing-content {
   width: 90%;
   margin: 0 auto;
+}
+
+#landing-content h2 {
+  margin-top: 0;
 }
 
 .landing-link {
