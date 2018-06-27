@@ -1,17 +1,33 @@
 # FlacheQL
 
-FlacheQL is a __*fast, lightweight*__ client caching library for GraphQL.
+FlacheQL is a __*fast, lightweight, and flexible*__ client-side cache for GraphQL.
 
 ## Why use FlacheQL?
 
-Third party solutions such as Apollo and Relay exist.  However, they are large frameworks that are heavy in build sizes, broadly scoped, and difficult to implement.
+FlacheQL offers partial retrieval of cached data based on search parameters — a feature that no other GraphQL library offers. Larger implementations like Apollo and Relay can only cache data based on GraphQL query fields. With minimal set up, you can customize FlacheQL to your app's needs by toggling fieldRetrieval and/or paramRetrieval in the options: 
 
-### Features
+```javascript
 
-* Full cache
-* Partial cache
-* nomalized data structure that ensures minimum network latency 
-* easy to implement
+======== partial retrieval on parameters ========       ======== partial retrieval on fields ========
+
+    search(location: “Venice” limit: *25*) {	          search(location: “Venice” limit: 25) {	
+      business {					    business {						
+        name					              *name*
+        rating					              *rating*
+      }						            }
+    }						          } 
+
+    search(location: “Venice” limit: *10*) {	          search(location: “Venice” limit: 25) {	
+      business {					    business {						
+        name					              *rating*
+        rating					            }      
+      }						          }  
+    }						          
+
+```
+
+FlacheQL consistently outperforms Apollo on retrievals of response data from identical queries as well as on both types of partial retrievals.  
+
 
 *This is a work in progress.  Cache persistence and "smart" expiration of cached items are some of the features considered to be added.*
 
