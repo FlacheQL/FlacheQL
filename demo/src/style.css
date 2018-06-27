@@ -13,10 +13,11 @@ button {
   background-color: white;
   font-family: inherit;
   margin: 5px;
-  font-size:15px;
+  font-size:14px;
   text-align: center;
+  border-radius: 0 !important;
   text-decoration: none;
-  border: 1px solid black
+  border: 1px solid #5600CD;
 }
 
 p {
@@ -35,14 +36,13 @@ h2 {
   font-size: 46px;
   margin: 20 0 10 0;
   text-shadow: 2px 2px lightgray;
+  color: #5600CD;
   font-family: inherit;
 }
 
 .body-wrapper {
   width: 100%;
   height: 100%;
-
-  
 }
 
 #content {
@@ -112,6 +112,8 @@ h2 {
   min-width: 800px !important;
   width: 80%;
   margin: 0 auto;
+  background: white;
+  color: rgb(44, 3, 101)
  }
 
 #top-wrapper {
@@ -134,19 +136,7 @@ h2 {
   overflow: auto;
 }
 
-#modal-overlay {
-  width: 100%;
-  height: 100%;
-  background: #5600CD;
-  z-index: -50;
-  position: relative;
-  top: 0;
-  display: none;
-}
-
 .modal {
-  border: 3px solid rgb(49, 9, 128);
-  /* box-shadow: 3px 3px #d0d0d0; */
   position: fixed;
   top: 50%;
   left: 50%;
@@ -197,14 +187,13 @@ h2 {
   padding: 15px;
   color: #5600CD;
   border: 3px white;
-
   text-transform: uppercase;
   letter-spacing: 3px;
   font-style: italic;
   font-weight: bold;
   font-family: "Open Sans" sans-serif;
   display: flex;
-  position: relative;
+  align-items: flex;
   justify-content: center;
   text-align: center;
   margin: auto;
@@ -229,20 +218,21 @@ h2 {
   align-content: center;
 }
 
-#form-button-box {
-  display: flex;
-  justify-content: space-between;
+#form-wrapper h2 {
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 #form-wrapper button {
-  width: 45%;
-  background-color: lightgreen;
+  width: 60%;
+  background: #5600CD;
+  color: white;
   padding: 5px;
   margin: 5px auto 0 auto;
 }
 
 input {
-  background: lightgreen;
+  background: rgb(224, 200, 255);
   padding: 5;
   width: 30%;
   margin-top: 2;
@@ -263,10 +253,56 @@ input[type=text] {
   line-height: 2;
 }
 
+.flex-container {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  float: center;
+  text-align: center;
+  position: relative;
+}
+
+.doc-container {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  text-align: center;
+  margin: auto;
+  line-height: 2;
+  width: 30%;
+  height: 75px;
+  font-size: 18px;
+  border-radius: 5px;
+  margin: 10px;
+  background: linear-gradient(rgb(98, 66, 161), rgb(49, 9, 128));
+  color: white;
+  box-shadow: 2px 2px rgba(165, 165, 165, .4);
+}
+
+
+.result-list {
+  width: 100%;
+}
+
+#top-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: flex;
+  justify-content: center;
+}
+
+#top-right-wrapper {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
 fieldset {
   margin-bottom: 5px;
   line-height: 1.4;
-  background-color: rgb(211, 255, 211);
+  background-color: rgb(224, 200, 255); 
   border-style: ridge;
   box-shadow: 2px 2px rgba(165, 165, 165, .4);
 }
@@ -276,37 +312,26 @@ fieldset {
   flex-direction: column;
 }
 
-/* TIMER */
-
-#top-right-wrapper {
-  width: 60%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
+/* TIMER STYLING */
 
 #timer-wrapper {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
-}
-
-#timer-wrapper button {
-  background-color: lightgreen;
+  justify-content: center;
 }
 
 .timerF {
   margin: 10px;
   width: 60%;
-  background-color: darkgreen;
+  background-color:#5600CD;
   color: white;
   box-shadow: 2px 2px rgba(165, 165, 165, .4);
 }
 
 .flashF {
-  background-color: lime;
+  background-color:lime;
   -webkit-transition: background-color 100ms ease-out;
   -moz-transition: background-color 100ms ease-out;
   -o-transition: background-color 100ms ease-out;
@@ -316,13 +341,13 @@ fieldset {
 .timerA {
   margin: 10px;
   width: 60%;
-  background-color: darkgreen;
+  background-color: #5600CD;
   color: white;
   box-shadow: 2px 2px rgba(165, 165, 165, .4);
 }
 
 .flashA {
-  background-color: red;
+  background-color:red;
   -webkit-transition: background-color 100ms ease-out;
   -moz-transition: background-color 100ms ease-out;
   -o-transition: background-color 100ms ease-out;
@@ -338,8 +363,11 @@ fieldset {
 }
 
 .timerF h3, .timerA h3 {
-  background-color: rgb(0, 60, 0);
+  background-color: rgb(44, 3, 101);
+  text-transform: uppercase;
+  padding: 6px;
   margin: 0 0 5 0;
+  font-weight: 600;
 }
 
 /* RESULT LIST */
@@ -352,13 +380,13 @@ fieldset {
   width: 90%;
   margin: 20px 0px;
   box-shadow: 2px 2px rgba(165, 165, 165, .4);
-  background-color: honeydew; 
+  background-color: rgb(242, 237, 252);
 }
 
 .search-title h3 {
   margin-bottom: 5px;
   padding-left: 7px;
-  background-color: rgb(211, 255, 211);
+  background-color: rgb(224, 200, 255);
 }
 
 .result-item-field {
