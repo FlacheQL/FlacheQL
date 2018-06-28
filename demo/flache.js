@@ -79,81 +79,80 @@ export default class Flache {
           this.children.every(child => objChildren.includes(child))
         );
       });
-      // no need to run partial query check on first query
-      if (childrenMatch) {
-        if (this.cacheLength > 0) {
-          let currentMatchedQuery;
-          for (let key in variables) {
-            for (let query in this.queryCache[key]) {
-              if (
-                this.cbs[this.options.subsets[key]](
-                  variables[key],
-                  this.queryCache[key][query]
-                )
-              ) {
-                // if the callback returns true, set the currentMatchedQuery to be the current query
-                currentMatchedQuery = query;
+        // no need to run partial query check on first query
+      if (this.cacheLength > 0) {
+        let currentMatchedQuery;
+        for (let key in variables) {
+          for (let query in this.queryCache[key]) {
+            if (
+              this.cbs[this.options.subsets[key]](
+                variables[key],
+                this.queryCache[key][query]
+              )
+            ) {
+              // if the callback returns true, set the currentMatchedQuery to be the current query
+              currentMatchedQuery = query;
+            } else {
+              continue;
+            }
+            for (let currentKey in this.queryCache) {
+              // skip the first key since this is the one that just matched
+              if (key === currentKey) continue;
+              /* run the value on that query on each callback 
+              such that if the callback of the current symbol passes
+              given the current query variable as the first argument, 
+              and the cached value on the current matched query key as the second,
+              the queriesPass boolean is set to the return value of the callback */
+              let rule = this.options.subsets[currentKey];
+              let arg1 = variables[currentKey];
+              let arg2 = this.queryCache[currentKey][currentMatchedQuery]
+              let result = this.cbs[rule](arg1, arg2);
+              if (result) {
+                allParamsPass = result;
               } else {
-                continue;
+                allParamsPass = false;
+                break;
               }
-              for (let currentKey in this.queryCache) {
-                // skip the first key since this is the one that just matched
-                if (key === currentKey) continue;
-                /* run the value on that query on each callback 
-                such that if the callback of the current symbol passes
-                given the current query variable as the first argument, 
-                and the cached value on the current matched query key as the second,
-                the queriesPass boolean is set to the return value of the callback */
-                let rule = this.options.subsets[currentKey];
-                let arg1 = variables[currentKey];
-                let arg2 = this.queryCache[currentKey][currentMatchedQuery]
-                let result = this.cbs[rule](arg1, arg2);
-                if (result) {
-                  allParamsPass = result;
-                } else {
-                  allParamsPass = false;
-                  break;
-                }
-              }
+            }
 
-              if (allParamsPass) {
-                let pathToNodes = this.options.pathToNodes;
+            console.log('allparamspass', allParamsPass)
+            if (allParamsPass) {
+              let pathToNodes = this.options.pathToNodes;
 
-                let cached = JSON.parse(JSON.stringify(this.cache[currentMatchedQuery]));
-                let { path, lastTerm } = constructResponsePath(
-                  pathToNodes,
-                  cached
-                );
+              let cached = JSON.parse(JSON.stringify(this.cache[currentMatchedQuery]));
+              let { path, lastTerm } = constructResponsePath(
+                pathToNodes,
+                cached
+              );
 
-                for (let key in this.options.queryPaths) {
-                  path[lastTerm] = path[lastTerm].filter(el => {
-                    let { path, lastTerm } = constructResponsePath(
-                      this.options.queryPaths[key],
-                      el
-                    );
-                    return this.cbs[this.options.subsets[key]](
-                      path[lastTerm],
-                      variables[key]
-                    );
-                  });
-                }
-
-                for (let key in this.options.subsets) {
-                  if (
-                    this.options.subsets[key] === 'first' ||
-                    this.options.subsets[key] === 'last' ||
-                    this.options.subsets[key] === 'limit'
-                  ) {
-                    path[lastTerm] = path[lastTerm].slice(0, variables[key])
-                  }
-                }
-
-                return new Promise((resolve, reject) => {
-                  resolve(cached);
+              for (let key in this.options.queryPaths) {
+                path[lastTerm] = path[lastTerm].filter(el => {
+                  let { path, lastTerm } = constructResponsePath(
+                    this.options.queryPaths[key],
+                    el
+                  );
+                  return this.cbs[this.options.subsets[key]](
+                    path[lastTerm],
+                    variables[key]
+                  );
                 });
               }
-    
+
+              for (let key in this.options.subsets) {
+                if (
+                  this.options.subsets[key] === 'first' ||
+                  this.options.subsets[key] === 'last' ||
+                  this.options.subsets[key] === 'limit'
+                ) {
+                  path[lastTerm] = path[lastTerm].slice(0, variables[key])
+                }
+              }
+
+              return new Promise((resolve, reject) => {
+                resolve(cached);
+              });
             }
+  
           }
         }
       }
