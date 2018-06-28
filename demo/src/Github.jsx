@@ -33,7 +33,7 @@ class GitHub extends Component {
         lastQueryTime: 'Please submit query...',
         timerText: 'Last query fetched 0 results in',
       },
-      apolloTimerClass: "timerA",
+      apolloTimerClass: "timerF",
       activeModal: null
     };
     this.handleMoreOptions = this.handleMoreOptions.bind(this);
