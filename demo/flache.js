@@ -59,9 +59,7 @@ export default class Flache {
     if (!this.options.paramRetrieval || !this.options.fieldRetrieval) return this.fetchData(query, stringifiedQuery);
 
     // returns an object of callback functions that check query validity using subset options
-    if (!this.cbs) {
-      this.cbs = createCallbacksForPartialQueryValidation(this.options.subsets);
-    }
+    if (!this.cbs) this.cbs = createCallbacksForPartialQueryValidation(this.options.subsets);
 
     // create a boolean to check if all queries are subsets of others
     let allParamsPass = false;
@@ -73,85 +71,85 @@ export default class Flache {
       let childrenMatch = false;
       // check if query children match 
       childrenMatch = this.fieldsCache.some(obj => {
-        let objChildren = Object.values(obj)[0].children;
-        return (
-          objChildren.every(child => this.children.includes(child)) &&
-          this.children.every(child => objChildren.includes(child))
-        );
+        let currentChildren = Object.values(obj)[0].children;
+        return this.children.every(child => currentChildren.includes(child));
       });
-        // no need to run partial query check on first query
-      if (this.cacheLength > 0) {
-        let currentMatchedQuery;
-        for (let key in variables) {
-          for (let query in this.queryCache[key]) {
-            if (
-              this.cbs[this.options.subsets[key]](
-                variables[key],
-                this.queryCache[key][query]
-              )
-            ) {
-              // if the callback returns true, set the currentMatchedQuery to be the current query
-              currentMatchedQuery = query;
-            } else {
-              continue;
-            }
-            for (let currentKey in this.queryCache) {
-              // skip the first key since this is the one that just matched
-              if (key === currentKey) continue;
-              /* run the value on that query on each callback 
-              such that if the callback of the current symbol passes
-              given the current query variable as the first argument, 
-              and the cached value on the current matched query key as the second,
-              the queriesPass boolean is set to the return value of the callback */
-              let rule = this.options.subsets[currentKey];
-              let arg1 = variables[currentKey];
-              let arg2 = this.queryCache[currentKey][currentMatchedQuery]
-              let result = this.cbs[rule](arg1, arg2);
-              if (result) {
-                allParamsPass = result;
+
+      if (childrenMatch) {
+          // no need to run partial query check on first query
+        if (this.cacheLength > 0) {
+          let currentMatchedQuery;
+          for (let key in variables) {
+            for (let query in this.queryCache[key]) {
+              if (
+                this.cbs[this.options.subsets[key]](
+                  variables[key],
+                  this.queryCache[key][query]
+                )
+              ) {
+                // if the callback returns true, set the currentMatchedQuery to be the current query
+                currentMatchedQuery = query;
               } else {
-                allParamsPass = false;
-                break;
+                continue;
               }
-            }
-
-            if (allParamsPass) {
-              let pathToNodes = this.options.pathToNodes;
-
-              let cached = JSON.parse(JSON.stringify(this.cache[currentMatchedQuery]));
-              let { path, lastTerm } = constructResponsePath(
-                pathToNodes,
-                cached
-              );
-
-              for (let key in this.options.queryPaths) {
-                path[lastTerm] = path[lastTerm].filter(el => {
-                  let { path, lastTerm } = constructResponsePath(
-                    this.options.queryPaths[key],
-                    el
-                  );
-                  return this.cbs[this.options.subsets[key]](
-                    path[lastTerm],
-                    variables[key]
-                  );
-                });
-              }
-
-              for (let key in this.options.subsets) {
-                if (
-                  this.options.subsets[key] === 'first' ||
-                  this.options.subsets[key] === 'last' ||
-                  this.options.subsets[key] === 'limit'
-                ) {
-                  path[lastTerm] = path[lastTerm].slice(0, variables[key])
+              for (let currentKey in this.queryCache) {
+                // skip the first key since this is the one that just matched
+                if (key === currentKey) continue;
+                /* run the value on that query on each callback 
+                such that if the callback of the current symbol passes
+                given the current query variable as the first argument, 
+                and the cached value on the current matched query key as the second,
+                the queriesPass boolean is set to the return value of the callback */
+                let rule = this.options.subsets[currentKey];
+                let arg1 = variables[currentKey];
+                let arg2 = this.queryCache[currentKey][currentMatchedQuery]
+                let result = this.cbs[rule](arg1, arg2);
+                if (result) {
+                  allParamsPass = result;
+                } else {
+                  allParamsPass = false;
+                  break;
                 }
               }
 
-              return new Promise((resolve, reject) => {
-                resolve(cached);
-              });
+              if (allParamsPass) {
+                let pathToNodes = this.options.pathToNodes;
+
+                let cached = JSON.parse(JSON.stringify(this.cache[currentMatchedQuery]));
+                let { path, lastTerm } = constructResponsePath(
+                  pathToNodes,
+                  cached
+                );
+
+                for (let key in this.options.queryPaths) {
+                  path[lastTerm] = path[lastTerm].filter(el => {
+                    let { path, lastTerm } = constructResponsePath(
+                      this.options.queryPaths[key],
+                      el
+                    );
+                    return this.cbs[this.options.subsets[key]](
+                      path[lastTerm],
+                      variables[key]
+                    );
+                  });
+                }
+
+                for (let key in this.options.subsets) {
+                  if (
+                    this.options.subsets[key] === 'first' ||
+                    this.options.subsets[key] === 'last' ||
+                    this.options.subsets[key] === 'limit'
+                  ) {
+                    path[lastTerm] = path[lastTerm].slice(0, variables[key])
+                  }
+                }
+
+                return new Promise((resolve, reject) => {
+                  resolve(cached);
+                });
+              }
+    
             }
-  
           }
         }
       }
