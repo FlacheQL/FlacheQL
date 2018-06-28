@@ -56,7 +56,6 @@ class Yelp extends Component {
   
     /* initial modal render */
   componentDidMount() {
-    console.log('mounted, active modal: ', this.state.activeModal);
     this.showModal();
     const endpoint = 'http://www.flacheql.io:8000/yelp'
     const headers = { "Content-Type": "text/plain",
@@ -72,13 +71,7 @@ class Yelp extends Component {
     }
     // ---- INIT FLACHE CLIENT ----
     this.cache = new Flache(endpoint, headers, options);
-
-    // setTimeout(() => {
-    //   this.getRestaurants('Venice', 10, ['']);
-    // }, 100);
-    // setTimeout(() => {
-    //   this.getRestaurants('Venice', 10, ['']);
-    // }, 5000);
+    this.getRestaurants('Venice', 10, ['']);
     // // setTimeout(() => {
     // //   this.getRestaurants('Venice', 20, ['']);
     // // }, 15000);
@@ -90,22 +83,15 @@ class Yelp extends Component {
       limit,
     }
     const flacheQuery = this.buildQuery(location, limit, true, extraFields);
-    const apolloQuery = this.buildQuery(location, limit, false, extraFields);
-    console.log('flacheq', flacheQuery)
     // start apollo timer
     this.startTimer(false, limit);
-    // launch apollo query
-    // this.apolloClient.query({ query: apolloQuery }).then(res => this.handleResponse(res.data, false));
     // start flache timer
     this.startTimer(true, limit);
     // launch flache query
     this.cache.it(flacheQuery, variables)
-      .then(res => {
+      .then((res) => {
         return this.handleResponse(res.data, true)
       });
-    // fetch(endpoint, { headers, method: 'POST', body: flacheQuery }).then(resp => resp.json()).then((data) => {
-    //   this.handleResponse(data.data, true);
-    // });
   }
 
   /**
@@ -139,13 +125,7 @@ class Yelp extends Component {
         }
       }
     }`);
-  } else return gql`{
-      search(location: "Venice" limit: 10) {
-        business {
-          name
-        }
-      }
-    }`;
+  }
   }
 
   handleMoreOptions() {

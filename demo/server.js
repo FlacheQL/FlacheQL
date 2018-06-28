@@ -16,7 +16,6 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, './dist')));
 
 app.use((req, res, next) => {
-  console.log('INCOMING REQUEST: ', req.body);
   next();
 });
 
