@@ -95,12 +95,12 @@ class GitHub extends Component {
       link,
       cache: new InMemoryCache(),
     });
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 30000, 100, ['homepageUrl', 'databaseId', 'createdAt', 'updatedAt']);
-    }, 1);
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 50000, 90, ['homepageUrl', 'createdAt']);
-    }, 3000);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 30000, 100, ['createdAt', 'databaseId', 'homepageUrl', 'updatedAt']);
+    // }, 1);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 90, ['createdAt', 'homepageUrl']);
+    // }, 3000);
   }
 
   /**
