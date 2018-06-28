@@ -100,7 +100,7 @@ class GitHub extends Component {
     }, 1);
     setTimeout(() => {
       this.getRepos('graphql', 'javascript', 500, 20, ['homepageUrl']);
-    }, 3000);
+    }, 8000);
   }
 
   /**
@@ -171,8 +171,9 @@ class GitHub extends Component {
     const reqStartTime = window.performance.now();
     const updatedTimer = { timerText: `Fetching ${num} items...`, reqStartTime, lastQueryTime: 'Please wait...' };
     // update either the flache or apollo timer
+    console.log(flache)
     if (flache) this.setState({ flacheTimer: updatedTimer });
-    else this.setState({ apolloTimer: updatedTimer });
+    this.setState({ apolloTimer: updatedTimer });
   }
 
   /**
