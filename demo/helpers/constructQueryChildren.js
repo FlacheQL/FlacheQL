@@ -1,9 +1,8 @@
 const constructQueryChildren = (query) => {
-  console.log('query', query)
   query = JSON.stringify(query);
-  console.log('strquery', query)
   let childArr = [];
   let splitQ = query.split('\\n');
+  
   splitQ.forEach((ele, index, array) => {
     if (index > 1) {
       if (array[index - 1].includes('{') && array[index + 1].includes('}') ) {
@@ -12,7 +11,10 @@ const constructQueryChildren = (query) => {
       } else if (!ele.includes('{') && !ele.includes('}') && ele.trim() != "") childArr.push(ele.trim());
     }
   });
-  console.log('babies', childArr)
+  childArr = childArr.reduce((acc, e) => {
+    if (e !== '\\') acc.push(e.replace(/\\/g, ''));
+    return acc;
+  }, []);
   return childArr;
 }
 

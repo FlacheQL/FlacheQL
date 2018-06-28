@@ -51,12 +51,12 @@ class GitHub extends Component {
   /* Modal Display */
   hideModal() {
     this.setState({ activeModal: null })
-    //document.getElementById("modal-overlay").style.display = "none"
+    document.getElementById("modal-overlay").style.display = "none"
   }
 
   showModal() {
     this.setState({ activeModal: Instructions });
-    //document.getElementById("modal-overlay").style.display = "block"
+    document.getElementById("modal-overlay").style.display = "block"
   }  
 
   onKeyDown(e) {
@@ -65,7 +65,6 @@ class GitHub extends Component {
 
   /* initial modal render */
   componentDidMount() {
-    console.log('mounted, active modal: ', this.state.activeModal);
     setTimeout(() => {this.showModal();}, 250)
     // ---- SETUP PARAMS FOR CACHING ENGINES ----
     const endpoint = 'https://api.github.com/graphql';
@@ -96,19 +95,12 @@ class GitHub extends Component {
       link,
       cache: new InMemoryCache(),
     });
-    // initial fetch
-    // setTimeout(() => {
-    //   this.getRepos('graphql', 'javascript', 500, 100, ['homepageUrl']);
-    // }, 1);
-    // setTimeout(() => {
-    //   this.getRepos('graphql', 'javascript', 500, 5, ['homepageUrl']);
-    // }, 3000);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
-    // }, 2000);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 50000, 100, ['homepageUrl']);
-    // }, 5000);
+    setTimeout(() => {
+      this.getRepos('graphql', 'javascript', 500, 20, ['homepageUrl', 'databaseId']);
+    }, 1);
+    setTimeout(() => {
+      this.getRepos('graphql', 'javascript', 500, 20, ['homepageUrl']);
+    }, 3000);
   }
 
   /**
@@ -120,16 +112,8 @@ class GitHub extends Component {
   * @param {array} extraFields An array containing information on which checkbokes are ticked
   */
   getRepos(terms, languages, stars, num, extraFields) {
-    console.log('extra fields', extraFields)
     const query = buildQuery(terms, languages, stars, num, true, extraFields);
-    console.log('github flache query:', query)
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
-    console.log('github apollo query:', apolloQuery.loc.source.body)
-    // console.log('check equivalence', JSON.stringify(query) == JSON.stringify(apolloQuery))
-    // refer to the documentation for details on these options
-    // FIXME: integrate this configuration with flache initialization, it never changes
-    // start apollo timer - THAT'S RIGHT, WE RUN THEM FIRST - NO SHENANIGANS
-    this.startTimer(false, num);
     // launch apollo query
     this.apolloClient.query({ query: apolloQuery })
       .then(res => this.handleResponse(res.data, false));
@@ -160,7 +144,7 @@ class GitHub extends Component {
   * Builds or re-builds the array of GitBoxes from the query result set. Calls setState. 
   * @param {object} res The response data from a cache hit or fetch
   */
-  buildBoxes(res) { 
+  buildBoxes(res) {
     const newBoxes = res.search.edges.map((repo, index) => {
       return (<GitBox 
         key={`b${index}`}
