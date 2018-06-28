@@ -37,25 +37,10 @@ class Yelp extends Component {
     this.flashTimer = this.flashTimer.bind(this);
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
-  }
-
-    /* Modal Display */
-    hideModal() {
-      this.setState({ activeModal: null })
-      //document.getElementById("modal-overlay").style.display = "none"
-    }
+  } 
   
-    showModal() {
-      this.setState({ activeModal: YelpModal });
-      //document.getElementById("modal-overlay").style.display = "block"
-    }  
-  
-    onKeyDown(e) {
-      if (e.keyCode === 27) this.hideModal();
-    } 
-  
-    /* initial modal render */
   componentDidMount() {
+    /* initial modal render */
     this.showModal();
     const endpoint = 'http://www.flacheql.io:8000/yelp'
     const headers = { "Content-Type": "text/plain",
@@ -75,6 +60,19 @@ class Yelp extends Component {
     // // setTimeout(() => {
     // //   this.getRestaurants('Venice', 20, ['']);
     // // }, 15000);
+  }
+
+  /* Modal Display */
+  hideModal() {
+    this.setState({ activeModal: null })
+  }
+
+  showModal() {
+    this.setState({ activeModal: YelpModal });
+  }  
+
+  onKeyDown(e) {
+    if (e.keyCode === 27) this.hideModal();
   }
 
   getRestaurants(location, limit, extraFields) {
@@ -189,7 +187,7 @@ class Yelp extends Component {
     if (flache) {
       this.setState({ flacheTimerClass: "timerF flashF" });
       setTimeout(() => this.setState({ flacheTimerClass: "timerF" }), 200);
-    } 
+    }
   }
 
   /** Fired on search, collects input fields and calls getRepos */
@@ -197,7 +195,7 @@ class Yelp extends Component {
     const extraFields = this.handleMoreOptions();
     this.getRestaurants(
       document.getElementById('location').value,
-      document.getElementById('limit').value,
+      Number(document.getElementById('limit').value),
       extraFields,
     );
   }
@@ -205,6 +203,13 @@ class Yelp extends Component {
   render() {
     return (
       <div className="main-container">
+        {/* Modal Control */}
+        {this.state.activeModal === YelpModal ? 
+          <YelpModal isOpen={this.state.activeModal} onClose={this.hideModal} onKeyDown={(e) => this.onKeyDown(e)}>
+            <p>Modal</p>
+          </YelpModal>
+          : <div></div>}
+        {/* Document Body */}
         <div id="top-wrapper">
           <Form
             showModal={this.showModal}
@@ -213,7 +218,7 @@ class Yelp extends Component {
             handleSubmit={this.handleSubmit}
             title={'Search Yelp'}
             fields={[
-              { label: 'Search: ', id: 'location' },
+              { label: 'Location: ', id: 'location' },
               { label: '# to fetch: ', id: 'limit' },
             ]}
             extras={[

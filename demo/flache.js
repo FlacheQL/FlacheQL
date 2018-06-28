@@ -115,7 +115,6 @@ export default class Flache {
               }
             }
 
-            console.log('allparamspass', allParamsPass)
             if (allParamsPass) {
               let pathToNodes = this.options.pathToNodes;
 
