@@ -48,23 +48,8 @@ class GitHub extends Component {
     this.showModal = this.showModal.bind(this);
   }
 
-  /* Modal Display */
-  hideModal() {
-    this.setState({ activeModal: null })
-    document.getElementById("modal-overlay").style.display = "none"
-  }
-
-  showModal() {
-    // this.setState({ activeModal: Instructions });
-    document.getElementById("modal-overlay").style.display = "block"
-  }  
-
-  onKeyDown(e) {
-    if (e.keyCode === 27) this.hideModal();
-  } 
-
-  /* initial modal render */
   componentDidMount() {
+    /* initial modal render */
     setTimeout(() => {this.showModal();}, 250)
     // ---- SETUP PARAMS FOR CACHING ENGINES ----
     const endpoint = 'https://api.github.com/graphql';
@@ -81,10 +66,8 @@ class GitHub extends Component {
       queryPaths: { stars: 'node.stargazers.totalCount' },
       pathToNodes: 'data.search.edges',
     };
-    
     // ---- INIT FLACHE CLIENT ----
     this.cache = new Flache(endpoint, headers, options);
-
     // ---- INIT APOLLO CLIENT ----
     const httpLink = new HttpLink({uri: endpoint });
     const authLink = setContext(() => ({
@@ -99,8 +82,29 @@ class GitHub extends Component {
     //   this.getRepos('react', 'javascript', 30000, 100, ['createdAt', 'databaseId', 'homepageUrl', 'updatedAt']);
     // }, 1);
     // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 50000, 90, ['createdAt', 'homepageUrl']);
+    //   this.getRepos('react', 'javascript', 30000, 90, ['createdAt', 'homepageUrl']);
+    // }, 3);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 90, ['homepageUrl', 'databaseId', 'createdAt', 'updatedAt']);
     // }, 3000);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 60000, 80, ['databaseId', 'createdAt', 'updatedAt']);
+    // }, 6000);
+  }
+
+  /* Modal Display */
+  hideModal() {
+    this.setState({ activeModal: null })
+    document.getElementById("modal-overlay").style.display = "none"
+  }
+
+  showModal() {
+    this.setState({ activeModal: Instructions });
+    document.getElementById("modal-overlay").style.display = "block"
+  }  
+
+  onKeyDown(e) {
+    if (e.keyCode === 27) this.hideModal();
   }
 
   /**
@@ -137,6 +141,7 @@ class GitHub extends Component {
   */
   handleResponse(res, flache) {
     this.endTimer(flache, res.search.edges.length);
+    console.log('res', res)
     this.buildBoxes(res);
   }
 
@@ -225,7 +230,7 @@ class GitHub extends Component {
       document.getElementById('searchText').value,
       document.getElementById('searchLang').value,
       Number(document.getElementById('searchStars').value),
-      document.getElementById('searchNum').value,
+      Number(document.getElementById('searchNum').value),
       extraFields,
     );
   }
@@ -234,7 +239,6 @@ class GitHub extends Component {
   render() {
     return (
       <div className="main-container">
-        <div id="top-wrapper">
         {/* Modal Control */}
         {this.state.activeModal === Instructions ? 
           <Instructions isOpen={this.state.activeModal} onClose={this.hideModal} onKeyDown={(e) => this.onKeyDown(e)}>
@@ -243,6 +247,7 @@ class GitHub extends Component {
           : <div></div>
         }
         {/* Document Body */}
+        <div id="top-wrapper">
             <Form
               showModal={this.showModal}
               onClose={this.hideModal}
@@ -253,7 +258,7 @@ class GitHub extends Component {
                 { label: 'Terms: ', id: 'searchText' },
                 { label: 'Language: ', id: 'searchLang' },
                 { label: '# of stars: ', id: 'searchStars' },
-                { label: '# to fetch: ', id: 'searchNum' },
+                { label: '# to fetch (max 100): ', id: 'searchNum' },
               ]}
               extras={[
                 { label: ' Created at', id: 'createdAt' },
@@ -298,7 +303,7 @@ class GitHub extends Component {
 function buildQuery(terms, languages, stars, num, flache, extraFields) {
   if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
   if (!terms || terms === 'graphql');
-  if (num > 100) return window.alert('max 100 results!');
+  if (num > 100 || num < 1) return window.alert('Error: Please search for 0 - 100 results!');
   const searchQuery = `"${terms || ''}${languages ? ' language:' + languages : ''}${stars ? ' stars:>' + stars : ''}"`;
   if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
   let str = '';
