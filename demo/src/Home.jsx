@@ -5,8 +5,8 @@ const Home = () => (
   <div className="landing-container">
     <div id="landing-content">
       <center>
-        <h2>Simple Deployment. Outperforming Results</h2>
-        <p>FlacheQL is a fast caching library for GraphQL. Here you will find a demonstration of our performance compared with a leading GraphQL caching engine, Apollo Client's inMemoryCache.</p>
+        <h2>Simple Deployment. Outperforming Results.</h2>
+        <p>FlacheQL is a fast and flexible caching library for GraphQL. Here you will find a demonstration of our performance compared with a leading GraphQL caching engine, Apollo Client's inMemoryCache.</p>
         <p>We have provided 2 APIs to run queries against. You can choose an API below:</p>
         <div className="landing-link-wrapper">
           <Link to="/github"><div className="landing-link">GitHub</div></Link>
