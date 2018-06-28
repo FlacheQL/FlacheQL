@@ -55,7 +55,7 @@ class GitHub extends Component {
   }
 
   showModal() {
-    this.setState({ activeModal: Instructions });
+    // this.setState({ activeModal: Instructions });
     document.getElementById("modal-overlay").style.display = "block"
   }  
 
@@ -96,11 +96,11 @@ class GitHub extends Component {
       cache: new InMemoryCache(),
     });
     setTimeout(() => {
-      this.getRepos('graphql', 'javascript', 500, 20, ['homepageUrl', 'databaseId']);
+      this.getRepos('react', 'javascript', 30000, 100, ['homepageUrl', 'databaseId', 'createdAt', 'updatedAt']);
     }, 1);
     setTimeout(() => {
-      this.getRepos('graphql', 'javascript', 500, 20, ['homepageUrl']);
-    }, 8000);
+      this.getRepos('react', 'javascript', 50000, 90, ['homepageUrl', 'createdAt']);
+    }, 3000);
   }
 
   /**
@@ -114,12 +114,12 @@ class GitHub extends Component {
   getRepos(terms, languages, stars, num, extraFields) {
     const query = buildQuery(terms, languages, stars, num, true, extraFields);
     const apolloQuery = buildQuery(terms, languages, stars, num, false, extraFields);
-    // launch apollo query
+    // start apollo timer and launch apollo query
+    this.startTimer(false, num);
     this.apolloClient.query({ query: apolloQuery })
       .then(res => this.handleResponse(res.data, false));
-    // start flache timer
+    // start flache timer and launch flache query
     this.startTimer(true, num);
-    // launch flache query
     const variables = { 
       terms,
       languages,
@@ -171,9 +171,8 @@ class GitHub extends Component {
     const reqStartTime = window.performance.now();
     const updatedTimer = { timerText: `Fetching ${num} items...`, reqStartTime, lastQueryTime: 'Please wait...' };
     // update either the flache or apollo timer
-    console.log(flache)
     if (flache) this.setState({ flacheTimer: updatedTimer });
-    this.setState({ apolloTimer: updatedTimer });
+    else this.setState({ apolloTimer: updatedTimer });
   }
 
   /**
