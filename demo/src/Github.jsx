@@ -78,9 +78,18 @@ class GitHub extends Component {
       link,
       cache: new InMemoryCache(),
     });
-    setTimeout(() => {
-      this.getRepos('react', 'javascript', 30000, 100, ['homepageUrl', 'databaseId', 'createdAt', 'updatedAt']);
-    }, 1);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 30000, 100, ['createdAt', 'databaseId', 'homepageUrl', 'updatedAt']);
+    // }, 1);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 30000, 90, ['createdAt', 'homepageUrl']);
+    // }, 3);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 50000, 90, ['homepageUrl', 'databaseId', 'createdAt', 'updatedAt']);
+    // }, 3000);
+    // setTimeout(() => {
+    //   this.getRepos('react', 'javascript', 60000, 80, ['databaseId', 'createdAt', 'updatedAt']);
+    // }, 6000);
   }
 
   /* Modal Display */
@@ -132,6 +141,7 @@ class GitHub extends Component {
   */
   handleResponse(res, flache) {
     this.endTimer(flache, res.search.edges.length);
+    console.log('res', res)
     this.buildBoxes(res);
   }
 
@@ -248,7 +258,7 @@ class GitHub extends Component {
                 { label: 'Terms: ', id: 'searchText' },
                 { label: 'Language: ', id: 'searchLang' },
                 { label: '# of stars: ', id: 'searchStars' },
-                { label: '# to fetch: ', id: 'searchNum' },
+                { label: '# to fetch (max 100): ', id: 'searchNum' },
               ]}
               extras={[
                 { label: ' Created at', id: 'createdAt' },
@@ -293,7 +303,7 @@ class GitHub extends Component {
 function buildQuery(terms, languages, stars, num, flache, extraFields) {
   if (!num || num === 0) return window.alert('bad query! you must enter a number to search for!');
   if (!terms || terms === 'graphql');
-  if (num > 100) return window.alert('max 100 results!');
+  if (num > 100 || num < 1) return window.alert('Error: Please search for 0 - 100 results!');
   const searchQuery = `"${terms || ''}${languages ? ' language:' + languages : ''}${stars ? ' stars:>' + stars : ''}"`;
   if (searchQuery === '""') return window.alert('bad query! you must enter at least one filter!');
   let str = '';
