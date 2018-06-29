@@ -32,7 +32,7 @@ FlacheQL offers partial retrieval of cached data based on search parameters — 
 FlacheQL consistently outperforms Apollo on retrievals of response data from identical queries as well as on both types of partial retrievals.  
 
 
-*This is a work in progress.  Cache persistence and "smart" expiration of cached items are some of the features considered to be added.*
+*This is a work in progress.  Cache persistence and "smart" expiration of cached items are some of the features to be added.*
 
 ### Cache Examples
 
