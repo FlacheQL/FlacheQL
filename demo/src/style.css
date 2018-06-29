@@ -207,6 +207,7 @@ h2 {
   max-width: 100%;
   max-height: 80%;
   min-height: 300;
+  min-width: 50%;
   overflow: auto;
   font-size: 18px;
   z-index: 1010;
@@ -263,6 +264,14 @@ h2 {
   width: 30%;
   height: 75px;
   margin: 10px;
+}
+
+.description p {
+  color: #5600CD;
+}
+
+.description p i {
+  font-weight: 400;
 }
 
 .doc-container:hover {
@@ -445,9 +454,20 @@ fieldset {
   text-decoration: none;
 }
 
+.standout {
+  color: rgb(223, 202, 252);
+  font-weight: 600;
+}
+
 #landing-content {
   width: 90%;
   margin: 0 auto;
+}
+
+.inline-link {
+  text-decoration: none;
+  font-weight: 600;
+  color: rgb(223, 202, 252);
 }
 
 #landing-content h2 {

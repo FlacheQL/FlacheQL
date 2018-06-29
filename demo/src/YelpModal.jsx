@@ -11,10 +11,10 @@ class YelpModal extends React.Component {
        <div className="modal" >
         <h1>Yelp Demo</h1>
         <div className="description"> 
-         Welcome to the Yelp demo of FlacheQL! This demo is intended to provide a simple overview of FlacheQL's functionality and speed. <br /> <br />
-
-         In the provided search fields you may provide a term to search for within the Yelp GraphQL API. This could be for bars, resturaunts, or any other services. Also provide a number of results to receive, up to 50 per Yelp's constraints. <br />
-         You are able to interact with Flache's partial query retrievals in this demo, so feel free to select and de-select boxes from the More Options menu and observe the improved response times that Flache brings to your web app.  
+         <p>Welcome to the Yelp demo of FlacheQL! This demo is intended to provide a simple overview of FlacheQL's functionality and speed.</p>
+         <p>In the search fields, provide a location to search the Yelp GraphQL API. This could be any neighborhood or city in the US. Also, you must provide a number of results to receive, up to 50 per Yelp's constraints. These fields represent the query <i>parameters</i>.</p>
+         <p>You can observe Flache's partial query matching in this demo by selecting boxes from the More Options menu. These options represent query <i>fields</i>. Start by running a search, and then deselecting one or more and running it again. Observe that FlacheQL recognizes when a full result set is in the cache even if the query does not match one already made.</p>
+         <p>If you're very familiar with other GraphQL caching solutions, you may even notice something surprising about our engine's capabilities... <emoji>🧐</emoji></p>
         </div>
           <div style={{textAlign: 'center'}}>
             <button onClick={this.props.onClose}>Close</button>
