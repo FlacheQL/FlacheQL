@@ -48,6 +48,7 @@ class Yelp extends Component {
     const options = {
       paramRetrieval: true,
       fieldRetrieval: true,
+      cacheExpiration: 1000 * 120,
       subsets: {
         location: "=",
         limit: "limit"
@@ -56,10 +57,9 @@ class Yelp extends Component {
     }
     // ---- INIT FLACHE CLIENT ----
     this.cache = new Flache(endpoint, headers, options);
-    this.getRestaurants('Venice', 10, ['']);
-    // // setTimeout(() => {
-    // //   this.getRestaurants('Venice', 20, ['']);
-    // // }, 15000);
+    setTimeout(() => {
+      this.getRestaurants('Venice', 20, ['']);
+    }, 100);
   }
 
   /* Modal Display */

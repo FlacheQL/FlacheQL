@@ -10,18 +10,15 @@ class Instructions extends React.Component {
   }
 
   render() {
-
     return (
        <div className="modal" >
-        <h1>Git Demo</h1>
+        <h1>Github Demo</h1>
         <div className="description"> 
-        Welcome to the GitHub demo page for FlacheQL! The intent of this application is to familiarize developers with the caching functionality and performance of the FlacheQL Library. <br /> <br />
-        We will be searching for Repositories on GitHub, to start enter a search term into the Search input. If you desire to search for repositories tagged with a specific language, you can provide the additional serach parameter in the Language input. For an increased depth to your query, you may spcify a minimum number of stars to search for, and the number of results you wish to receive (with a maximum value of 100). <br /> <br />
-
-        To interact with the full breadth of FlacheQL's capabilities, refine your queries with the More Options checkboxes. Note that FlacheQL returns results from the cache for queries containing partial fields of previously cached responses. <br />
-        Also note that FlacheQL will return subsets of queries from the cache instead of making a round-trip to the database. In the instance of GitHub, more stars implies fewer repositories, and thus the subset will be retrieved from the cache. <br /> <br />
-
-        A comparison of FlacheQL and Apollo's retrieval times are presented to the right, and results are displayed below the input fields.  
+          <p>Welcome to the GitHub demo page for FlacheQL! The intent of this page is to allow you to test our performance against the leading GraphQL caching engine, Apollo Client.</p>
+          <p>We will be searching for repos on GitHub. To start, you must enter a search term. You can throw in a programming language if you like. You can also specify a minimum number of stars to search for. You must enter the number of results you wish to receive (with a maximum value of 100, as GitHub will return no more than this).</p>
+          <p>Much like with Yelp, you can refine your queries with the More Options checkboxes. Note that FlacheQL returns results from the cache for appropriate queries containing only fields it has previously cached.</p>
+          <p>If you didn't catch it on the Yelp demo, then take special notice that FlacheQL will do that same kind of "subset" retrieval <i>for the query parameters</i>. In the instance of GitHub, more stars implies fewer repositories, and thus, all else the same, a query run with a higher number of stars is a subset and will be retrieved from the cache. Likewise, searching for 50 repos makes a fetch, but the same search for only 25 comes from the cache. <i>No other open-source engine includes this functionality.</i></p>
+          <p>FlacheQL and Apollo's respective retrieval speed is shown in the timers. Both libraries' query calls are asynchronous (but just in case, we fire Apollo's first 😉).</p>
         </div>
         <div style={{textAlign: 'center'}}>
           <button onClick={this.props.onClose}>Close</button>

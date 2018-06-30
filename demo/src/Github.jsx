@@ -78,18 +78,9 @@ class GitHub extends Component {
       link,
       cache: new InMemoryCache(),
     });
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 30000, 100, ['createdAt', 'databaseId', 'homepageUrl', 'updatedAt']);
-    // }, 1);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 30000, 90, ['createdAt', 'homepageUrl']);
-    // }, 3);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 50000, 90, ['homepageUrl', 'databaseId', 'createdAt', 'updatedAt']);
-    // }, 3000);
-    // setTimeout(() => {
-    //   this.getRepos('react', 'javascript', 60000, 80, ['databaseId', 'createdAt', 'updatedAt']);
-    // }, 6000);
+    setTimeout(() => {
+      this.getRepos('graphql', 'javascript', 1000, 35, ['createdAt', 'databaseId', 'homepageUrl', 'updatedAt']);
+    }, 100);
   }
 
   /* Modal Display */
@@ -141,7 +132,6 @@ class GitHub extends Component {
   */
   handleResponse(res, flache) {
     this.endTimer(flache, res.search.edges.length);
-    console.log('res', res)
     this.buildBoxes(res);
   }
 
