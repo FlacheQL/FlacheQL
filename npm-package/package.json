@@ -1,6 +1,6 @@
 {
   "name": "flacheql",
-  "version": "1.0.1",
+  "version": "2.0.1",
   "description": "simple and fast client-side cache for graphql",
   "main": "flache.js",
   "scripts": {

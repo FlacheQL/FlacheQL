@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import gql from 'graphql-tag';
-import Flache from '../flache';
+import Flache from 'flacheql';
 import Form from './Form.jsx';
 import GitBox from "./GitBox.jsx";
 import QueryTimer from './QueryTimer.jsx';
