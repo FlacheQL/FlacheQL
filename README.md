@@ -46,8 +46,6 @@ All HTTP requests from a browser are first routed to the browser cache.
 
 * If a request is a subset of a query that was previously made, then it reads the matching response from cache.
 
-* If a request consists of a previous query and a new query, then it reads the matching response from cache and fetches the new query from the data source.
-
 ## Getting Started
 
 Install the module with npm install flacheQL or place into your package.json and run npm install.
