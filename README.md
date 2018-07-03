@@ -62,6 +62,7 @@ To initialize FlacheQL, simply import the npm package and declare a new instance
 
 
 ```javascript
+
 import Flache from 'flacheql'
 const endpoint = 'https://<yoursite>.com/graphql';
 const yourCache = new Flache(endpoint);
@@ -71,13 +72,14 @@ import Flache from 'flacheql'
 const endpoint = 'https://<yoursite>.com/graphql';
 const headers = { "Content-Type": "application/graphql", "Authorization": "token <SOMETOKEN>" }
 const yourCache = new Flache(endpoint, headers);
+
 ```
 
 Every GraphQL query will go to through the FlacheQL cache, and if a new incoming query is identical to a past query, it will automatically be returned from the cache. In order to make an API call or retrieve data from the cache, simply pass in your queries into the it() function like so. Let's use a query to the Github GraphQL API as an example. We'll be searching for all repositories that match 'react', that use 'javascript', and that have over 10,000 stars. We'll then grab the first 50 results (Github caps the number we can fetch to 100). All we do is define our query and pass it into the it function, which is called on the cache that we initialized above. 
 
 ```javascript
 const query1 = 
-  {
+  `{
     search(query: "react language:javascript stars:>10000, type: REPOSITORY, first: 50) {
       repositoryCount
       edges {
@@ -94,7 +96,7 @@ const query1 =
         }
       }
     }
-  }
+  }`
   
 yourCache.it(query1)
          .then(res => 
