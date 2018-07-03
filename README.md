@@ -203,7 +203,7 @@ const queryWithVars =
         node {
           ... on Repository {
             name
-            ${createdAt ? createdAt : ''} *************************
+            ${createdAt ? createdAt : ''} // add optional fields *************************
             stargazers {
               totalCount
             }
