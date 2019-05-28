@@ -7,8 +7,7 @@ const htmlPlugin = new HtmlWebPackPlugin({
 
 module.exports = {
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.jsx?$/,
         loader: "babel-loader",
         exclude: /node_modules/,
@@ -22,7 +21,7 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: [ 'file-loader' ],
+        use: ['file-loader'],
       }
     ]
   },
