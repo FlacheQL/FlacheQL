@@ -4,10 +4,13 @@ import constructResponsePath from "./helpers/constructResponsePath";
 import createCallbacksForPartialQueryValidation from "./helpers/createCallbacksForPartialQueryValidation";
 import denormalize from "./helpers/denormalize";
 import flatten from "./helpers/flatten";
+import localforage from "localforage"
 
 export default class Flache {
   // TODO: have these parameters set-up on initialization rather than on each query
-  constructor(endpoint, headers = { "Content-Type": "application/graphql" }, options) {
+  constructor(endpoint, headers = {
+    "Content-Type": "application/graphql"
+  }, options) {
     this.cache = {};
     this.queryCache = {};
     this.fieldsCache = [];
@@ -16,7 +19,57 @@ export default class Flache {
     this.endpoint = endpoint;
     this.options = options;
     this.headers = headers;
+
+    // ! TEST
+    this.refreshCache = function () {
+      // return the "data"-keyed object from indexDB using localForage
+      console.log("Attempting to refresh CFQ from IDB...");
+
+      localforage.getItem('FlacheQL', (err, value) => {
+        console.log("RESPONSE");
+        if (err) {
+          // console.log("IDB error getting data from IDB")
+          return false;
+        } else {
+          if (!value) {
+            // console.log("No data returned from IDB call");
+            return false;
+          } else {
+            // console.log("VALUE IS: ", value)
+            // console.log("Assigning CFQ with values from cache ;)");
+            this.cache = value.cache;
+            this.queryCache = value.queryCache;
+            this.fieldsCache = value.fieldsCache;
+
+            // console.log("After LOADING FROM IDB, our C Q F are: ")
+            // console.log("CACHE: ", this.cache);
+            // console.log("QUERYCACHE: ", this.queryCache);
+            // console.log("FIELDSCACHE: ", this.fieldsCache);
+            return true;
+          }
+        }
+      });
+    }
+    // this.refreshCache();
   }
+
+
+  // ! On Instantiation: Attempt to reload CFQ from IndexedDB via LocalForage
+  // refreshCache() {
+  //   // return the "data"-keyed object from indexDB using localForage
+  //   localforage.getItem('FlacheQL', (err, value) => {
+  //     if (err) {
+  //       console.log("error getting data ")
+  //       return false;
+  //     } else {
+  //       this.cache = value.data.cache;
+  //       this.queryCache = value.data.queryCache;
+  //       this.fieldsCache = value.data.fieldsCache;
+  //       return true;
+  //     }
+  //   });
+  // }
+
 
   /**
    * Saves all Flache data to browser session storage for cache persistence. Purges after 200 seconds.
@@ -38,7 +91,18 @@ export default class Flache {
     });
   }
 
+  // checkIfRefreshNeeded() {
+  //   if (!this.fieldsCache.length && !Object.keys(this.cache).length && !Object.keys(this.queryCache).length) {
+  //     return  this.refreshCache();
+  //   }
+  // }
+
   it(query, variables) {
+
+    if (!this.fieldsCache.length && !Object.keys(this.cache).length && !Object.keys(this.queryCache).length) {
+      this.refreshCache();
+    }
+
     // create a key to store the payloads in the cache
     const stringifiedQuery = JSON.stringify(query);
     // return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery)
@@ -64,9 +128,14 @@ export default class Flache {
     let allParamsPass = false;
 
     // increment cache length
+
+    console.log("Do we want paramRetrieval? ", this.options.paramRetrieval);
+    console.log("Do we want fieldRetrieval? ", this.options.fieldRetrieval);
+
     this.cacheLength = Object.keys(this.cache).length;
     // if the developer specifies in App.jsx
     if (this.options.paramRetrieval) {
+      console.log("In paramRetrieval");
       let childrenMatch = false;
       // check if query children match 
       childrenMatch = this.fieldsCache.some(obj => {
@@ -75,7 +144,7 @@ export default class Flache {
       });
 
       if (childrenMatch) {
-          // no need to run partial query check on first query
+        // no need to run partial query check on first query
         if (this.cacheLength > 0) {
           let currentMatchedQuery;
           for (let key in variables) {
@@ -115,14 +184,20 @@ export default class Flache {
                 let pathToNodes = this.options.pathToNodes;
 
                 let cached = JSON.parse(JSON.stringify(this.cache[currentMatchedQuery]));
-                let { path, lastTerm } = constructResponsePath(
+                let {
+                  path,
+                  lastTerm
+                } = constructResponsePath(
                   pathToNodes,
                   cached
                 );
 
                 for (let key in this.options.queryPaths) {
                   path[lastTerm] = path[lastTerm].filter(el => {
-                    let { path, lastTerm } = constructResponsePath(
+                    let {
+                      path,
+                      lastTerm
+                    } = constructResponsePath(
                       this.options.queryPaths[key],
                       el
                     );
@@ -147,13 +222,14 @@ export default class Flache {
                   resolve(cached);
                 });
               }
-    
+
             }
           }
         }
       }
     }
-    
+
+    console.log("About to populate query cache");
     Object.keys(variables).forEach(queryVariable => {
       // if a key already exists on the query cache for that variable add a new key value pair to it, else create a new obj
       if (this.queryCache[queryVariable]) {
@@ -202,30 +278,69 @@ export default class Flache {
       }
     }
     return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery);
-    
+
   }
 
   fetchData(query, endpoint, headers, stringifiedQuery) {
+    console.log("Starting fetchData method for query: ", query);
+    console.log("THIS CACHE IS : ", this.cache);
+    console.log("THIS.FIELDSCACHE IS ", this.fieldsCache);
+    console.log("THIS.QUERYCACHE IS : ", this.queryCache);
     return new Promise((resolve, reject) => {
       fetch(endpoint, {
-        method: "POST",
-        headers,
-        body: query
-      })
-      .then(res => {
-        return res.json()})
-      .then(res => {
-        this.cache[stringifiedQuery] = res;
-        let normalizedData = flatten(res);
-          this.fieldsCache.push({
+          method: "POST",
+          headers,
+          body: query
+        })
+        .then(res => {
+          return res.json()
+        })
+        .then(res => {
+          this.cache[stringifiedQuery] = res;
+          let normalizedData = flatten(res);
+
+          let fieldCacheObj = {
             [this.queryParams]: {
               data: normalizedData,
               children: constructQueryChildren(query)
             }
-          });
+          }
+
+          if (!this.fieldsCache.some(obj => {
+              return JSON.stringify(obj) === JSON.stringify(fieldCacheObj);
+            })) {
+            this.fieldsCache.push(fieldCacheObj);
+          }
+          console.log("PREPARING TO WRITE TO IDB WITH INMEMORY VALUES: ")
+          console.log("CACHE: ", this.cache);
+          console.log("QUERYCACHE: ", this.queryCache);
+          console.log("FIELDSCACHE: ", this.fieldsCache);
+          this.saveToIndexedDB();
           resolve(res);
         })
         .catch(err => err);
     });
   }
+
+  saveToIndexedDB() {
+    console.log("save to indexedDB")
+    const data = {
+      cache: this.cache,
+      queryCache: this.queryCache,
+      fieldsCache: this.fieldsCache
+    }
+    console.log("Data about to be saved is: ", data);
+    localforage.setItem('FlacheQL', data, (err, result) => {
+      if (err) {
+        console.log("Error setting item in local forage for ", data);
+        return false;
+      } else {
+        console.log("No error setting item in localforage")
+        return true;
+      }
+    })
+  }
+
+
+
 }
