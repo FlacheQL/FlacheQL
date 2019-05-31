@@ -168,13 +168,17 @@ export default class Flache {
     if (this.options.fieldRetrieval) {
       let filtered;
       let foundMatch = false;
+      const matchingChildren = [];
       this.fieldsCache.forEach(node => {
         if (node.hasOwnProperty(this.queryParams)) {
+          //assigning filtered here so that we have access to query that match on fields, but not completely on children
+          filtered = denormalize(node[this.queryParams].data);
+          console.log('this is filtered', filtered)
           foundMatch = this.children.every(child => {
             return node[this.queryParams].children.includes(child);
           });
           if (foundMatch) {
-            filtered = JSON.parse(JSON.stringify(node[this.queryParams].data));
+            filtered = JSON.parse(JSON.stringif.y(node[this.queryParams].data));
             for (let key in filtered) {
               if (!this.children.some(child => key.includes(child))) {
                 delete filtered[key];
@@ -189,10 +193,59 @@ export default class Flache {
           filtered = denormalize(filtered);
           resolve(filtered);
         });
-      }
+      };
 
+      if (!foundMatch) {
+        let activeQuery = query;
+        const cachedDataToCompare = filtered;
+        console.log('cachedData', cachedDataToCompare)
+        this.fieldsCache.forEach(node => {
+          if (node.hasOwnProperty(this.queryParams)) {
+            this.children.filter(child => {
+              if (node[this.queryParams].children.includes(child)) {
+                matchingChildren.push(child)
+              }
+            })
+          }
+        })
+        matchingChildren.forEach(match => {
+          if (activeQuery.includes(match)) {
+            activeQuery = activeQuery.replace(match, '')
+          }
+        })
+        console.log('this is new query', activeQuery);
+        function fetchPartialData(query, endpoint, headers, stringifiedQuery) {
+          console.log('IN PARTIAL')
+          return new Promise((resolve, reject) => {
+            fetch(endpoint, {
+              method: "POST",
+              headers,
+              body: query
+            })
+              .then(res => {
+                return res.json()
+              })
+              .then(res => {
+                console.log('this is res', res)
+                console.log('this is cachedData in func', cachedDataToCompare)
+                const mergedQueryResults = _.merge(cachedDataToCompare, res);
+                this.cache[stringifiedQuery] = mergedQueryResults;
+                let normalizedData = flatten(mergedQueryResults);
+                this.fieldsCache.push({
+                  [this.queryParams]: {
+                    data: normalizedData,
+                    children: constructQueryChildren(query)
+                  }
+                })
+                resolve(mergedQueryResults);
+              })
+              .catch(err => err);
+          });
+        }
+        fetchPartialData(activeQuery, this.endpoint, this.headers, stringifiedQuery)
+      }
     } else {
-      //if partial retrieval is off, return cached object or fetchData
+      //if partial retrieval is turned off, return cached object or fetchData
       if (this.cache[stringifiedQuery]) {
         return new Promise(resolve => {
           return resolve(this.cache[stringifiedQuery]);
@@ -202,10 +255,10 @@ export default class Flache {
       }
     }
     return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery);
-
   }
 
   fetchData(query, endpoint, headers, stringifiedQuery) {
+    console.log('IN FETCH')
     return new Promise((resolve, reject) => {
       fetch(endpoint, {
         method: "POST",
