@@ -75,7 +75,7 @@ export default class Flache {
       });
 
       if (childrenMatch) {
-          // no need to run partial query check on first query
+        // no need to run partial query check on first query
         if (this.cacheLength > 0) {
           let currentMatchedQuery;
           for (let key in variables) {
@@ -147,13 +147,13 @@ export default class Flache {
                   resolve(cached);
                 });
               }
-    
+
             }
           }
         }
       }
     }
-    
+
     Object.keys(variables).forEach(queryVariable => {
       // if a key already exists on the query cache for that variable add a new key value pair to it, else create a new obj
       if (this.queryCache[queryVariable]) {
@@ -202,7 +202,7 @@ export default class Flache {
       }
     }
     return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery);
-    
+
   }
 
   fetchData(query, endpoint, headers, stringifiedQuery) {
@@ -212,11 +212,12 @@ export default class Flache {
         headers,
         body: query
       })
-      .then(res => {
-        return res.json()})
-      .then(res => {
-        this.cache[stringifiedQuery] = res;
-        let normalizedData = flatten(res);
+        .then(res => {
+          return res.json()
+        })
+        .then(res => {
+          this.cache[stringifiedQuery] = res;
+          let normalizedData = flatten(res);
           this.fieldsCache.push({
             [this.queryParams]: {
               data: normalizedData,
