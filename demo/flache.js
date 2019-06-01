@@ -169,15 +169,15 @@ export default class Flache {
       let filtered;
       let foundMatch = false;
       const matchingChildren = [];
-      let sum = 0;
+      let sumOfMatchingChildren = 0;
       this.fieldsCache.forEach(node => {
         if (node.hasOwnProperty(this.queryParams)) {
           node[this.queryParams].children.forEach((child, i) => {
             if (this.children[i] === child) {
-              sum += 1;
+              sumOfMatchingChildren += 1;
             }
           })
-          //assigning filtered here so that we have access to query that match on fields, but not completely on children
+          //assigning filtered here so that we have access to query that matched on fields, but not completely on children
           filtered = denormalize(node[this.queryParams].data);
           foundMatch = this.children.every(child => {
             return node[this.queryParams].children.includes(child);
@@ -199,11 +199,10 @@ export default class Flache {
           resolve(filtered);
         });
       };
-
-      if (!foundMatch && sum > 4) {
+      //sumOfMatchingChildren is used as a flag, specifically for this demo, the number of matching children between this.children (current query's children) and node[this.queryParams].children (prior query's children) needs to be above 4 as we query for name, rating, hours.is_open_now, and categories.title automatically. 
+      if (!foundMatch && sumOfMatchingChildren > 4) {
         let activeQuery = query;
         const cachedDataToCompare = filtered;
-        console.log('cachedData', cachedDataToCompare)
         this.fieldsCache.forEach(node => {
           if (node.hasOwnProperty(this.queryParams)) {
             this.children.filter(child => {
@@ -220,44 +219,6 @@ export default class Flache {
           }
         })
         return this.fetchPartialData(activeQuery, this.endpoint, this.headers, stringifiedQuery, cachedDataToCompare)
-
-
-
-        // console.log('this is new query', activeQuery);
-        // fetchPartialData(query, endpoint, headers, stringifiedQuery) {
-        //   console.log('IN PARTIAL')
-        //   console.log('this.cache', cache)
-        //   return new Promise((resolve, reject) => {
-        //     fetch(endpoint, {
-        //       method: "POST",
-        //       headers,
-        //       body: query
-        //     })
-        //       .then(res => {
-        //         return res.json()
-        //       })
-        //       .then(res => {
-        //         console.log('res', res)
-        //         const mergedQueryResults = _.merge(cachedDataToCompare, res);
-        //         console.log(this.cache, 'this.cache')
-        //         console.log('mergedQueryResults', mergedQueryResults)
-        //         console.log(stringifiedQuery, 'this is stringifiedQuery')
-        //         console.log(this.cache[stringifiedQuery], 'hereeeee')
-        //         this.cache[stringifiedQuery] = mergedQueryResults;
-        //         console.log('stuck here', this.cache)
-        //         let normalizedData = flatten(mergedQueryResults);
-        //         this.fieldsCache.push({
-        //           [this.queryParams]: {
-        //             data: normalizedData,
-        //             children: constructQueryChildren(query)
-        //           }
-        //         })
-        //         console.log('we are getting here')
-        //         resolve(mergedQueryResults);
-        //       })
-        //       .catch(err => err);
-        //   });
-        // };
       }
     } else {
       //if partial retrieval is turned off, return cached object or fetchData
@@ -284,12 +245,9 @@ export default class Flache {
           return res.json()
         })
         .then(res => {
-          console.log('res', res)
           const mergedQueryResults = _.merge(cachedData, res);
           this.cache[stringifiedQuery] = mergedQueryResults;
-          console.log('stuck here', this.cache)
           let normalizedData = flatten(mergedQueryResults);
-          console.log('normalizeData', normalizedData)
           this.fieldsCache.push({
             [this.queryParams]: {
               data: normalizedData,
@@ -304,7 +262,6 @@ export default class Flache {
 
 
   fetchData(query, endpoint, headers, stringifiedQuery) {
-    console.log('IN FETCH')
     return new Promise((resolve, reject) => {
       fetch(endpoint, {
         method: "POST",
@@ -317,7 +274,6 @@ export default class Flache {
         .then(res => {
           this.cache[stringifiedQuery] = res;
           let normalizedData = flatten(res);
-          console.log('normalized in fetch', normalizedData)
           this.fieldsCache.push({
             [this.queryParams]: {
               data: normalizedData,
