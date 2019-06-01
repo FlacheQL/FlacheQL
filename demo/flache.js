@@ -18,21 +18,24 @@ export default class Flache {
     this.cbs;
     this.endpoint = endpoint;
     this.options = options;
+    this.ttl = options.ttl || 300000; // ! Either passed in TTL or default to default value... CHANGE this later to a realistic default value
     this.headers = headers;
 
-    // ! TEST
-    this.refreshCache = function () {
+    // ! A method to retrieve CFQ from the IndexedDB browser storage, and use it to refresh the in-memory CFQ.
+    this.loadFromIndexDB = function () {
       // return the "data"-keyed object from indexDB using localForage
       console.log("Attempting to refresh CFQ from IDB...");
 
       localforage.getItem('FlacheQL', (err, value) => {
-        console.log("RESPONSE");
+        // console.log("RESPONSE");
         if (err) {
           // console.log("IDB error getting data from IDB")
+          console.log("DONE WITH LoadFromINdexDB");
           return false;
         } else {
           if (!value) {
             // console.log("No data returned from IDB call");
+            console.log("DONE WITH LoadFromINdexDB");
             return false;
           } else {
             // console.log("VALUE IS: ", value)
@@ -40,68 +43,70 @@ export default class Flache {
             this.cache = value.cache;
             this.queryCache = value.queryCache;
             this.fieldsCache = value.fieldsCache;
-
             // console.log("After LOADING FROM IDB, our C Q F are: ")
             // console.log("CACHE: ", this.cache);
             // console.log("QUERYCACHE: ", this.queryCache);
             // console.log("FIELDSCACHE: ", this.fieldsCache);
+            console.log("DONE WITH LoadFromINdexDB");
             return true;
           }
         }
-      });
+      })
+
     }
-    // this.refreshCache();
+
+    // ! This method looks through the in-memory CFQ and removes any stale past queries.
+    this.pruneStaleFromCache = function () {
+      console.log("STARTING pruneStaleFromCache");
+      if (Object.keys(this.cache)) {
+        const currentTime = Date.now(); // ex: 8759213 (seconds)
+        console.log("CURRENT TIME IS: ", currentTime, "... About to iterate through this.cache");
+        for (let stringifiedQuery in this.cache) {
+          let pastQueryTime = this.cache[stringifiedQuery].created_at;
+          console.log("pastQueryTime is : ", pastQueryTime);
+          if (currentTime - pastQueryTime > this.ttl) {
+            console.log("STALE QUERY DETECTED! FOR: ", this.cache[stringifiedQuery]);
+            console.log("Query is expired by: ", currentTime - pastQueryTime - this.ttl, "  milliseconds");
+            // Query is Expired... Need to remove the appropriate information from CFQ
+            // Need to get the associated queryParams with the stale query
+            let staleStringifiedQuery = stringifiedQuery;
+            let staleQueryParams = cleanQuery(JSON.parse(staleStringifiedQuery));
+            // 1: Delete the appropriate information from this.cache
+            delete this.cache[staleStringifiedQuery];
+            // 2: Delete the appropriate information from this.fieldsCache
+            this.fieldsCache.forEach((fieldsCacheObj, index) => {
+              if (staleQueryParams in fieldsCacheObj) {
+                this.fieldsCache.splice(index, 1);
+              }
+            });
+            // 3: Delete the appropriate information from this.queryCache
+            for (let param in this.queryCache) {
+              for (let stringifiedQuery in this.queryCache[param]) {
+                if (stringifiedQuery == staleStringifiedQuery) {
+                  delete this.queryCache[param][stringifiedQuery];
+                }
+              }
+            }
+          }
+        }
+      }
+
+      console.log("DONE WITH PRUNESTALE");
+      return;
+    }
+
+
   }
 
 
-  // ! On Instantiation: Attempt to reload CFQ from IndexedDB via LocalForage
-  // refreshCache() {
-  //   // return the "data"-keyed object from indexDB using localForage
-  //   localforage.getItem('FlacheQL', (err, value) => {
-  //     if (err) {
-  //       console.log("error getting data ")
-  //       return false;
-  //     } else {
-  //       this.cache = value.data.cache;
-  //       this.queryCache = value.data.queryCache;
-  //       this.fieldsCache = value.data.fieldsCache;
-  //       return true;
-  //     }
-  //   });
-  // }
-
-
-  /**
-   * Saves all Flache data to browser session storage for cache persistence. Purges after 200 seconds.
-   */
-  saveToSessionStorage() {
-    Object.keys(this).forEach(key =>
-      sessionStorage.setItem(key, JSON.stringify(this[key]))
-    );
-    setTimeout(() => sessionStorage.clear(), 200000);
-  }
-
-  /**
-   * Grabs any relevant Flache data from browser session storage.
-   */
-  readFromSessionStorage() {
-    Object.keys(this).forEach(key => {
-      if (sessionStorage.getItem(key))
-        this[key] = JSON.parse(sessionStorage.getItem(key));
-    });
-  }
-
-  // checkIfRefreshNeeded() {
-  //   if (!this.fieldsCache.length && !Object.keys(this.cache).length && !Object.keys(this.queryCache).length) {
-  //     return  this.refreshCache();
-  //   }
-  // }
 
   it(query, variables) {
 
     if (!this.fieldsCache.length && !Object.keys(this.cache).length && !Object.keys(this.queryCache).length) {
-      this.refreshCache();
+      this.loadFromIndexDB();
     }
+    this.pruneStaleFromCache(); // ! This will run before loadFromIndexDB on the FIRST request, but clean the cache appropriately every query thereafter
+
 
     // create a key to store the payloads in the cache
     const stringifiedQuery = JSON.stringify(query);
@@ -233,12 +238,14 @@ export default class Flache {
     Object.keys(variables).forEach(queryVariable => {
       // if a key already exists on the query cache for that variable add a new key value pair to it, else create a new obj
       if (this.queryCache[queryVariable]) {
+        console.log("WRITING TO QUERY CACHE A");
         this.queryCache[queryVariable][stringifiedQuery] =
           variables[queryVariable];
       } else
-        this.queryCache[queryVariable] = {
-          [stringifiedQuery]: variables[queryVariable]
-        };
+        console.log("WRITING TO QUERY CACHE B!");
+      this.queryCache[queryVariable] = {
+        [stringifiedQuery]: variables[queryVariable]
+      };
     });
 
     if (this.options.fieldRetrieval) {
@@ -296,6 +303,8 @@ export default class Flache {
           return res.json()
         })
         .then(res => {
+          // ! Assign a timestamp to the query being inserted into this.cache
+          res.created_at = Date.now();
           this.cache[stringifiedQuery] = res;
           let normalizedData = flatten(res);
 
@@ -307,7 +316,18 @@ export default class Flache {
           }
 
           if (!this.fieldsCache.some(obj => {
-              return JSON.stringify(obj) === JSON.stringify(fieldCacheObj);
+              console.log("--- Comparing...")
+              console.log(Object.keys(obj)[0] === this.queryParams && JSON.stringify(obj[Object.keys(obj)[0]].children) == JSON.stringify(fieldCacheObj[this.queryParams].children))
+              // console.log("Existing: ", JSON.stringify(obj));
+              // console.log("NEW: ", JSON.stringify(fieldCacheObj));
+              // ! NOTE! They're trying to use JSON.stringify to check whether the active query exists in fieldscache, but this strategy doesn't work because the values in .data include a createdAt field that will be different for any query...
+              // return JSON.stringify(obj) === JSON.stringify(fieldCacheObj); // ! THEIR METHOD
+
+              console.log("Old Query Key: ", Object.keys(obj)[0]);
+              console.log("New query Key: ", this.queryParams);
+              console.log("Old query children: ", obj[Object.keys(obj)[0]].children);
+              console.log("New Query Children: ", fieldCacheObj[this.queryParams].children);
+              return (Object.keys(obj)[0] === this.queryParams && JSON.stringify(obj[Object.keys(obj)[0]].children) == JSON.stringify(fieldCacheObj[this.queryParams].children))
             })) {
             this.fieldsCache.push(fieldCacheObj);
           }
