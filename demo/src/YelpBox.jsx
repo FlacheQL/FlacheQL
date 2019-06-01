@@ -1,16 +1,14 @@
 import React, { Component } from "react";
 
 const YelpBox = (props) => {
-  console.log('props in yelpbox', props)
   const displayOptions = [];
   for (let key in props.moreOptions) {
     let index = 0;
     if (props.moreOptions[key][0] === true) {
-      displayOptions.push(<div key={`c${key}${index}`} className="result-item-field"><strong>{key}</strong>: {props[props.moreOptions[key][1]]} </div>);
+      displayOptions.push(<div key={`c${key}${index}`} className="result-item-field"><strong>{key}</strong>: {props[props.moreOptions[key][1]] + ''} </div>);
       index += 1;
     }
   }
-  //maybe use Object.keys instead of for in?
   const categories = props.categories.reduce((acc, e) => e.title ? e.title + ', ' + acc : acc, '').slice(0, -2);
   return (
     <div className="result-item">
