@@ -30,14 +30,16 @@ export default class Flache {
         // console.log("RESPONSE");
         if (err) {
           // console.log("IDB error getting data from IDB")
-          console.log("DONE WITH LoadFromINdexDB");
+          console.log("ERR loading Data from IDB");
           return false;
         } else {
           if (!value) {
             // console.log("No data returned from IDB call");
-            console.log("DONE WITH LoadFromINdexDB");
+            console.log("DONE WITH LoadFromINdexDB -- no data to load");
             return false;
           } else {
+            console.log("DONE WITH LoadFromINdexDB -- found data :)");
+            value = JSON.parse(value); // ! Added 6/3... turn the stingified storage object into an acutal object!
             // console.log("VALUE IS: ", value)
             // console.log("Assigning CFQ with values from cache ;)");
             this.cache = value.cache;
@@ -47,7 +49,7 @@ export default class Flache {
             // console.log("CACHE: ", this.cache);
             // console.log("QUERYCACHE: ", this.queryCache);
             // console.log("FIELDSCACHE: ", this.fieldsCache);
-            console.log("DONE WITH LoadFromINdexDB");
+            console.log("DONE WITH LoadFromINdexDB -- found data and loaded into inmemory");
             return true;
           }
         }
@@ -400,11 +402,12 @@ export default class Flache {
 
   saveToIndexedDB() {
     console.log("save to indexedDB")
-    const data = {
+    let data = {
       cache: this.cache,
       queryCache: this.queryCache,
       fieldsCache: this.fieldsCache
     }
+    data = JSON.stringify(data); // ! Added 6/3... turn the stingified storage object into an acutal object!
     console.log("Data about to be saved is: ", data);
     localforage.setItem('FlacheQL', data, (err, result) => {
       if (err) {
