@@ -234,7 +234,6 @@ export default class Flache {
       }
     }
 
-    console.log("About to populate query cache");
     Object.keys(variables).forEach(queryVariable => {
       // if a key already exists on the query cache for that variable add a new key value pair to it, else create a new obj
       if (this.queryCache[queryVariable]) {
@@ -251,8 +250,17 @@ export default class Flache {
     if (this.options.fieldRetrieval) {
       let filtered;
       let foundMatch = false;
+      const matchingChildren = [];
+      let sumOfMatchingChildren = 0;
       this.fieldsCache.forEach(node => {
         if (node.hasOwnProperty(this.queryParams)) {
+          node[this.queryParams].children.forEach((child, i) => {
+            if (this.children[i] === child) {
+              sumOfMatchingChildren += 1;
+            }
+          })
+          //assigning filtered here so that we have access to query that matched on fields, but not completely on children
+          filtered = denormalize(node[this.queryParams].data);
           foundMatch = this.children.every(child => {
             return node[this.queryParams].children.includes(child);
           });
@@ -272,10 +280,30 @@ export default class Flache {
           filtered = denormalize(filtered);
           resolve(filtered);
         });
-      }
+      };
+      //sumOfMatchingChildren is used as a flag, specifically for this demo, the number of matching children between this.children (current query's children) and node[this.queryParams].children (prior query's children) needs to be above 4 as we query for name, rating, hours.is_open_now, and categories.title automatically. 
+      if (!foundMatch && sumOfMatchingChildren > 4) {
+        let activeQuery = query;
+        const cachedDataToCompare = filtered;
+        this.fieldsCache.forEach(node => {
+          if (node.hasOwnProperty(this.queryParams)) {
+            this.children.filter(child => {
+              if (node[this.queryParams].children.includes(child)) {
+                matchingChildren.push(child)
 
+              }
+            })
+          }
+        })
+        matchingChildren.forEach(match => {
+          if (activeQuery.includes(match)) {
+            activeQuery = activeQuery.replace(match, '')
+          }
+        })
+        return this.fetchPartialData(activeQuery, this.endpoint, this.headers, stringifiedQuery, cachedDataToCompare)
+      }
     } else {
-      //if partial retrieval is off, return cached object or fetchData
+      //if partial retrieval is turned off, return cached object or fetchData
       if (this.cache[stringifiedQuery]) {
         return new Promise(resolve => {
           return resolve(this.cache[stringifiedQuery]);
@@ -287,6 +315,34 @@ export default class Flache {
     return this.fetchData(query, this.endpoint, this.headers, stringifiedQuery);
 
   }
+
+
+  fetchPartialData(query, endpoint, headers, stringifiedQuery, cachedData) {
+    return new Promise((resolve, reject) => {
+      fetch(endpoint, {
+          method: "POST",
+          headers,
+          body: query
+        })
+        .then(res => {
+          return res.json()
+        })
+        .then(res => {
+          const mergedQueryResults = _.merge(cachedData, res);
+          this.cache[stringifiedQuery] = mergedQueryResults;
+          let normalizedData = flatten(mergedQueryResults);
+          this.fieldsCache.push({
+            [this.queryParams]: {
+              data: normalizedData,
+              children: constructQueryChildren(query)
+            }
+          })
+          resolve(mergedQueryResults);
+        })
+        .catch(err => err);
+    });
+  };
+
 
   fetchData(query, endpoint, headers, stringifiedQuery) {
     console.log("Starting fetchData method for query: ", query);
@@ -353,6 +409,7 @@ export default class Flache {
     localforage.setItem('FlacheQL', data, (err, result) => {
       if (err) {
         console.log("Error setting item in local forage for ", data);
+        console.log("Index db error is : ", err);
         return false;
       } else {
         console.log("No error setting item in localforage")
