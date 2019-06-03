@@ -39,7 +39,7 @@ export default class Flache {
             return false;
           } else {
             console.log("DONE WITH LoadFromINdexDB -- found data :)");
-            value = JSON.parse(value); // ! Added 6/3... turn the stingified storage object into an acutal object!
+            // value = JSON.parse(value); // ! Added 6/3... turn the stingified storage object into an acutal object!
             // console.log("VALUE IS: ", value)
             // console.log("Assigning CFQ with values from cache ;)");
             this.cache = value.cache;
@@ -407,7 +407,7 @@ export default class Flache {
       queryCache: this.queryCache,
       fieldsCache: this.fieldsCache
     }
-    data = JSON.stringify(data); // ! Added 6/3... turn the stingified storage object into an acutal object!
+    // data = JSON.stringify(data); // ! Added 6/3... turn the stingified storage object into an acutal object!
     console.log("Data about to be saved is: ", data);
     localforage.setItem('FlacheQL', data, (err, result) => {
       if (err) {
