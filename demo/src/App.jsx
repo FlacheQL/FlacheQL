@@ -11,6 +11,7 @@ import logo from './img/logo.png';
 import { GitIcon, NPMIcon } from './Icon.jsx';
 
 /*eslint-disable*/
+// Update: Cache Persistence
 
 class App extends Component {
   constructor(props) {
@@ -29,18 +30,18 @@ class App extends Component {
               <Link to="/home"><img id="img-logo" src={logo} /></Link>
             </div>
             <div id="nav-bar-links">
-            <Link to="/home"><div className="nav-bar-link">Home</div></Link>
-            <div className="dropdown-wrapper"><center>Demos</center>
-              <div className="dropdown-content">
-                <div className="dropdown-content-wrapper">
-                  <Link to="/yelp"><div className="dropdown-item">Yelp Demo</div></Link>
-                  <Link to="/github"><div className="dropdown-item">Github Demo</div></Link>
+              <Link to="/home"><div className="nav-bar-link">Home</div></Link>
+              <div className="dropdown-wrapper"><center>Demos</center>
+                <div className="dropdown-content">
+                  <div className="dropdown-content-wrapper">
+                    <Link to="/yelp"><div className="dropdown-item">Yelp Demo</div></Link>
+                    <Link to="/github"><div className="dropdown-item">Github Demo</div></Link>
+                  </div>
                 </div>
               </div>
-            </div>
-            <Link to="/documentation"><div className="nav-bar-link">Documentation</div></Link>
-            <a href="http://www.github.com/FlacheQL/FlacheQL"><GitIcon /></a>
-            <a href="https://www.npmjs.com/package/flacheql"><NPMIcon /></a>
+              <Link to="/documentation"><div className="nav-bar-link">Documentation</div></Link>
+              <a href="http://www.github.com/FlacheQL/FlacheQL"><GitIcon /></a>
+              <a href="https://www.npmjs.com/package/flacheql"><NPMIcon /></a>
             </div>
           </div>
           <Switch>
