@@ -124,7 +124,7 @@ export default class Flache {
       });
 
       if (childrenMatch) {
-        // no need to run partial query check on first query
+        // no need to run partial query check on first query, as for this Yelp demo we query for four fields automatically 
         if (this.cacheLength > 0) {
           let currentMatchedQuery;
           for (let key in variables) {
@@ -232,7 +232,7 @@ export default class Flache {
               sumOfMatchingChildren += 1;
             }
           })
-          //assigning filtered here so that we have access to query that matched on fields, but not completely on children
+          //assigning filtered here so that we have access to query that matched on arguments passed into the initial query parameters, but not completely on "children" (a.k.a fields)
           filtered = denormalize(node[this.queryParams].data);
           foundMatch = this.children.every(child => {
             return node[this.queryParams].children.includes(child);
@@ -254,7 +254,14 @@ export default class Flache {
           resolve(filtered);
         });
       };
-      //sumOfMatchingChildren is used as a flag, specifically for this demo, the number of matching children between this.children (current query's children) and node[this.queryParams].children (prior query's children) needs to be above 4 as we query for name, rating, hours.is_open_now, and categories.title automatically. 
+
+      /*
+      Note: "children" are query fields, nested fields will always be queried for. 
+      
+      sumOfMatchingChildren is used as a flag, specifically for this Yelp demo, the number of matching children between this.children (current query's children) and node[this.queryParams].children (prior query's children) needs to be above 4 as we query for name, rating, hours.is_open_now, and categories.title automatically. The number to check the flag against will dependent on your data.
+      
+      */
+
       if (!foundMatch && sumOfMatchingChildren > 4) {
         let activeQuery = query;
         const cachedDataToCompare = filtered;
@@ -289,6 +296,7 @@ export default class Flache {
 
   }
 
+  //fetchPartialData will only be called if a query is a "superset" of a prior query
 
   fetchPartialData(query, endpoint, headers, stringifiedQuery, cachedData) {
     return new Promise((resolve, reject) => {
