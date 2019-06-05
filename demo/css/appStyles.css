@@ -97,7 +97,7 @@ h2 {
       color: #f9a460; }
 
 #img-logo {
-  height: 215px;
+  height: 100px;
   margin: auto auto; }
 
 #nav-bar-links {
@@ -108,52 +108,43 @@ h2 {
   align-items: center;
   justify-content: space-evenly;
   text-decoration: none; }
-
-.nav-bar-link {
-  padding: 35 15; }
+  #nav-bar-links a .nav-bar-link {
+    padding: 35 15; }
+  #nav-bar-links a #git-logo #git-logo-svg:hover {
+    fill: #f9a460; }
+  #nav-bar-links a #git-logo .icon {
+    width: 20px; }
+  #nav-bar-links a #npm-logo {
+    margin-right: 20px; }
+    #nav-bar-links a #npm-logo #npm-logo-svg:hover {
+      fill: #f9a460; }
 
 .dropdown-wrapper {
   overflow: hidden;
   letter-spacing: 4px;
   padding: 30 15; }
-
-.dropdown-wrapper:hover {
-  color: #d4b6ff;
-  cursor: pointer; }
+  .dropdown-wrapper:hover {
+    color: #f9a460;
+    cursor: pointer; }
+    .dropdown-wrapper:hover .dropdown-content {
+      display: block; }
 
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #5600CD;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
+  box-shadow: 0px 8px 8px 0px #f9a460;
   transform: translate(-25%, 0%);
   padding-top: 10px; }
-
-.dropdown-item a, .dropdown-item {
-  color: #5600CD; }
-
-.dropdown-content-wrapper {
-  background-color: white; }
-
-.dropdown-content-wrapper div {
-  padding: 15px; }
-
-.dropdown-content-wrapper div:hover {
-  background-color: #d4b6ff; }
-
-.dropdown-wrapper:hover .dropdown-content {
-  display: block; }
-
-#git-logo:hover #git-logo-svg {
-  fill: #d4b6ff; }
-
-#npm-logo {
-  margin-right: 20px; }
-
-#npm-logo:hover #npm-logo-svg {
-  fill: #d4b6ff; }
+  .dropdown-content .dropdown-content-wrapper {
+    background-color: #D5E7F2; }
+    .dropdown-content .dropdown-content-wrapper div {
+      padding: 10px; }
+    .dropdown-content .dropdown-content-wrapper div:hover {
+      background-color: #f9a460; }
+    .dropdown-content .dropdown-content-wrapper a div {
+      color: #005772; }
 
 .main-container {
   padding: 0px 100px;
@@ -365,9 +356,12 @@ fieldset {
   /* Opera < 12.1 */
   animation: fadein 1s; }
   .modal h1 {
-    color: #00303F; }
+    color: #005772; }
   .modal button {
-    color: #00303F; }
+    color: #005772; }
+  .modal p {
+    font-size: 14px;
+    color: #005772; }
 
 @keyframes fadein {
   from {
@@ -375,29 +369,25 @@ fieldset {
   to {
     opacity: 1; } }
 
-.description p {
-  color: #00303F; }
-
-#form-wrapper button {
-  width: 30%;
-  justify-content: center;
-  background: #659DBF;
-  border-radius: 25px;
-  border: none;
-  padding: 5px;
-  margin: 5px auto, 0 auto;
-  box-shadow: 5px 10px 18px #abbed6; }
-
 #form-wrapper {
   width: 60%;
   display: flex;
   flex-direction: column;
   align-content: center; }
-
-#form-wrapper h2 {
-  text-transform: uppercase;
-  font-weight: 600;
-  color: #2c0365; }
+  #form-wrapper button {
+    width: 30%;
+    justify-content: center;
+    background: #659DBF;
+    border-radius: 25px;
+    border: none;
+    padding: 5px;
+    margin: 5px auto, 0 auto;
+    box-shadow: 5px 10px 18px #abbed6;
+    color: #FFF; }
+  #form-wrapper h2 {
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #005772; }
 
 #form-button-box {
   display: flex; }

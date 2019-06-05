@@ -115,7 +115,7 @@ h2 {
 }
 
 #img-logo {
-  height: 215px;
+  height: 100px;
   margin: auto auto;
 }
 
@@ -127,66 +127,67 @@ h2 {
   align-items: center;
   justify-content: space-evenly;
   text-decoration: none;
-}
-
-.nav-bar-link {
-  padding: 35 15;
+  a{
+    .nav-bar-link{
+      padding: 35 15;
+    }
+    #git-logo{
+      #git-logo-svg{
+        &:hover{
+          fill: lighten($apricot, 10%);
+        }
+      }
+      .icon{
+        width: 20px;
+      }
+    }
+    #npm-logo{
+      margin-right: 20px;
+      #npm-logo-svg{
+        &:hover{
+          fill: lighten($apricot, 10%);
+        }
+      }
+    }
+  }
 }
 
 .dropdown-wrapper {
   overflow: hidden;
   letter-spacing: 4px;
   padding: 30 15;
-}
-
-.dropdown-wrapper:hover {
-  color: rgb(212, 182, 255);
+  &:hover {
+  color: lighten($apricot, 10%);
   cursor: pointer;
+  .dropdown-content{
+    display:block;
+   }
+  }
 }
 
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #5600CD;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
+  box-shadow: 0px 8px 8px 0px lighten($apricot, 10%);
   transform: translate(-25%, 0%);
   padding-top: 10px;
+  .dropdown-content-wrapper {
+    background-color: $iceBlue;
+    div{
+      padding: 10px;
+    }
+    div:hover{
+      background-color: lighten($apricot, 10%);
+    }
+    a {
+      div{
+        color: lighten($cerulean, 10%);
+      }
+    }
+  }
 }
-
-.dropdown-item a, .dropdown-item {
-  color: #5600CD;
-}
-
-.dropdown-content-wrapper {
-  background-color: white;
-}
-
-.dropdown-content-wrapper div {
-  padding: 15px;
-}
-
-.dropdown-content-wrapper div:hover {
-  background-color: rgb(212, 182, 255);
-}
-
-.dropdown-wrapper:hover .dropdown-content {
-  display: block;
-}
-
-#git-logo:hover #git-logo-svg {
-  fill: rgb(212, 182, 255);
-}
-
-#npm-logo {
-  margin-right: 20px;
-}
-
-#npm-logo:hover #npm-logo-svg {
-  fill: rgb(212, 182, 255);
-}
-
 
 //Result List: 
 
@@ -435,10 +436,14 @@ fieldset {
     -o-animation: fadein 1s; /* Opera < 12.1 */
        animation: fadein 1s;
   h1{
-    color: $cerulean
+    color: lighten($cerulean, 10%);
   }
   button{
-    color: $cerulean;
+    color: lighten($cerulean, 10%);
+  }
+  p{
+    font-size: 14px;
+    color: lighten($cerulean, 10%);
   }
 }
 
@@ -447,34 +452,29 @@ fieldset {
   to   { opacity: 1; }
 }
 
-.description p {
-  color: $cerulean
-}
-
 //Form:
-
-#form-wrapper button{
-  width: 30%;
-  justify-content: center;
-  background: $skyBlue;
-  border-radius: 25px;
-  border: none;
-  padding: 5px;
-  margin: 5px auto, 0 auto;
-  box-shadow: 5px 10px 18px darken($greysilver, 5%)
-}
 
 #form-wrapper {
   width: 60%;
   display: flex;
   flex-direction: column;
   align-content: center;
-}
-
-#form-wrapper h2 {
-  text-transform: uppercase;
-  font-weight: 600;
-  color: rgb(44, 3, 101);
+  button{
+    width: 30%;
+    justify-content: center;
+    background: $skyBlue;
+    border-radius: 25px;
+    border: none;
+    padding: 5px;
+    margin: 5px auto, 0 auto;
+    box-shadow: 5px 10px 18px darken($greysilver, 5%);
+    color: $white;
+  }
+  h2{
+    text-transform: uppercase;
+    font-weight: 600;
+    color: lighten($cerulean, 10%);
+  }
 }
 
 #form-button-box {
