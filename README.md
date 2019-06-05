@@ -11,28 +11,26 @@ FlacheQL offers partial retrieval of cached data based on search parameters — 
 
 ```javascript
 
-======== partial retrieval on parameters ========       ======== partial retrieval on fields ========
+======== partial retrieval on parameters ========       ======== partial retrieval on fields ========       ======== partial retrieval on supersets of fields ========
 
-    search(location: “Venice” limit: *25*) {	          search(location: “Venice” limit: 25) {	
-      business {					    business {						
-        name					              *name*
-        rating					              *rating*
-      }						            }
-    }						          } 
+    search(location: “Venice” limit: *25*) {	          search(location: “Venice” limit: 25) {	            search(location: “Venice” limit: 25) {
+      business {					    business {						                                                          business {
+        name					          *name*                                                                           name
+        rating					        *rating*                                                                         rating
+      }						            }                                                                                }
+    }						            }                                                                                }
 
-    search(location: “Venice” limit: *10*) {	          search(location: “Venice” limit: 25) {	
-      business {					    business {						
-        name					              *rating*
-        rating					            }      
-      }						          }  
-    }						          
-
+    search(location: “Venice” limit: *10*) {	          search(location: “Venice” limit: 25) {	            search(location: “Venice” limit: 25) {
+      business {					    business {						                                                          business {              business {
+        name					          *rating*                                                                         name
+        rating					      }                                                                                  rating     
+      }						          }                                                                                    *phone number*        phone number
+    }						                                                                                                 *review count*        review count
+                                                                                                              }                       }
+                                                                                                            }                       }
 ```
 
 FlacheQL consistently outperforms Apollo on retrievals of response data from identical queries as well as on both types of partial retrievals.  
-
-
-*This is a work in progress.  Cache persistence and "smart" expiration of cached items are some of the features to be added.*
 
 ### Cache Examples
 
@@ -45,6 +43,8 @@ All HTTP requests from a browser are first routed to the browser cache.
 **Partial Cache:**
 
 * If a request is a subset of a query that was previously made, then it reads the matching response from cache.
+
+* If a request is a superset of a query that was previously made, the query will be modified to only query for the fields that are missing. The results will be merged with the results already in cache, and saved as the value of the query. 
 
 ## Getting Started
 
