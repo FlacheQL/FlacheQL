@@ -349,7 +349,7 @@ input[type=text] {
 fieldset {
   margin-bottom: 5px;
   line-height: 1.4;
-  background-color: rgb(212, 182, 255)); 
+  background-color: rgb(212, 182, 255); 
   border-style: ridge;
   box-shadow: 2px 2px rgba(165, 165, 165, .4);
 }
