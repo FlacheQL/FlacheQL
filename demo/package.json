@@ -7,7 +7,8 @@
     "build": "webpack --mode production",
     "start": "webpack-dev-server --mode development --open",
     "dist": "rm -rf dist && npm run build",
-    "start-server": "nodemon server.js"
+    "start-server": "nodemon server.js",
+    "scss": "node-sass --watch scss -o css"
   },
   "author": "",
   "license": "ISC",
