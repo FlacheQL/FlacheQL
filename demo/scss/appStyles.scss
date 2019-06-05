@@ -189,6 +189,42 @@ h2 {
   }
 }
 
+<<<<<<< HEAD
+.dropdown-item a, .dropdown-item {
+  color: #5600CD;
+}
+
+.dropdown-content-wrapper {
+  background-color: white;
+}
+
+.dropdown-content-wrapper div {
+  padding: 15px;
+}
+
+.dropdown-content-wrapper div:hover {
+  background-color: rgb(212, 182, 255);
+}
+
+.dropdown-wrapper:hover .dropdown-content {
+  display: block;
+}
+
+#git-logo:hover #git-logo-svg {
+  fill:lighten($apricot, 10%);
+}
+
+#npm-logo {
+  margin-right: 20px;
+}
+
+#npm-logo:hover #npm-logo-svg {
+  fill: lighten($apricot, 10%);
+}
+
+
+=======
+>>>>>>> bb742868f00f50ec5d509da04d1c70fcc30159f8
 //Result List: 
 
 .main-container {
