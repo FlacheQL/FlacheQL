@@ -21,7 +21,7 @@ export default class Flache {
     this.headers = headers;
 
     // ! A method to retrieve CFQ from the IndexedDB browser storage, and use it to refresh the in-memory CFQ.
-    this.loadFromIndexDB = function () {
+    this.loadFromIndexedDB = function () {
       // return the "data"-keyed object from indexDB using localForage
 
       localforage.getItem('FlacheQL', (err, value) => {
