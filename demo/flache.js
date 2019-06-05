@@ -20,8 +20,10 @@ export default class Flache {
     this.ttl = options.ttl || 300000; // Either passed in Time-To-Live (TTL) default value of 5 minutes.
     this.headers = headers;
 
-    // A method to retrieve Cache, FieldCache, and QueryCache (CFQ) from the IndexedDB browser storage, and use it to refresh the in-memory CFQ.
+    // ! A method to retrieve CFQ from the IndexedDB browser storage, and use it to refresh the in-memory CFQ.
     this.loadFromIndexedDB = function () {
+      // return the "data"-keyed object from indexDB using localForage
+
       localforage.getItem('FlacheQL', (err, value) => {
         if (err) {
           return false;
@@ -42,12 +44,12 @@ export default class Flache {
     // A method to look through the in-memory CFQ and removes any stale past queries based on the TTL set in the "options" configuration object
     this.pruneStaleFromCache = function () {
       if (Object.keys(this.cache)) {
-        const currentTime = Date.now();
-        // Iterate through past queries in this.cache. If one is expired, remove information about that query from the CFQ caches.
+        const currentTime = Date.now(); // ex: 8759213 (seconds)
         for (let stringifiedQuery in this.cache) {
           let pastQueryTime = this.cache[stringifiedQuery].created_at;
           if (currentTime - pastQueryTime > this.ttl) {
-            // Query is Stale
+            // Query is Expired... Need to remove the appropriate information from CFQ
+            // Need to get the associated queryParams with the stale query
             let staleStringifiedQuery = stringifiedQuery;
             let staleQueryParams = cleanQuery(JSON.parse(staleStringifiedQuery));
             // 1: Delete the appropriate information from this.cache
@@ -81,7 +83,7 @@ export default class Flache {
     if (!this.fieldsCache.length && !Object.keys(this.cache).length && !Object.keys(this.queryCache).length) {
       this.loadFromIndexedDB();
     }
-    this.pruneStaleFromCache(); 
+    this.pruneStaleFromCache();
 
 
     // create a key to store the payloads in the cache
@@ -109,7 +111,6 @@ export default class Flache {
     let allParamsPass = false;
 
     // increment cache length
-
     this.cacheLength = Object.keys(this.cache).length;
     // if the developer specifies in App.jsx
     if (this.options.paramRetrieval) {
@@ -121,7 +122,7 @@ export default class Flache {
       });
 
       if (childrenMatch) {
-        // no need to run partial query check on first query
+        // no need to run partial query check on first query, as for this Yelp demo we query for four fields automatically 
         if (this.cacheLength > 0) {
           let currentMatchedQuery;
           for (let key in variables) {
@@ -212,9 +213,9 @@ export default class Flache {
         this.queryCache[queryVariable][stringifiedQuery] =
           variables[queryVariable];
       } else
-      this.queryCache[queryVariable] = {
-        [stringifiedQuery]: variables[queryVariable]
-      };
+        this.queryCache[queryVariable] = {
+          [stringifiedQuery]: variables[queryVariable]
+        };
     });
 
     if (this.options.fieldRetrieval) {
@@ -229,7 +230,7 @@ export default class Flache {
               sumOfMatchingChildren += 1;
             }
           })
-          //assigning filtered here so that we have access to query that matched on fields, but not completely on children
+          //assigning filtered here so that we have access to query that matched on arguments passed into the initial query parameters, but not completely on "children" (a.k.a fields)
           filtered = denormalize(node[this.queryParams].data);
           foundMatch = this.children.every(child => {
             return node[this.queryParams].children.includes(child);
@@ -251,6 +252,14 @@ export default class Flache {
           resolve(filtered);
         });
       };
+
+      /*
+      Note: "children" are query fields, nested fields will always be queried for. 
+      
+      sumOfMatchingChildren is used as a flag, specifically for this Yelp demo, the number of matching children between this.children (current query's children) and node[this.queryParams].children (prior query's children) needs to be above 4 as we query for name, rating, hours.is_open_now, and categories.title automatically. The number to check the flag against will dependent on your data.
+      
+      */
+
       if (!foundMatch && sumOfMatchingChildren > 4) {
         let activeQuery = query;
         const cachedDataToCompare = filtered;
@@ -285,14 +294,15 @@ export default class Flache {
 
   }
 
+  //fetchPartialData will only be called if a query is a "superset" of a prior query
 
   fetchPartialData(query, endpoint, headers, stringifiedQuery, cachedData) {
     return new Promise((resolve, reject) => {
       fetch(endpoint, {
-          method: "POST",
-          headers,
-          body: query
-        })
+        method: "POST",
+        headers,
+        body: query
+      })
         .then(res => {
           return res.json()
         })
@@ -316,10 +326,10 @@ export default class Flache {
   fetchData(query, endpoint, headers, stringifiedQuery) {
     return new Promise((resolve, reject) => {
       fetch(endpoint, {
-          method: "POST",
-          headers,
-          body: query
-        })
+        method: "POST",
+        headers,
+        body: query
+      })
         .then(res => {
           return res.json()
         })
@@ -338,7 +348,7 @@ export default class Flache {
 
           if (!this.fieldsCache.some(obj => {
             return (Object.keys(obj)[0] === this.queryParams && JSON.stringify(obj[Object.keys(obj)[0]].children) == JSON.stringify(fieldCacheObj[this.queryParams].children))
-            })) {
+          })) {
             this.fieldsCache.push(fieldCacheObj);
           }
           this.saveToIndexedDB();
@@ -355,6 +365,7 @@ export default class Flache {
       queryCache: this.queryCache,
       fieldsCache: this.fieldsCache
     }
+    // data = JSON.stringify(data); // ! Added 6/3... turn the stingified storage object into an acutal object!
     localforage.setItem('FlacheQL', data, (err, result) => {
       if (err) {
         return false;

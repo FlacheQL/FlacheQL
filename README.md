@@ -11,29 +11,29 @@ FlacheQL offers partial retrieval of cached data based on search parameters — 
 
 ```javascript
 
-======== partial retrieval on parameters ========       ======== partial retrieval on fields ========
+======== partial retrieval on parameters ========       ======== partial retrieval on fields ========       ======== partial retrieval on supersets of fields ========
 
-    search(location: “Venice” limit: *25*) {	          search(location: “Venice” limit: 25) {	
-      business {					    business {						
-        name					              *name*
-        rating					              *rating*
-      }						            }
-    }						          } 
+    search(location: “Venice” limit: *25*) {	          search(location: “Venice” limit: 25) {	            search(location: “Venice” limit: 25) {
+      business {					    business {						                                                          business {
+        name					          *name*                                                                           name
+        rating					        *rating*                                                                         rating
+      }						            }                                                                                }
+    }						            }                                                                                }
 
-    search(location: “Venice” limit: *10*) {	          search(location: “Venice” limit: 25) {	
-      business {					    business {						
-        name					              *rating*
-        rating					            }      
-      }						          }  
-    }						          
-
+    search(location: “Venice” limit: *10*) {	          search(location: “Venice” limit: 25) {	            search(location: “Venice” limit: 25) {
+      business {					    business {						                                                          business {              business {
+        name					          *rating*                                                                         name
+        rating					      }                                                                                  rating     
+      }						          }                                                                                    *phone number*        phone number
+    }						                                                                                                 *review count*        review count
+                                                                                                              }                       }
+                                                                                                            }                       }
 ```
 
 FlacheQL consistently outperforms Apollo on retrievals of response data from identical queries as well as on both types of partial retrievals.  
 
 
-*This is a work in progress.  Cache persistence, expiration of cached items, and "superset" partial querying are some of the recently added features.*
-*In the future, we're looking to add a Higher Order Component (HOC) in React similar to that provided by Apollo. Please let us know if you'd like to contribute towards this goal!*
+*This is a work in progress.  Cache persistence, expiration of cached items, and "superset" partial querying are some of the recently added features. In the future, we're looking to add a Higher Order Component (HOC) in React similar to that provided by Apollo. Please let us know if you'd like to contribute towards this goal!*
 
 ### Cache Examples
 
@@ -49,7 +49,7 @@ All HTTP requests from a browser are first routed to the browser cache under the
 
 **Superset Partial Cache:**
 
-* If a request is a match on parameters and represents a field __superset__ of the past query, FlacheQL reconstructs the outbound query to only fetch the additionally needed fields, before stitching back together the query response document on the client side. This results in fewer invocations of resolvers on the client side, reducing the load on servers and databases. Combined with a properly-configured TTL based on your application needs, you can expect that the constructed response document is reasonably fresh. *
+* If a request is a match on parameters and represents a field __superset__ of the past query, FlacheQL reconstructs the outbound query to only fetch the additionally needed fields, before stitching back together the query response document on the client side. This results in fewer invocations of resolvers on the client side, reducing the load on servers and databases. Combined with a properly-configured TTL based on your application needs, you can expect that the constructed response document is reasonably fresh. 
 
 ## Getting Started
 
