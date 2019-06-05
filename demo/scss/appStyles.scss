@@ -176,7 +176,7 @@ h2 {
 }
 
 #git-logo:hover #git-logo-svg {
-  fill: rgb(212, 182, 255);
+  fill:lighten($apricot, 10%);
 }
 
 #npm-logo {
@@ -184,7 +184,7 @@ h2 {
 }
 
 #npm-logo:hover #npm-logo-svg {
-  fill: rgb(212, 182, 255);
+  fill: lighten($apricot, 10%);
 }
 
 
