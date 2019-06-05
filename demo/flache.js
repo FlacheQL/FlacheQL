@@ -7,7 +7,6 @@ import flatten from "./helpers/flatten";
 import localforage from "localforage"
 
 export default class Flache {
-  // TODO: have these parameters set-up on initialization rather than on each query
   constructor(endpoint, headers = {
     "Content-Type": "application/graphql"
   }, options) {
@@ -18,7 +17,7 @@ export default class Flache {
     this.cbs;
     this.endpoint = endpoint;
     this.options = options;
-    this.ttl = options.ttl || 300000; // ! Either passed in TTL or default to default value... CHANGE this later to a realistic default value
+    this.ttl = options.ttl || 300000; // Either passed in Time-To-Live (TTL) default value of 5 minutes.
     this.headers = headers;
 
     // ! A method to retrieve CFQ from the IndexedDB browser storage, and use it to refresh the in-memory CFQ.
@@ -42,7 +41,7 @@ export default class Flache {
 
     }
 
-    // ! This method looks through the in-memory CFQ and removes any stale past queries.
+    // A method to look through the in-memory CFQ and removes any stale past queries based on the TTL set in the "options" configuration object
     this.pruneStaleFromCache = function () {
       if (Object.keys(this.cache)) {
         const currentTime = Date.now(); // ex: 8759213 (seconds)
@@ -74,18 +73,17 @@ export default class Flache {
       }
       return;
     }
-
-
   }
 
 
 
   it(query, variables) {
 
+    // On Query, first load the CFQ from IndexedDB if appropriate. Then, prune your in-memory CFQ based on the TTL set in the "options" configuration object
     if (!this.fieldsCache.length && !Object.keys(this.cache).length && !Object.keys(this.queryCache).length) {
-      this.loadFromIndexDB();
+      this.loadFromIndexedDB();
     }
-    this.pruneStaleFromCache(); // ! This will run before loadFromIndexDB on the FIRST request, but clean the cache appropriately every query thereafter
+    this.pruneStaleFromCache();
 
 
     // create a key to store the payloads in the cache
@@ -336,7 +334,7 @@ export default class Flache {
           return res.json()
         })
         .then(res => {
-          // ! Assign a timestamp to the query being inserted into this.cache
+          // Assign a timestamp to the query being inserted into this.cache
           res.created_at = Date.now();
           this.cache[stringifiedQuery] = res;
           let normalizedData = flatten(res);
@@ -360,6 +358,7 @@ export default class Flache {
     });
   }
 
+  // A method to save the current Cache, FieldCache, and QueryCache (CFQ) data structures in memory to IndexedDB using localforage, a higher-level API.
   saveToIndexedDB() {
     let data = {
       cache: this.cache,
