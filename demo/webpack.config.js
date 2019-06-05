@@ -8,21 +8,21 @@ const htmlPlugin = new HtmlWebPackPlugin({
 module.exports = {
   module: {
     rules: [{
-        test: /\.jsx?$/,
-        loader: "babel-loader",
-        exclude: /node_modules/,
-        query: {
-          presets: ['react', 'es2015']
-        }
-      },
-      {
-        test: /\.(s*)css$/, 
-        use: ["style-loader", "css-loader","sass-loader"]
-      },
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: ['file-loader'],
+      test: /\.jsx?$/,
+      loader: "babel-loader",
+      exclude: /node_modules/,
+      query: {
+        presets: ['react', 'es2015']
       }
+    },
+    {
+      test: /\.(s*)css$/,
+      use: ["style-loader", "css-loader", "sass-loader"]
+    },
+    {
+      test: /\.(png|svg|jpg|gif)$/,
+      use: ['file-loader'],
+    }
     ]
   },
   plugins: [htmlPlugin],

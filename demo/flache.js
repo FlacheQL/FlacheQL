@@ -7,7 +7,6 @@ import flatten from "./helpers/flatten";
 import localforage from "localforage"
 
 export default class Flache {
-  // TODO: have these parameters set-up on initialization rather than on each query
   constructor(endpoint, headers = {
     "Content-Type": "application/graphql"
   }, options) {
@@ -18,16 +17,15 @@ export default class Flache {
     this.cbs;
     this.endpoint = endpoint;
     this.options = options;
-    this.ttl = options.ttl || 300000; // ! Either passed in TTL or default to default value... CHANGE this later to a realistic default value
+    this.ttl = options.ttl || 300000; // Either passed in Time-To-Live (TTL) default value of 5 minutes.
     this.headers = headers;
 
     // ! A method to retrieve CFQ from the IndexedDB browser storage, and use it to refresh the in-memory CFQ.
-    this.loadFromIndexDB = function () {
+    this.loadFromIndexedDB = function () {
       // return the "data"-keyed object from indexDB using localForage
 
       localforage.getItem('FlacheQL', (err, value) => {
         if (err) {
-
           return false;
         } else {
           if (!value) {
@@ -43,7 +41,7 @@ export default class Flache {
 
     }
 
-    // ! This method looks through the in-memory CFQ and removes any stale past queries.
+    // A method to look through the in-memory CFQ and removes any stale past queries based on the TTL set in the "options" configuration object
     this.pruneStaleFromCache = function () {
       if (Object.keys(this.cache)) {
         const currentTime = Date.now(); // ex: 8759213 (seconds)
@@ -75,18 +73,17 @@ export default class Flache {
       }
       return;
     }
-
-
   }
 
 
 
   it(query, variables) {
 
+    // On Query, first load the CFQ from IndexedDB if appropriate. Then, prune your in-memory CFQ based on the TTL set in the "options" configuration object
     if (!this.fieldsCache.length && !Object.keys(this.cache).length && !Object.keys(this.queryCache).length) {
-      this.loadFromIndexDB();
+      this.loadFromIndexedDB();
     }
-    this.pruneStaleFromCache(); // ! This will run before loadFromIndexDB on the FIRST request, but clean the cache appropriately every query thereafter
+    this.pruneStaleFromCache();
 
 
     // create a key to store the payloads in the cache
@@ -114,7 +111,6 @@ export default class Flache {
     let allParamsPass = false;
 
     // increment cache length
-
     this.cacheLength = Object.keys(this.cache).length;
     // if the developer specifies in App.jsx
     if (this.options.paramRetrieval) {
@@ -126,7 +122,7 @@ export default class Flache {
       });
 
       if (childrenMatch) {
-        // no need to run partial query check on first query
+        // no need to run partial query check on first query, as for this Yelp demo we query for four fields automatically 
         if (this.cacheLength > 0) {
           let currentMatchedQuery;
           for (let key in variables) {
@@ -217,9 +213,9 @@ export default class Flache {
         this.queryCache[queryVariable][stringifiedQuery] =
           variables[queryVariable];
       } else
-      this.queryCache[queryVariable] = {
-        [stringifiedQuery]: variables[queryVariable]
-      };
+        this.queryCache[queryVariable] = {
+          [stringifiedQuery]: variables[queryVariable]
+        };
     });
 
     if (this.options.fieldRetrieval) {
@@ -234,7 +230,7 @@ export default class Flache {
               sumOfMatchingChildren += 1;
             }
           })
-          //assigning filtered here so that we have access to query that matched on fields, but not completely on children
+          //assigning filtered here so that we have access to query that matched on arguments passed into the initial query parameters, but not completely on "children" (a.k.a fields)
           filtered = denormalize(node[this.queryParams].data);
           foundMatch = this.children.every(child => {
             return node[this.queryParams].children.includes(child);
@@ -256,6 +252,14 @@ export default class Flache {
           resolve(filtered);
         });
       };
+
+      /*
+      Note: "children" are query fields, nested fields will always be queried for. 
+      
+      sumOfMatchingChildren is used as a flag, specifically for this Yelp demo, the number of matching children between this.children (current query's children) and node[this.queryParams].children (prior query's children) needs to be above 4 as we query for name, rating, hours.is_open_now, and categories.title automatically. The number to check the flag against will dependent on your data.
+      
+      */
+
       if (!foundMatch && sumOfMatchingChildren > 4) {
         let activeQuery = query;
         const cachedDataToCompare = filtered;
@@ -290,14 +294,15 @@ export default class Flache {
 
   }
 
+  //fetchPartialData will only be called if a query is a "superset" of a prior query
 
   fetchPartialData(query, endpoint, headers, stringifiedQuery, cachedData) {
     return new Promise((resolve, reject) => {
       fetch(endpoint, {
-          method: "POST",
-          headers,
-          body: query
-        })
+        method: "POST",
+        headers,
+        body: query
+      })
         .then(res => {
           return res.json()
         })
@@ -321,15 +326,15 @@ export default class Flache {
   fetchData(query, endpoint, headers, stringifiedQuery) {
     return new Promise((resolve, reject) => {
       fetch(endpoint, {
-          method: "POST",
-          headers,
-          body: query
-        })
+        method: "POST",
+        headers,
+        body: query
+      })
         .then(res => {
           return res.json()
         })
         .then(res => {
-          // ! Assign a timestamp to the query being inserted into this.cache
+          // Assign a timestamp to the query being inserted into this.cache
           res.created_at = Date.now();
           this.cache[stringifiedQuery] = res;
           let normalizedData = flatten(res);
@@ -343,7 +348,7 @@ export default class Flache {
 
           if (!this.fieldsCache.some(obj => {
             return (Object.keys(obj)[0] === this.queryParams && JSON.stringify(obj[Object.keys(obj)[0]].children) == JSON.stringify(fieldCacheObj[this.queryParams].children))
-            })) {
+          })) {
             this.fieldsCache.push(fieldCacheObj);
           }
           this.saveToIndexedDB();
@@ -353,6 +358,7 @@ export default class Flache {
     });
   }
 
+  // A method to save the current Cache, FieldCache, and QueryCache (CFQ) data structures in memory to IndexedDB using localforage, a higher-level API.
   saveToIndexedDB() {
     let data = {
       cache: this.cache,
@@ -368,7 +374,4 @@ export default class Flache {
       }
     })
   }
-
-
-
 }
