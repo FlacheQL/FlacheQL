@@ -10,23 +10,57 @@ FlacheQL is a __*fast, lightweight, and flexible*__ client-side cache for GraphQ
 FlacheQL offers partial retrieval of cached data based on search parameters — a feature that no other GraphQL library offers. Larger implementations like Apollo and Relay can only cache data based on GraphQL query fields. With minimal set up, you can customize FlacheQL to your app's needs by toggling fieldRetrieval and/or paramRetrieval in the options: 
 
 ```javascript
+===== partial retrieval on parameters =====
+  search(location: "Venice" limit: 25) {
+    business {
+      name 
+      rating 
+    }
+  }
 
-======== partial retrieval on parameters ========       ======== partial retrieval on fields ======== 
+  search(location: "Venice" limit: 10) {
+    business {
+      name 
+      rating
+    }
+  }
+```
 
-    search(location: “Venice” limit: *25*) {	          search(location: “Venice” limit: 25) {	          
-      business {					    business {						                                                      
-        name					          *name*                                                                    
-        rating					        *rating*                                                                 
-      }						            }                                                                          
+```javascript
+===== partial retrieval on fields =====
+  search(location: "Venice" limit: 25) {
+    business {
+      name 
+      rating 
+    }
+  }
 
-    search(location: “Venice” limit: *10*) {	          search(location: “Venice” limit: 25) {	            
-      business {					    business {						                                                        
-        name					          *rating*                                         
-        rating					      }                                                                  
-      }						          }                                                         
-    }						                                                                                        
-                                                                                                         
-                                                                                                      
+  search(location: "Venice" limit: 25) {
+    business {
+      rating
+    }
+  }
+```
+
+```javascript
+===== partial retrieval on supersets of fields =====
+  search(location: "Venice" limit: 25) {
+    business {
+      name 
+      rating 
+      distance
+      phone number
+    }
+  }
+
+  search(location: "Venice" limit: 25) {
+    business {
+      distance
+      phone number
+    }
+  }
+  /*returned to the user are name and rating results from the cache,
+  and distance and phone number results from the server*/
 ```
 
 FlacheQL consistently outperforms Apollo on retrievals of response data from identical queries as well as on both types of partial retrievals.  

@@ -359,9 +359,9 @@ fieldset {
     color: #005772; }
   .modal button {
     color: #005772; }
-  .modal p {
+  .modal .description p {
     font-size: 14px;
-    color: #005772; }
+    color: #00090c; }
 
 @keyframes fadein {
   from {
