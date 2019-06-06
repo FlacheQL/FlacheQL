@@ -137,32 +137,6 @@ h2 {
   box-shadow: 0px 8px 8px 0px #f9a460;
   transform: translate(-25%, 0%);
   padding-top: 10px; }
-<<<<<<< HEAD
-
-.dropdown-item a, .dropdown-item {
-  color: #5600CD; }
-
-.dropdown-content-wrapper {
-  background-color: white; }
-
-.dropdown-content-wrapper div {
-  padding: 15px; }
-
-.dropdown-content-wrapper div:hover {
-  background-color: #d4b6ff; }
-
-.dropdown-wrapper:hover .dropdown-content {
-  display: block; }
-
-#git-logo:hover #git-logo-svg {
-  fill: #f9a460; }
-
-#npm-logo {
-  margin-right: 20px; }
-
-#npm-logo:hover #npm-logo-svg {
-  fill: #f9a460; }
-=======
   .dropdown-content .dropdown-content-wrapper {
     background-color: #D5E7F2; }
     .dropdown-content .dropdown-content-wrapper div {
@@ -171,7 +145,6 @@ h2 {
       background-color: #f9a460; }
     .dropdown-content .dropdown-content-wrapper a div {
       color: #005772; }
->>>>>>> bb742868f00f50ec5d509da04d1c70fcc30159f8
 
 .main-container {
   padding: 0px 100px;
@@ -386,9 +359,9 @@ fieldset {
     color: #005772; }
   .modal button {
     color: #005772; }
-  .modal p {
+  .modal .description p {
     font-size: 14px;
-    color: #005772; }
+    color: #00090c; }
 
 @keyframes fadein {
   from {
