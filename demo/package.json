@@ -28,7 +28,7 @@
     "graphql-tag": "^2.9.2",
     "http": "0.0.0",
     "localforage": "^1.7.3",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.13",
     "node-fetch": "^2.1.2",
     "react": "^16.4.0",
     "react-bootcards": "^0.1.0",
