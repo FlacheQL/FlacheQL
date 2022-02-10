@@ -51,7 +51,7 @@
     "css-loader": "^0.28.11",
     "express-graphql": "^0.6.12",
     "html-webpack-plugin": "^3.2.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "nodemon": "^1.17.5",
     "react-apollo": "^2.1.5",
     "sass-loader": "^7.1.0",
